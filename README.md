@@ -31,7 +31,7 @@ mediapprove/
 ### Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/kalviumcommunity/S115-0726-Error-404-FullStack-Next.js--MediApprove.git>
 cd mediapprove
 ```
 
