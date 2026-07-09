@@ -89,8 +89,7 @@ npm run lint
 
 ## 🔮 Future Enhancements
 
-- Prisma ORM integration
-- Database connectivity
+- 
 - Admin authentication
 - Medicine approval workflow
 - REST API development
@@ -103,5 +102,8 @@ Vinayak Kulkarni
 Raina George
 
 ---
+what is done:
 
 This project was scaffolded using **Next.js** and serves as the foundation for the MediApprove admin approval system.
+- Prisma ORM integration
+- Database connectivity
