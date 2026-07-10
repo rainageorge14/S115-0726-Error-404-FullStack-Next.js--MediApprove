@@ -13,3 +13,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+}
+
+enum MedicineStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AuditAction {
+  APPROVED
+  REJECTED
+}
+
+model Admin {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      Role       @default(ADMIN)
+
+  auditLogs AuditLog[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model MedicineListing {
+  id             String           @id @default(cuid())
+  medicineName   String
+  sku            String           @unique
+  formulation    String
+  price          Float
+  expiryDate     DateTime
+  vendor         String
+  status         MedicineStatus   @default(PENDING)
+
+  auditLogs      AuditLog[]
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model AuditLog {
+  id          String            @id @default(cuid())
+
+  adminId     String
+  admin       Admin             @relation(fields: [adminId], references: [id])
+
+  listingId   String
+  listing     MedicineListing   @relation(fields: [listingId], references: [id])
+
+  action      AuditAction
+
+  createdAt   DateTime          @default(now())
+}
