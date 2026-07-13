@@ -1,0 +1,586 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+
+interface Medicine {
+  id: string;
+  name: string;
+  company: string;
+  submittedOn: string;
+  status: "pending" | "approved" | "rejected";
+}
+
+interface Activity {
+  id: string;
+  medicineName: string;
+  action: "approved" | "rejected" | "pending";
+  user: string;
+  time: string;
+}
+
+export default function DashboardHome() {
+  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // Mock initial data
+  const [medicines, setMedicines] = useState<Medicine[]>([
+    { id: "1", name: "Paracetamol 650mg", company: "Dr. Reddy's", submittedOn: "20th May 2026", status: "pending" },
+    { id: "2", name: "Crocin 200mg", company: "Sun Pharma", submittedOn: "20th May 2026", status: "pending" },
+    { id: "3", name: "Dolo 650mg", company: "Cipla Ltd.", submittedOn: "19th May 2026", status: "pending" },
+    { id: "4", name: "Aspirin 250mg", company: "Lupin Ltd.", submittedOn: "19th May 2026", status: "pending" },
+    { id: "5", name: "Calpol 350mg", company: "Dr. Reddy's", submittedOn: "18th May 2026", status: "pending" },
+  ]);
+
+  const [activities, setActivities] = useState<Activity[]>([
+    { id: "act-1", medicineName: "Paracetamol 650mg", action: "approved", user: "Admin User", time: "2 min ago" },
+    { id: "act-2", medicineName: "Dolo 650mg", action: "rejected", user: "Admin User", time: "2 min ago" },
+    { id: "act-3", medicineName: "Crocin 200mg", action: "approved", user: "Admin User", time: "2 min ago" },
+    { id: "act-4", medicineName: "Aspirin 350mg", action: "pending", user: "Admin User", time: "2 min ago" },
+  ]);
+
+  // Statistics counters
+  const [stats, setStats] = useState({
+    pending: 128,
+    approved: 453,
+    rejected: 65,
+    companies: 45,
+  });
+
+  // Toast effect
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
+  const handleApprove = (id: string) => {
+    const med = medicines.find((m) => m.id === id);
+    if (!med) return;
+
+    // Remove from pending table list
+    setMedicines((prev) => prev.filter((m) => m.id !== id));
+
+    // Add to activity logs
+    const newActivity: Activity = {
+      id: `act-${Date.now()}`,
+      medicineName: med.name,
+      action: "approved",
+      user: "Admin User",
+      time: "Just now",
+    };
+    setActivities((prev) => [newActivity, ...prev]);
+
+    // Update statistics
+    setStats((prev) => ({
+      ...prev,
+      pending: Math.max(0, prev.pending - 1),
+      approved: prev.approved + 1,
+    }));
+
+    setSelectedMedicine(null);
+    setToastMessage(`"${med.name}" has been approved successfully.`);
+  };
+
+  const handleReject = (id: string) => {
+    const med = medicines.find((m) => m.id === id);
+    if (!med) return;
+
+    // Remove from pending table list
+    setMedicines((prev) => prev.filter((m) => m.id !== id));
+
+    // Add to activity logs
+    const newActivity: Activity = {
+      id: `act-${Date.now()}`,
+      medicineName: med.name,
+      action: "rejected",
+      user: "Admin User",
+      time: "Just now",
+    };
+    setActivities((prev) => [newActivity, ...prev]);
+
+    // Update statistics
+    setStats((prev) => ({
+      ...prev,
+      pending: Math.max(0, prev.pending - 1),
+      rejected: prev.rejected + 1,
+    }));
+
+    setSelectedMedicine(null);
+    setToastMessage(`"${med.name}" has been rejected.`);
+  };
+
+  return (
+    <main className="flex-1 p-6 md:p-8 space-y-6 md:space-y-8 overflow-y-auto">
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3 px-5 py-3.5 bg-dark-navy text-white rounded-xl shadow-2xl border border-primary/20 animate-fade-in select-none">
+          <svg className="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+          </svg>
+          <span className="text-sm font-semibold">{toastMessage}</span>
+        </div>
+      )}
+
+      {/* LEVEL 1: Four Statistic Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        {/* Stat Card 1: Pending */}
+        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+                Pending Medicines
+              </span>
+              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+                {stats.pending}
+              </h3>
+            </div>
+            <div className="p-3 bg-[#0EA5B7]/10 text-primary rounded-xl">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
+              </svg>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/pending"
+            className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-hover transition-colors mt-5"
+          >
+            View all pending &rarr;
+          </Link>
+        </Card>
+
+        {/* Stat Card 2: Approved */}
+        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+                Approved Medicines
+              </span>
+              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+                {stats.approved}
+              </h3>
+            </div>
+            <div className="p-3 bg-[#22C55E]/10 text-[#22C55E] rounded-xl">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/pending"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#22C55E] hover:text-[#1ea850] transition-colors mt-5"
+          >
+            View all approved &rarr;
+          </Link>
+        </Card>
+
+        {/* Stat Card 3: Rejected */}
+        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+                Rejected Medicines
+              </span>
+              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+                {stats.rejected}
+              </h3>
+            </div>
+            <div className="p-3 bg-[#EF4444]/10 text-[#EF4444] rounded-xl">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/pending"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#EF4444] hover:text-[#dc3545] transition-colors mt-5"
+          >
+            View all rejected &rarr;
+          </Link>
+        </Card>
+
+        {/* Stat Card 4: Total Companies */}
+        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+                Total Companies
+              </span>
+              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+                {stats.companies}
+              </h3>
+            </div>
+            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+          </div>
+          <a
+            href="#"
+            onClick={(e) => { e.preventDefault(); alert("Viewing companies directory."); }}
+            className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 hover:text-purple-700 transition-colors mt-5"
+          >
+            View all companies &rarr;
+          </a>
+        </Card>
+
+      </div>
+
+      {/* LEVEL 2: Table + Activity Feed */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* Table Column (col-span-2) */}
+        <div className="lg:col-span-2">
+          <Card
+            title="Pending Medicines"
+            headerActions={
+              <Link
+                href="/dashboard/pending"
+                className="py-1.5 px-4 text-xs font-bold rounded-lg cursor-pointer bg-primary text-white hover:bg-primary-hover active:scale-95 transition-all inline-flex items-center justify-center"
+              >
+                View All
+              </Link>
+            }
+            noPadding
+          >
+            {medicines.length === 0 ? (
+              <div className="p-10 text-center text-slate-400 font-semibold text-sm">
+                No pending medicines to review.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-border-color">
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Medicine Name
+                      </th>
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Company
+                      </th>
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Submitted On
+                      </th>
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400 text-right">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-color">
+                    {medicines.map((med) => (
+                      <tr key={med.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4.5 text-sm font-extrabold text-dark-navy">
+                          {med.name}
+                        </td>
+                        <td className="px-6 py-4.5 text-sm font-medium text-slate-500">
+                          {med.company}
+                        </td>
+                        <td className="px-6 py-4.5 text-sm font-medium text-slate-400">
+                          {med.submittedOn}
+                        </td>
+                        <td className="px-6 py-4.5 text-right">
+                          <Button
+                            onClick={() => setSelectedMedicine(med)}
+                            className="!py-1.5 !px-4.5 text-xs font-bold rounded-full text-white bg-[#0A8E9B] hover:bg-[#087a85] active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
+                          >
+                            Review
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+        </div>
+
+        {/* Recent Activity Column */}
+        <div>
+          <Card title="Recent Activity" noPadding>
+            <div className="divide-y divide-border-color">
+              {activities.map((act) => (
+                <div key={act.id} className="p-5 flex items-start gap-3.5 hover:bg-slate-50/40 transition-colors">
+                  {act.action === "approved" && (
+                    <div className="p-1.5 bg-[#22C55E]/10 text-[#22C55E] rounded-full shrink-0">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  {act.action === "rejected" && (
+                    <div className="p-1.5 bg-[#EF4444]/10 text-[#EF4444] rounded-full shrink-0">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
+                  )}
+                  {act.action === "pending" && (
+                    <div className="p-1.5 bg-amber-50 text-amber-500 rounded-full shrink-0">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                    </div>
+                  )}
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm font-semibold text-slate-500 leading-snug">
+                      <strong className="text-dark-navy font-bold">{act.medicineName}</strong>{" "}
+                      {act.action === "approved" && "approved"}
+                      {act.action === "rejected" && "rejected"}
+                      {act.action === "pending" && "pending review"}{" "}
+                      <span className="text-[11px] text-slate-400 block sm:inline mt-0.5 sm:mt-0 font-medium">by {act.user}</span>
+                    </p>
+                    <span className="text-[10px] font-bold text-slate-400 block mt-1.5 uppercase tracking-wide">
+                      {act.time}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-5 border-t border-border-color text-center bg-slate-50/30">
+              <Link
+                href="/dashboard/pending"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-hover transition-colors"
+              >
+                View all Logs &rarr;
+              </Link>
+            </div>
+          </Card>
+        </div>
+
+      </div>
+
+      {/* LEVEL 3: Visual Analytics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {/* Donut Chart Card */}
+        <Card title="Medicine Status Overview">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 py-2 select-none">
+
+            {/* SVG Donut Chart */}
+            <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
+              <svg viewBox="0 0 120 120" className="w-full h-full transform -rotate-90">
+                <circle cx="60" cy="60" r="40" stroke="#E5E7EB" strokeWidth="18" fill="transparent" />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="40"
+                  stroke="#22C55E"
+                  strokeWidth="18"
+                  fill="transparent"
+                  strokeDasharray="163.28 251.2"
+                  strokeDashoffset="0"
+                />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="40"
+                  stroke="#0EA5B7"
+                  strokeWidth="18"
+                  fill="transparent"
+                  strokeDasharray="37.68 251.2"
+                  strokeDashoffset="-163.28"
+                />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="40"
+                  stroke="#EF4444"
+                  strokeWidth="18"
+                  fill="transparent"
+                  strokeDasharray="25.12 251.2"
+                  strokeDashoffset="-200.96"
+                />
+              </svg>
+              <div className="absolute text-center">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  Total
+                </span>
+                <span className="text-lg font-extrabold text-dark-navy block mt-0.5 leading-none">
+                  {stats.approved + stats.pending + stats.rejected}
+                </span>
+              </div>
+            </div>
+
+            {/* Donut Legend */}
+            <div className="flex flex-col gap-3 flex-1 w-full sm:w-auto">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 font-bold text-slate-500">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0EA5B7]" />
+                  Pending
+                </div>
+                <span className="font-extrabold text-dark-navy">128 (15%)</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 font-bold text-slate-500">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E]" />
+                  Approved
+                </div>
+                <span className="font-extrabold text-dark-navy">542 (65%)</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 font-bold text-slate-500">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
+                  Rejected
+                </div>
+                <span className="font-extrabold text-dark-navy">76 (10%)</span>
+              </div>
+            </div>
+
+          </div>
+        </Card>
+
+        {/* Line Chart Card */}
+        <Card title="Submission Overview (This month)">
+          <div className="relative w-full h-[140px] mt-2 select-none">
+            <svg viewBox="0 0 300 130" className="w-full h-full">
+              <line x1="20" y1="20" x2="290" y2="20" stroke="#F1F5F9" strokeWidth="1" />
+              <line x1="20" y1="50" x2="290" y2="50" stroke="#F1F5F9" strokeWidth="1" />
+              <line x1="20" y1="80" x2="290" y2="80" stroke="#F1F5F9" strokeWidth="1" />
+              <line x1="20" y1="110" x2="290" y2="110" stroke="#F1F5F9" strokeWidth="1" />
+
+              <defs>
+                <linearGradient id="chartFillGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0EA5B7" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#0EA5B7" stopOpacity="0.00" />
+                </linearGradient>
+              </defs>
+
+              <path
+                d="M 20 110 L 20 85 L 85 60 L 150 78 L 215 35 L 280 62 L 280 110 Z"
+                fill="url(#chartFillGrad)"
+              />
+
+              <path
+                d="M 20 85 L 85 60 L 150 78 L 215 35 L 280 62"
+                fill="none"
+                stroke="#0EA5B7"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              <circle cx="20" cy="85" r="4.5" fill="#0F2940" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle cx="85" cy="60" r="4.5" fill="#0F2940" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle cx="150" cy="78" r="4.5" fill="#0F2940" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle cx="215" cy="35" r="4.5" fill="#0F2940" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle cx="280" cy="62" r="4.5" fill="#0F2940" stroke="#FFFFFF" strokeWidth="1.5" />
+
+              <text x="20" y="125" fill="#94A3B8" fontSize="8" fontWeight="bold" textAnchor="middle">May 1</text>
+              <text x="85" y="125" fill="#94A3B8" fontSize="8" fontWeight="bold" textAnchor="middle">May 8</text>
+              <text x="150" y="125" fill="#94A3B8" fontSize="8" fontWeight="bold" textAnchor="middle">May 15</text>
+              <text x="215" y="125" fill="#94A3B8" fontSize="8" fontWeight="bold" textAnchor="middle">May 22</text>
+              <text x="280" y="125" fill="#94A3B8" fontSize="8" fontWeight="bold" textAnchor="middle">May 29</text>
+            </svg>
+          </div>
+        </Card>
+
+        {/* Top Submitting Companies Card */}
+        <Card title="Top Submitting Companies">
+          <div className="flex flex-col gap-3.5 py-1">
+            {[
+              { name: "Sun Pharma", count: 120, pct: "w-[100%]", color: "bg-primary" },
+              { name: "Cipla Ltd.", count: 98, pct: "w-[82%]", color: "bg-primary/80" },
+              { name: "Dr. Reddy's", count: 76, pct: "w-[63%]", color: "bg-primary/60" },
+              { name: "Lupin Ltd.", count: 65, pct: "w-[54%]", color: "bg-primary/40" },
+            ].map((comp, idx) => (
+              <div key={idx} className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-dark-navy">
+                  <span className="text-slate-500 font-semibold">{comp.name}</span>
+                  <span>{comp.count} Submissions</span>
+                </div>
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full transition-all duration-500 ${comp.pct} ${comp.color}`} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+      </div>
+
+      {/* DETAIL MODAL PANEL */}
+      {selectedMedicine && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-navy/60 backdrop-blur-xs animate-fade-in select-none">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-border-color">
+            <div className="px-6 py-5 border-b border-border-color flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-base font-extrabold text-dark-navy tracking-tight">
+                Review Medicine Listing
+              </h3>
+              <button
+                onClick={() => setSelectedMedicine(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-dark-navy cursor-pointer"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Medicine Name
+                  </span>
+                  <span className="text-sm font-extrabold text-dark-navy block mt-0.5">
+                    {selectedMedicine.name}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Company
+                  </span>
+                  <span className="text-sm font-bold text-slate-600 block mt-0.5">
+                    {selectedMedicine.company}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Submitted Date
+                  </span>
+                  <span className="text-sm font-semibold text-slate-500 block mt-0.5">
+                    {selectedMedicine.submittedOn}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    System Note
+                  </span>
+                  <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                    Please review the listing specifications and compliance credentials submitted by the manufacturer. Approving this listing will publish it to the directory.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action buttons inside Modal */}
+              <div className="grid grid-cols-2 gap-3.5 pt-4">
+                <Button
+                  onClick={() => handleReject(selectedMedicine.id)}
+                  className="!bg-[#EF4444] hover:!bg-[#dc3545] text-white"
+                >
+                  Reject
+                </Button>
+                <Button
+                  onClick={() => handleApprove(selectedMedicine.id)}
+                  className="bg-primary hover:bg-primary-hover text-white"
+                >
+                  Approve
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </main>
+  );
+}
