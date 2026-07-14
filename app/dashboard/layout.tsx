@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { MedicineProvider } from "@/components/ui/MedicineContext";
 
 interface SidebarMenuItem {
   name: string;
@@ -93,7 +94,8 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC] font-sans text-dark-navy antialiased">
+    <MedicineProvider>
+      <div className="flex min-h-screen bg-[#F8FAFC] font-sans text-dark-navy antialiased">
 
       {/* SIDEBAR */}
       {/* Desktop Sidebar */}
@@ -148,8 +150,8 @@ export default function DashboardLayout({
                         key={item.name}
                         href={item.href}
                         className={`flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-150 cursor-pointer ${isActive
-                            ? "bg-primary text-white shadow-md shadow-primary/10"
-                            : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                          ? "bg-primary text-white shadow-md shadow-primary/10"
+                          : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
                           }`}
                       >
                         {renderIcon(item.icon, isActive)}
@@ -316,5 +318,6 @@ export default function DashboardLayout({
 
       </div>
     </div>
+    </MedicineProvider>
   );
 }

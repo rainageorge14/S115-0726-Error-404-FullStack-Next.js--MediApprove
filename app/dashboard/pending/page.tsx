@@ -1,23 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-
-interface DosageBadge {
-  label: string;
-  type: "dosage" | "form" | "route";
-}
-
-interface PendingMedicine {
-  id: string;
-  name: string;
-  company: string;
-  submittedOn: string;
-  badges: DosageBadge[];
-}
+import { MedicineDetailsModal } from "@/components/ui/MedicineDetailsModal";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 
 export default function PendingMedicinesPage() {
+  const { medicines, approveMedicine, rejectMedicine } = useMedicines();
+  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCompanyFilter, setSelectedCompanyFilter] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -25,200 +17,85 @@ export default function PendingMedicinesPage() {
   const [toastMessage, setToastMessage] = useState("");
   const itemsPerPage = 5;
 
-  // 15 Seeded medicines to support pagination (3 pages of 5 items each)
-  const [pendingList, setPendingList] = useState<PendingMedicine[]>([
-    {
-      id: "med-1",
-      name: "Paracetamol",
-      company: "Dr. Reddy's",
-      submittedOn: "20th May 2026",
-      badges: [
-        { label: "650mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-2",
-      name: "Crocin",
-      company: "Sun Pharma",
-      submittedOn: "20th May 2026",
-      badges: [
-        { label: "200mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-3",
-      name: "Dolo",
-      company: "Cipla Ltd.",
-      submittedOn: "19th May 2026",
-      badges: [
-        { label: "650mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-4",
-      name: "Aspirin",
-      company: "Lupin Ltd.",
-      submittedOn: "19th May 2026",
-      badges: [
-        { label: "250mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-5",
-      name: "Calpol",
-      company: "Dr. Reddy's",
-      submittedOn: "18th May 2026",
-      badges: [
-        { label: "350mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-6",
-      name: "Ibuprofen",
-      company: "Cipla Ltd.",
-      submittedOn: "18th May 2026",
-      badges: [
-        { label: "400mg", type: "dosage" },
-        { label: "Capsule", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-7",
-      name: "Amoxicillin",
-      company: "Sun Pharma",
-      submittedOn: "17th May 2026",
-      badges: [
-        { label: "500mg", type: "dosage" },
-        { label: "Capsule", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-8",
-      name: "Cetirizine",
-      company: "Lupin Ltd.",
-      submittedOn: "17th May 2026",
-      badges: [
-        { label: "10mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-9",
-      name: "Metformin",
-      company: "Dr. Reddy's",
-      submittedOn: "16th May 2026",
-      badges: [
-        { label: "1000mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-10",
-      name: "Atorvastatin",
-      company: "Sun Pharma",
-      submittedOn: "15th May 2026",
-      badges: [
-        { label: "20mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-11",
-      name: "Omeprazole",
-      company: "Cipla Ltd.",
-      submittedOn: "15th May 2026",
-      badges: [
-        { label: "20mg", type: "dosage" },
-        { label: "Capsule", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-12",
-      name: "Azithromycin",
-      company: "Lupin Ltd.",
-      submittedOn: "14th May 2026",
-      badges: [
-        { label: "250mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-13",
-      name: "Losartan",
-      company: "Dr. Reddy's",
-      submittedOn: "13th May 2026",
-      badges: [
-        { label: "50mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-14",
-      name: "Amlodipine",
-      company: "Sun Pharma",
-      submittedOn: "12th May 2026",
-      badges: [
-        { label: "5mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-    {
-      id: "med-15",
-      name: "Pantoprazole",
-      company: "Cipla Ltd.",
-      submittedOn: "12th May 2026",
-      badges: [
-        { label: "40mg", type: "dosage" },
-        { label: "Tablet", type: "form" },
-        { label: "Oral", type: "route" },
-      ],
-    },
-  ]);
+  // Confirmation modal states
+  const [confirmMedicineId, setConfirmMedicineId] = useState<string | null>(null);
+  const [isApproving, setIsApproving] = useState(false);
+
+  // Retrieve pending medicines from global shared state context
+  const pendingList = medicines.filter((m) => m.status === "pending");
 
   // Unique companies list for filtering
   const companies = ["All", ...Array.from(new Set(pendingList.map((m) => m.company)))];
 
-  // Handle Approve
-  const handleApprove = (id: string, name: string) => {
-    setPendingList((prev) => prev.filter((m) => m.id !== id));
-    showToast(`"${name}" approved successfully.`);
-    adjustPaginationAfterDelete();
+  // Handle Reject
+  const handleReject = async (id: string, name: string) => {
+    const success = await rejectMedicine(id, "Admin User");
+    if (success) {
+      showToast(`"${name}" rejected.`);
+      adjustPaginationAfterDelete();
+    } else {
+      showToast(`Failed to reject "${name}".`);
+    }
   };
 
-  // Handle Reject
-  const handleReject = (id: string, name: string) => {
-    setPendingList((prev) => prev.filter((m) => m.id !== id));
-    showToast(`"${name}" rejected.`);
-    adjustPaginationAfterDelete();
+  // Trigger Confirmation Modal for approval
+  const handleApproveClick = (id: string) => {
+    setConfirmMedicineId(id);
+  };
+
+  // Execute approval on confirmation
+  const handleApproveConfirm = async () => {
+    if (!confirmMedicineId) return;
+    setIsApproving(true);
+
+    const med = medicines.find((m) => m.id === confirmMedicineId);
+    const name = med ? med.name : "";
+
+    try {
+      const success = await approveMedicine(confirmMedicineId, "Admin User");
+      if (success) {
+        showToast(`"${name}" approved successfully.`);
+        adjustPaginationAfterDelete();
+        setSelectedMedicine(null); // Close details modal if open
+      } else {
+        // Validation check failed - triggers for med-4 Aspirin
+        showToast(`Compliance check failed for "${name}". Medicine remains pending.`);
+      }
+    } catch (err) {
+      showToast(`Error approving "${name}". Internal Server Error.`);
+    } finally {
+      setIsApproving(false);
+      setConfirmMedicineId(null);
+    }
+  };
+
+  // Modal actions mapping
+  const handleModalApprove = (id: string) => {
+    handleApproveClick(id);
+  };
+
+  const handleModalReject = (id: string) => {
+    const med = pendingList.find((m) => m.id === id);
+    if (med) {
+      handleReject(id, med.name);
+    }
+    setSelectedMedicine(null);
   };
 
   // Toast utilities
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(""), 3000);
   };
 
+  // Clear toast effect
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
   const adjustPaginationAfterDelete = () => {
-    // If the last item of the last page was deleted, step back one page
     const totalFiltered = filteredMedicines.length - 1;
     const maxPage = Math.ceil(totalFiltered / itemsPerPage);
     if (currentPage > maxPage && maxPage > 0) {
@@ -389,11 +266,14 @@ export default function PendingMedicinesPage() {
                       {/* Column 1: Details and dosage badges */}
                       <td className="px-6 py-4.5">
                         <div className="flex flex-col gap-2">
-                          <span className="text-sm font-extrabold text-dark-navy">
+                          <span
+                            onClick={() => setSelectedMedicine(med)}
+                            className="text-sm font-extrabold text-dark-navy hover:text-primary hover:underline cursor-pointer transition-colors"
+                          >
                             {med.name}
                           </span>
                           <div className="flex flex-wrap gap-1.5 select-none">
-                            {med.badges.map((b, idx) => (
+                            {med.badges?.map((b, idx) => (
                               <span
                                 key={idx}
                                 className={`px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-wide ${getBadgeClass(
@@ -419,7 +299,15 @@ export default function PendingMedicinesPage() {
 
                       {/* Column 4: Approve / Reject Action controls */}
                       <td className="px-6 py-4.5 text-right">
-                        <div className="flex items-center justify-end gap-3">
+                        <div className="flex items-center justify-end gap-2.5">
+                          {/* Review button */}
+                          <Button
+                            onClick={() => setSelectedMedicine(med)}
+                            className="!py-1.5 !px-3.5 text-xs font-bold rounded-lg text-white bg-primary hover:bg-primary-hover active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
+                          >
+                            Review
+                          </Button>
+
                           {/* Reject button (red outlined) */}
                           <Button
                             onClick={() => handleReject(med.id, med.name)}
@@ -431,7 +319,7 @@ export default function PendingMedicinesPage() {
                           
                           {/* Approve button (solid success green) */}
                           <Button
-                            onClick={() => handleApprove(med.id, med.name)}
+                            onClick={() => handleApproveClick(med.id)}
                             className="!py-1.5 !px-3.5 text-xs font-bold rounded-lg bg-[#22C55E] text-white hover:bg-[#1ea850] active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
                           >
                             Approve
@@ -503,6 +391,22 @@ export default function PendingMedicinesPage() {
         )}
       </Card>
 
+      <MedicineDetailsModal
+        isOpen={selectedMedicine !== null}
+        medicine={selectedMedicine as any}
+        onClose={() => setSelectedMedicine(null)}
+        onApprove={handleModalApprove}
+        onReject={handleModalReject}
+      />
+
+      <ConfirmationModal
+        isOpen={confirmMedicineId !== null}
+        title="Approve Medicine"
+        message="Are you sure you want to approve this medicine listing?"
+        isLoading={isApproving}
+        onConfirm={handleApproveConfirm}
+        onCancel={() => setConfirmMedicineId(null)}
+      />
     </main>
   );
 }

@@ -4,50 +4,13 @@ import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-
-interface Medicine {
-  id: string;
-  name: string;
-  company: string;
-  submittedOn: string;
-  status: "pending" | "approved" | "rejected";
-}
-
-interface Activity {
-  id: string;
-  medicineName: string;
-  action: "approved" | "rejected" | "pending";
-  user: string;
-  time: string;
-}
+import { MedicineDetailsModal } from "@/components/ui/MedicineDetailsModal";
+import { useMedicines, Medicine, Activity } from "@/components/ui/MedicineContext";
 
 export default function DashboardHome() {
+  const { medicines, activities, approveMedicine, rejectMedicine } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [toastMessage, setToastMessage] = useState("");
-
-  // Mock initial data
-  const [medicines, setMedicines] = useState<Medicine[]>([
-    { id: "1", name: "Paracetamol 650mg", company: "Dr. Reddy's", submittedOn: "20th May 2026", status: "pending" },
-    { id: "2", name: "Crocin 200mg", company: "Sun Pharma", submittedOn: "20th May 2026", status: "pending" },
-    { id: "3", name: "Dolo 650mg", company: "Cipla Ltd.", submittedOn: "19th May 2026", status: "pending" },
-    { id: "4", name: "Aspirin 250mg", company: "Lupin Ltd.", submittedOn: "19th May 2026", status: "pending" },
-    { id: "5", name: "Calpol 350mg", company: "Dr. Reddy's", submittedOn: "18th May 2026", status: "pending" },
-  ]);
-
-  const [activities, setActivities] = useState<Activity[]>([
-    { id: "act-1", medicineName: "Paracetamol 650mg", action: "approved", user: "Admin User", time: "2 min ago" },
-    { id: "act-2", medicineName: "Dolo 650mg", action: "rejected", user: "Admin User", time: "2 min ago" },
-    { id: "act-3", medicineName: "Crocin 200mg", action: "approved", user: "Admin User", time: "2 min ago" },
-    { id: "act-4", medicineName: "Aspirin 350mg", action: "pending", user: "Admin User", time: "2 min ago" },
-  ]);
-
-  // Statistics counters
-  const [stats, setStats] = useState({
-    pending: 128,
-    approved: 453,
-    rejected: 65,
-    companies: 45,
-  });
 
   // Toast effect
   useEffect(() => {
@@ -57,61 +20,48 @@ export default function DashboardHome() {
     }
   }, [toastMessage]);
 
-  const handleApprove = (id: string) => {
+  // Handle Approve
+  const handleApprove = async (id: string) => {
     const med = medicines.find((m) => m.id === id);
     if (!med) return;
 
-    // Remove from pending table list
-    setMedicines((prev) => prev.filter((m) => m.id !== id));
-
-    // Add to activity logs
-    const newActivity: Activity = {
-      id: `act-${Date.now()}`,
-      medicineName: med.name,
-      action: "approved",
-      user: "Admin User",
-      time: "Just now",
-    };
-    setActivities((prev) => [newActivity, ...prev]);
-
-    // Update statistics
-    setStats((prev) => ({
-      ...prev,
-      pending: Math.max(0, prev.pending - 1),
-      approved: prev.approved + 1,
-    }));
-
+    const success = await approveMedicine(id, "Admin User");
+    if (success) {
+      setToastMessage(`"${med.name}" has been approved successfully.`);
+    } else {
+      setToastMessage(`Failed to approve "${med.name}" due to verification error.`);
+    }
     setSelectedMedicine(null);
-    setToastMessage(`"${med.name}" has been approved successfully.`);
   };
 
-  const handleReject = (id: string) => {
+  // Handle Reject
+  const handleReject = async (id: string) => {
     const med = medicines.find((m) => m.id === id);
     if (!med) return;
 
-    // Remove from pending table list
-    setMedicines((prev) => prev.filter((m) => m.id !== id));
-
-    // Add to activity logs
-    const newActivity: Activity = {
-      id: `act-${Date.now()}`,
-      medicineName: med.name,
-      action: "rejected",
-      user: "Admin User",
-      time: "Just now",
-    };
-    setActivities((prev) => [newActivity, ...prev]);
-
-    // Update statistics
-    setStats((prev) => ({
-      ...prev,
-      pending: Math.max(0, prev.pending - 1),
-      rejected: prev.rejected + 1,
-    }));
-
+    const success = await rejectMedicine(id, "Admin User");
+    if (success) {
+      setToastMessage(`"${med.name}" has been rejected.`);
+    } else {
+      setToastMessage(`Failed to reject "${med.name}".`);
+    }
     setSelectedMedicine(null);
-    setToastMessage(`"${med.name}" has been rejected.`);
   };
+
+  // Calculate dynamic stats
+  const pendingCount = medicines.filter((m) => m.status === "pending").length;
+  const approvedCount = medicines.filter((m) => m.status === "approved").length;
+  const rejectedCount = medicines.filter((m) => m.status === "rejected").length;
+
+  const stats = {
+    pending: 128 - (15 - pendingCount),
+    approved: 453 + (approvedCount - 15),
+    rejected: 65 + rejectedCount,
+    companies: 45,
+  };
+
+  // 5 pending medicines for home screen table listing
+  const displayMedicines = medicines.filter((m) => m.status === "pending").slice(0, 5);
 
   return (
     <main className="flex-1 p-6 md:p-8 space-y-6 md:space-y-8 overflow-y-auto">
@@ -249,7 +199,7 @@ export default function DashboardHome() {
             }
             noPadding
           >
-            {medicines.length === 0 ? (
+            {displayMedicines.length === 0 ? (
               <div className="p-10 text-center text-slate-400 font-semibold text-sm">
                 No pending medicines to review.
               </div>
@@ -273,7 +223,7 @@ export default function DashboardHome() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-color">
-                    {medicines.map((med) => (
+                    {displayMedicines.map((med) => (
                       <tr key={med.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-4.5 text-sm font-extrabold text-dark-navy">
                           {med.name}
@@ -508,78 +458,13 @@ export default function DashboardHome() {
       </div>
 
       {/* DETAIL MODAL PANEL */}
-      {selectedMedicine && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-navy/60 backdrop-blur-xs animate-fade-in select-none">
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-border-color">
-            <div className="px-6 py-5 border-b border-border-color flex justify-between items-center bg-slate-50/50">
-              <h3 className="text-base font-extrabold text-dark-navy tracking-tight">
-                Review Medicine Listing
-              </h3>
-              <button
-                onClick={() => setSelectedMedicine(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-dark-navy cursor-pointer"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    Medicine Name
-                  </span>
-                  <span className="text-sm font-extrabold text-dark-navy block mt-0.5">
-                    {selectedMedicine.name}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    Company
-                  </span>
-                  <span className="text-sm font-bold text-slate-600 block mt-0.5">
-                    {selectedMedicine.company}
-                  </span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    Submitted Date
-                  </span>
-                  <span className="text-sm font-semibold text-slate-500 block mt-0.5">
-                    {selectedMedicine.submittedOn}
-                  </span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    System Note
-                  </span>
-                  <p className="text-xs text-slate-500 leading-relaxed mt-1">
-                    Please review the listing specifications and compliance credentials submitted by the manufacturer. Approving this listing will publish it to the directory.
-                  </p>
-                </div>
-              </div>
-
-              {/* Action buttons inside Modal */}
-              <div className="grid grid-cols-2 gap-3.5 pt-4">
-                <Button
-                  onClick={() => handleReject(selectedMedicine.id)}
-                  className="!bg-[#EF4444] hover:!bg-[#dc3545] text-white"
-                >
-                  Reject
-                </Button>
-                <Button
-                  onClick={() => handleApprove(selectedMedicine.id)}
-                  className="bg-primary hover:bg-primary-hover text-white"
-                >
-                  Approve
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <MedicineDetailsModal
+        isOpen={selectedMedicine !== null}
+        medicine={selectedMedicine as any}
+        onClose={() => setSelectedMedicine(null)}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
 
     </main>
   );
