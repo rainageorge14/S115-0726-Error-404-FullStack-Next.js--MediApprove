@@ -1,4 +1,5 @@
-export const authPlaceholder = true;
-export const loginMock = async () => {
-  return { success: true };
-};
+import { verifyToken } from "./jwt";
+
+export function authenticate(token: string) {
+  return verifyToken(token);
+}
