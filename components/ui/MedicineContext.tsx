@@ -19,6 +19,10 @@ export interface Medicine {
   status: "pending" | "approved" | "rejected";
   approvedBy?: string;
   approvedAt?: string;
+  rejectedBy?: string;
+  rejectedAt?: string;
+  rejectionReason?: string;
+  adminNotes?: string;
   createdAt: string; // requested
   submittedOn: string; // compatibility
   composition: string;
@@ -44,7 +48,7 @@ interface MedicineContextType {
   medicines: Medicine[];
   activities: Activity[];
   approveMedicine: (id: string, adminName: string) => Promise<boolean>;
-  rejectMedicine: (id: string, adminName: string) => Promise<boolean>;
+  rejectMedicine: (id: string, adminName: string, reason: string, notes?: string) => Promise<boolean>;
 }
 
 const MedicineContext = createContext<MedicineContextType | undefined>(undefined);
@@ -79,7 +83,68 @@ const getInitialMedicines = (): Medicine[] => {
     approvedAt: m.approvedDate || "20 July 2026",
   }));
 
-  return [...mappedPending, ...mappedApproved];
+  const initialRejected: Medicine[] = [
+    {
+      id: "med-rej-1",
+      name: "Metformin Hydrochloride",
+      medicineName: "Metformin Hydrochloride",
+      company: "Lupin Ltd.",
+      category: "Tablet",
+      batchNumber: "B-MET-88910",
+      batch: "B-MET-88910",
+      price: 120,
+      dosage: "Twice daily after meals",
+      expiryDate: "15 Jan 2028",
+      expiry: "15 Jan 2028",
+      status: "rejected",
+      createdAt: "10 May 2026",
+      submittedOn: "10 May 2026",
+      composition: "Metformin Hydrochloride IP 500mg",
+      description: "Oral antihyperglycemic agent used for managing type 2 diabetes.",
+      image: "/medicine-placeholder.png",
+      rejectedBy: "Admin User",
+      rejectedAt: "12 Jul 2026",
+      rejectionReason: "Expired Product",
+      adminNotes: "The expiry date of this batch is already past or too near. Re-submission with a fresh batch is required.",
+      badges: [
+        { label: "500mg", type: "dosage" },
+        { label: "Tablet", type: "form" },
+        { label: "Oral", type: "route" },
+      ],
+      licenseNumber: "DL-19401-20"
+    },
+    {
+      id: "med-rej-2",
+      name: "Augmentin Duo",
+      medicineName: "Augmentin Duo",
+      company: "Cipla Ltd.",
+      category: "Syrup",
+      batchNumber: "B-AUG-77211",
+      batch: "B-AUG-77211",
+      price: 245,
+      dosage: "5ml every 12 hours",
+      expiryDate: "15 Jan 2028",
+      expiry: "15 Jan 2028",
+      status: "rejected",
+      createdAt: "12 May 2026",
+      submittedOn: "12 May 2026",
+      composition: "Amoxicillin 200mg + Clavulanic Acid 28.5mg per 5ml",
+      description: "Antibacterial combination product for oral pediatric suspension.",
+      image: "/medicine-placeholder.png",
+      rejectedBy: "Super Admin",
+      rejectedAt: "14 Jul 2026",
+      rejectionReason: "Missing Regulatory Approval",
+      adminNotes: "Missing regulatory FDA license certificate in the uploaded PDF documents.",
+      badges: [
+        { label: "228.5mg", type: "dosage" },
+        { label: "Syrup", type: "form" },
+        { label: "Oral", type: "route" },
+      ],
+      licenseNumber: "DL-99321-22"
+    }
+  ];
+
+  return [...mappedPending, ...mappedApproved, ...initialRejected];
 };
 
 const initialActivities: Activity[] = [
@@ -142,27 +207,43 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   // Reject workflow logic
-  const rejectMedicine = async (id: string, adminName: string): Promise<boolean> => {
+  const rejectMedicine = async (
+    id: string,
+    adminName: string,
+    reason: string,
+    notes?: string
+  ): Promise<boolean> => {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
+    const currentDate = new Date().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }); // e.g. "15 Jul 2026"
+
+    let targetName = "";
     setMedicines((prev) =>
       prev.map((med) => {
         if (med.id === id) {
+          targetName = med.name;
           return {
             ...med,
             status: "rejected",
+            rejectedBy: adminName,
+            rejectedAt: currentDate,
+            rejectionReason: reason,
+            adminNotes: notes || "",
           };
         }
         return med;
       })
     );
 
-    const target = medicines.find((m) => m.id === id);
-    if (target) {
+    if (targetName) {
       setActivities((prev) => [
         {
           id: `act-${Date.now()}`,
-          medicineName: target.name,
+          medicineName: targetName,
           action: "rejected",
           user: adminName,
           time: "Just now",

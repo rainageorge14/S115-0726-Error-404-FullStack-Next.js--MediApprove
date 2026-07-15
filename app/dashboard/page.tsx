@@ -5,12 +5,18 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { MedicineDetailsModal } from "@/components/ui/MedicineDetailsModal";
+import { RejectionModal } from "@/components/ui/RejectionModal";
 import { useMedicines, Medicine, Activity } from "@/components/ui/MedicineContext";
 
 export default function DashboardHome() {
   const { medicines, activities, approveMedicine, rejectMedicine } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [toastMessage, setToastMessage] = useState("");
+
+  // Rejection modal states
+  const [rejectionMedicineId, setRejectionMedicineId] = useState<string | null>(null);
+  const [rejectionMedicineName, setRejectionMedicineName] = useState("");
+  const [isRejecting, setIsRejecting] = useState(false);
 
   // Toast effect
   useEffect(() => {
@@ -34,18 +40,35 @@ export default function DashboardHome() {
     setSelectedMedicine(null);
   };
 
-  // Handle Reject
-  const handleReject = async (id: string) => {
+  // Open Rejection Modal
+  const handleRejectClick = (id: string) => {
     const med = medicines.find((m) => m.id === id);
-    if (!med) return;
-
-    const success = await rejectMedicine(id, "Admin User");
-    if (success) {
-      setToastMessage(`"${med.name}" has been rejected.`);
-    } else {
-      setToastMessage(`Failed to reject "${med.name}".`);
+    if (med) {
+      setRejectionMedicineId(id);
+      setRejectionMedicineName(med.name);
     }
-    setSelectedMedicine(null);
+  };
+
+  // Execute Rejection on confirmation
+  const handleRejectConfirm = async (reason: string, notes: string) => {
+    if (!rejectionMedicineId) return;
+    setIsRejecting(true);
+
+    try {
+      const success = await rejectMedicine(rejectionMedicineId, "Admin User", reason, notes);
+      if (success) {
+        setToastMessage(`"${rejectionMedicineName}" has been rejected successfully.`);
+        setSelectedMedicine(null); // Close details modal if open
+      } else {
+        setToastMessage(`Failed to reject "${rejectionMedicineName}".`);
+      }
+    } catch (err) {
+      setToastMessage(`Error rejecting "${rejectionMedicineName}".`);
+    } finally {
+      setIsRejecting(false);
+      setRejectionMedicineId(null);
+      setRejectionMedicineName("");
+    }
   };
 
   // Calculate dynamic stats
@@ -463,7 +486,18 @@ export default function DashboardHome() {
         medicine={selectedMedicine as any}
         onClose={() => setSelectedMedicine(null)}
         onApprove={handleApprove}
-        onReject={handleReject}
+        onReject={handleRejectClick}
+      />
+
+      <RejectionModal
+        isOpen={rejectionMedicineId !== null}
+        medicineName={rejectionMedicineName}
+        isLoading={isRejecting}
+        onConfirm={handleRejectConfirm}
+        onCancel={() => {
+          setRejectionMedicineId(null);
+          setRejectionMedicineName("");
+        }}
       />
 
     </main>
