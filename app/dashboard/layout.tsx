@@ -97,227 +97,233 @@ export default function DashboardLayout({
     <MedicineProvider>
       <div className="flex min-h-screen bg-[#F8FAFC] font-sans text-dark-navy antialiased">
 
-      {/* SIDEBAR */}
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 bg-dark-navy text-slate-300 min-h-screen shrink-0 border-r border-border-color/10 select-none">
-        {/* Sidebar Brand Header */}
-        <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-700/30">
-          <div className="w-9 h-9">
-            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-              <rect x="25" y="15" width="60" height="80" rx="10" fill="#FFFFFF" stroke="#0EA5B7" strokeWidth="6" />
-              <path d="M45 15C45 11 50 10 55 10H65C70 10 75 11 75 15V18H45V15Z" fill="#0F2940" />
-              <g transform="rotate(-30, 45, 75)">
-                <path d="M30 65H42V85C42 88.3 39.3 91 36 91C32.7 91 30 88.3 30 85V65Z" fill="#0F2940" />
-                <path d="M30 65H42V45C42 41.7 39.3 39 36 39C32.7 39 30 41.7 30 45V65Z" fill="#0EA5B7" />
-                <rect x="29" y="63" width="14" height="4" fill="#FFFFFF" rx="1" />
-              </g>
-              <g filter="drop-shadow(0px 2px 4px rgba(15, 41, 64, 0.15))">
-                <path d="M70 65C70 65 70 70 70 75C70 85 85 92 85 92C85 92 100 85 100 75C100 70 100 65 100 65L85 60L70 65Z" fill="url(#sideShieldGrad)" stroke="#FFFFFF" strokeWidth="2.5" />
-                <path d="M80 76.5L83.5 80L90.5 73" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </g>
-              <defs>
-                <linearGradient id="sideShieldGrad" x1="85" y1="60" x2="85" y2="92" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#0EA5B7" />
-                  <stop offset="100%" stopColor="#097E8C" />
-                </linearGradient>
-              </defs>
-            </svg>
+        {/* SIDEBAR */}
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:flex flex-col w-64 bg-dark-navy text-slate-300 min-h-screen shrink-0 border-r border-border-color/10 select-none">
+          {/* Sidebar Brand Header */}
+          <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-700/30">
+            <div className="w-9 h-9">
+              <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <rect x="25" y="15" width="60" height="80" rx="10" fill="#FFFFFF" stroke="#0EA5B7" strokeWidth="6" />
+                <path d="M45 15C45 11 50 10 55 10H65C70 10 75 11 75 15V18H45V15Z" fill="#0F2940" />
+                <g transform="rotate(-30, 45, 75)">
+                  <path d="M30 65H42V85C42 88.3 39.3 91 36 91C32.7 91 30 88.3 30 85V65Z" fill="#0F2940" />
+                  <path d="M30 65H42V45C42 41.7 39.3 39 36 39C32.7 39 30 41.7 30 45V65Z" fill="#0EA5B7" />
+                  <rect x="29" y="63" width="14" height="4" fill="#FFFFFF" rx="1" />
+                </g>
+                <g filter="drop-shadow(0px 2px 4px rgba(15, 41, 64, 0.15))">
+                  <path d="M70 65C70 65 70 70 70 75C70 85 85 92 85 92C85 92 100 85 100 75C100 70 100 65 100 65L85 60L70 65Z" fill="url(#sideShieldGrad)" stroke="#FFFFFF" strokeWidth="2.5" />
+                  <path d="M80 76.5L83.5 80L90.5 73" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </g>
+                <defs>
+                  <linearGradient id="sideShieldGrad" x1="85" y1="60" x2="85" y2="92" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#0EA5B7" />
+                    <stop offset="100%" stopColor="#097E8C" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <span className="text-xl font-extrabold tracking-tight">
+              <span className="text-[#0EA5B7]">Medi</span>
+              <span className="text-white">Approve</span>
+            </span>
           </div>
-          <span className="text-xl font-extrabold tracking-tight">
-            <span className="text-[#0EA5B7]">Medi</span>
-            <span className="text-white">Approve</span>
-          </span>
-        </div>
 
-        {/* Sidebar Navigation */}
-        <nav className="flex-1 py-6 px-4 space-y-7 overflow-y-auto">
-          {["", "MANAGE", "ACTIVITY", "SETTINGS"].map((cat) => {
-            const items = sidebarMenu.filter((m) => m.category === cat);
-            if (items.length === 0) return null;
+          {/* Sidebar Navigation */}
+          <nav className="flex-1 py-6 px-4 space-y-7 overflow-y-auto">
+            {["", "MANAGE", "ACTIVITY", "SETTINGS"].map((cat) => {
+              const items = sidebarMenu.filter((m) => m.category === cat);
+              if (items.length === 0) return null;
 
-            return (
-              <div key={cat} className="space-y-1.5">
-                {cat && (
-                  <h4 className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                    {cat}
-                  </h4>
-                )}
-                <div className="space-y-0.5">
-                  {items.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className={`flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-150 cursor-pointer ${isActive
-                          ? "bg-primary text-white shadow-md shadow-primary/10"
-                          : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
-                          }`}
-                      >
-                        {renderIcon(item.icon, isActive)}
-                        {item.name}
-                      </Link>
-                    );
-                  })}
+              return (
+                <div key={cat} className="space-y-1.5">
+                  {cat && (
+                    <h4 className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      {cat}
+                    </h4>
+                  )}
+                  <div className="space-y-0.5">
+                    {items.map((item) => {
+                      const isActive = pathname === item.href;
+                      const isRejectedItem = item.href === "/dashboard/rejected";
+                      return (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className={`flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-150 cursor-pointer ${isActive
+                            ? (isRejectedItem
+                              ? "bg-danger text-white shadow-md shadow-danger/10"
+                              : "bg-primary text-white shadow-md shadow-primary/10")
+                            : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                            }`}
+                        >
+                          {renderIcon(item.icon, isActive)}
+                          {item.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </nav>
+              );
+            })}
+          </nav>
 
-        {/* Sidebar Footer (Logout) */}
-        <div className="p-4 border-t border-slate-700/30">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl text-slate-400 hover:bg-danger/10 hover:text-danger transition-colors cursor-pointer"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* Mobile Drawer Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-dark-navy/60 backdrop-blur-xs md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Mobile Sidebar Drawer */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark-navy text-slate-300 flex flex-col md:hidden transform transition-transform duration-300 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-      >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-700/30">
-          <div className="flex items-center gap-2.5">
-            <span className="text-lg font-extrabold text-[#0EA5B7]">Medi</span>
-            <span className="text-lg font-extrabold text-white">Approve</span>
-          </div>
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="p-1 rounded-lg text-slate-400 hover:text-white"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <nav className="flex-1 py-4 px-4 space-y-6 overflow-y-auto">
-          {["", "MANAGE", "ACTIVITY", "SETTINGS"].map((cat) => {
-            const items = sidebarMenu.filter((m) => m.category === cat);
-            if (items.length === 0) return null;
-
-            return (
-              <div key={cat} className="space-y-1">
-                {cat && (
-                  <h4 className="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                    {cat}
-                  </h4>
-                )}
-                <div className="space-y-0.5">
-                  {items.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl cursor-pointer ${isActive ? "bg-primary text-white" : "text-slate-400 hover:bg-slate-800/40"
-                          }`}
-                      >
-                        {renderIcon(item.icon, isActive)}
-                        {item.name}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </nav>
-
-        <div className="p-4 border-t border-slate-700/30">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl text-slate-400 hover:text-danger cursor-pointer"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* MAIN CONTAINER */}
-      <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
-
-        {/* TOP NAVBAR */}
-        <header className="bg-white border-b border-border-color sticky top-0 z-30 px-6 py-4 md:py-5 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            {/* Hamburger Button for Mobile */}
+          {/* Sidebar Footer (Logout) */}
+          <div className="p-4 border-t border-slate-700/30">
             <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="p-1.5 rounded-lg border border-border-color text-dark-navy md:hidden hover:bg-slate-50 cursor-pointer"
-              aria-label="Open sidebar menu"
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl text-slate-400 hover:bg-danger/10 hover:text-danger transition-colors cursor-pointer"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </button>
+          </div>
+        </aside>
+
+        {/* Mobile Drawer Overlay */}
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-dark-navy/60 backdrop-blur-xs md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Mobile Sidebar Drawer */}
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark-navy text-slate-300 flex flex-col md:hidden transform transition-transform duration-300 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+        >
+          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-700/30">
+            <div className="flex items-center gap-2.5">
+              <span className="text-lg font-extrabold text-[#0EA5B7]">Medi</span>
+              <span className="text-lg font-extrabold text-white">Approve</span>
+            </div>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-1 rounded-lg text-slate-400 hover:text-white"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <div>
-              <h2 className="text-xl md:text-2xl font-extrabold text-dark-navy tracking-tight leading-none">
-                {getActiveTitle()}
-              </h2>
-              <p className="text-xs md:text-sm font-semibold text-slate-400 mt-1.5 hidden sm:block">
-                Overview of medicine Listing and recent activity
-              </p>
-            </div>
           </div>
 
-          {/* Right Header items */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            {/* Notification Bell */}
-            <button className="relative p-2 text-slate-400 hover:text-dark-navy rounded-xl border border-border-color transition-colors cursor-pointer">
+          <nav className="flex-1 py-4 px-4 space-y-6 overflow-y-auto">
+            {["", "MANAGE", "ACTIVITY", "SETTINGS"].map((cat) => {
+              const items = sidebarMenu.filter((m) => m.category === cat);
+              if (items.length === 0) return null;
+
+              return (
+                <div key={cat} className="space-y-1">
+                  {cat && (
+                    <h4 className="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                      {cat}
+                    </h4>
+                  )}
+                  <div className="space-y-0.5">
+                    {items.map((item) => {
+                      const isActive = pathname === item.href;
+                      const isRejectedItem = item.href === "/dashboard/rejected";
+                      return (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl cursor-pointer ${isActive
+                            ? (isRejectedItem ? "bg-danger text-white" : "bg-primary text-white")
+                            : "text-slate-400 hover:bg-slate-800/40"
+                            }`}
+                        >
+                          {renderIcon(item.icon, isActive)}
+                          {item.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </nav>
+
+          <div className="p-4 border-t border-slate-700/30">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold rounded-xl text-slate-400 hover:text-danger cursor-pointer"
+            >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
-              {/* Notification Badge */}
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#EF4444] rounded-full" />
+              Logout
             </button>
-
-            {/* Admin Avatar */}
-            <div className="flex items-center gap-3 select-none">
-              {/* User Avatar Circle */}
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-border-color select-none">
-                AU
-              </div>
-              <div className="text-left hidden lg:block">
-                <h4 className="text-sm font-bold text-dark-navy leading-none">
-                  Admin User
-                </h4>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mt-0.5 block">
-                  Super Admin
-                </span>
-              </div>
-              {/* Chevron icon */}
-              <svg className="w-3.5 h-3.5 text-slate-400 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
           </div>
-        </header>
+        </aside>
 
-        {/* Child Pages main content */}
-        {children}
+        {/* MAIN CONTAINER */}
+        <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
 
+          {/* TOP NAVBAR */}
+          <header className="bg-white border-b border-border-color sticky top-0 z-30 px-6 py-4 md:py-5 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3">
+              {/* Hamburger Button for Mobile */}
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-1.5 rounded-lg border border-border-color text-dark-navy md:hidden hover:bg-slate-50 cursor-pointer"
+                aria-label="Open sidebar menu"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div>
+                <h2 className="text-xl md:text-2xl font-extrabold text-dark-navy tracking-tight leading-none">
+                  {getActiveTitle()}
+                </h2>
+                <p className="text-xs md:text-sm font-semibold text-slate-400 mt-1.5 hidden sm:block">
+                  Overview of medicine Listing and recent activity
+                </p>
+              </div>
+            </div>
+
+            {/* Right Header items */}
+            <div className="flex items-center gap-4 sm:gap-6">
+              {/* Notification Bell */}
+              <button className="relative p-2 text-slate-400 hover:text-dark-navy rounded-xl border border-border-color transition-colors cursor-pointer">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                {/* Notification Badge */}
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#EF4444] rounded-full" />
+              </button>
+
+              {/* Admin Avatar */}
+              <div className="flex items-center gap-3 select-none">
+                {/* User Avatar Circle */}
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-border-color select-none">
+                  AU
+                </div>
+                <div className="text-left hidden lg:block">
+                  <h4 className="text-sm font-bold text-dark-navy leading-none">
+                    Admin User
+                  </h4>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mt-0.5 block">
+                    Super Admin
+                  </span>
+                </div>
+                {/* Chevron icon */}
+                <svg className="w-3.5 h-3.5 text-slate-400 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </header>
+
+          {/* Child Pages main content */}
+          {children}
+
+        </div>
       </div>
-    </div>
     </MedicineProvider>
   );
 }

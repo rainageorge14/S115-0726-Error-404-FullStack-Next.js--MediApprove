@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { MedicineDetailsModal } from "@/components/ui/MedicineDetailsModal";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { RejectionModal } from "@/components/ui/RejectionModal";
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 
 export default function PendingMedicinesPage() {
@@ -21,20 +22,43 @@ export default function PendingMedicinesPage() {
   const [confirmMedicineId, setConfirmMedicineId] = useState<string | null>(null);
   const [isApproving, setIsApproving] = useState(false);
 
+  // Rejection modal states
+  const [rejectionMedicineId, setRejectionMedicineId] = useState<string | null>(null);
+  const [rejectionMedicineName, setRejectionMedicineName] = useState("");
+  const [isRejecting, setIsRejecting] = useState(false);
+
   // Retrieve pending medicines from global shared state context
   const pendingList = medicines.filter((m) => m.status === "pending");
 
   // Unique companies list for filtering
   const companies = ["All", ...Array.from(new Set(pendingList.map((m) => m.company)))];
 
-  // Handle Reject
-  const handleReject = async (id: string, name: string) => {
-    const success = await rejectMedicine(id, "Admin User");
-    if (success) {
-      showToast(`"${name}" rejected.`);
-      adjustPaginationAfterDelete();
-    } else {
-      showToast(`Failed to reject "${name}".`);
+  // Open Rejection Modal
+  const handleRejectClick = (id: string, name: string) => {
+    setRejectionMedicineId(id);
+    setRejectionMedicineName(name);
+  };
+
+  // Execute Rejection on confirmation
+  const handleRejectConfirm = async (reason: string, notes: string) => {
+    if (!rejectionMedicineId) return;
+    setIsRejecting(true);
+
+    try {
+      const success = await rejectMedicine(rejectionMedicineId, "Admin User", reason, notes);
+      if (success) {
+        showToast("Medicine rejected successfully.");
+        adjustPaginationAfterDelete();
+        setSelectedMedicine(null); // Close details modal if open
+      } else {
+        showToast(`Failed to reject "${rejectionMedicineName}".`);
+      }
+    } catch (err) {
+      showToast(`Error rejecting "${rejectionMedicineName}".`);
+    } finally {
+      setIsRejecting(false);
+      setRejectionMedicineId(null);
+      setRejectionMedicineName("");
     }
   };
 
@@ -77,9 +101,8 @@ export default function PendingMedicinesPage() {
   const handleModalReject = (id: string) => {
     const med = pendingList.find((m) => m.id === id);
     if (med) {
-      handleReject(id, med.name);
+      handleRejectClick(id, med.name);
     }
-    setSelectedMedicine(null);
   };
 
   // Toast utilities
@@ -310,7 +333,7 @@ export default function PendingMedicinesPage() {
 
                           {/* Reject button (red outlined) */}
                           <Button
-                            onClick={() => handleReject(med.id, med.name)}
+                            onClick={() => handleRejectClick(med.id, med.name)}
                             variant="outline"
                             className="!py-1.5 !px-3.5 text-xs font-bold rounded-lg !border-danger !text-danger bg-white hover:!bg-danger hover:!text-white active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
                           >
@@ -406,6 +429,17 @@ export default function PendingMedicinesPage() {
         isLoading={isApproving}
         onConfirm={handleApproveConfirm}
         onCancel={() => setConfirmMedicineId(null)}
+      />
+
+      <RejectionModal
+        isOpen={rejectionMedicineId !== null}
+        medicineName={rejectionMedicineName}
+        isLoading={isRejecting}
+        onConfirm={handleRejectConfirm}
+        onCancel={() => {
+          setRejectionMedicineId(null);
+          setRejectionMedicineName("");
+        }}
       />
     </main>
   );

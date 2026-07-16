@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  
+
   // Validation and UI states
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -27,7 +27,7 @@ export default function LoginPage() {
   // Validate form inputs
   const validateForm = () => {
     let isValid = true;
-    
+
     // Email Validation
     if (!email) {
       setEmailError("Email address is required");
@@ -52,7 +52,7 @@ export default function LoginPage() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -108,7 +108,7 @@ export default function LoginPage() {
         </div>
       ) : (
         <form onSubmit={handleSignIn} className="flex flex-col gap-5">
-          
+
           {/* Status Message for Errors */}
           {loginStatus === "error" && (
             <div className="p-3.5 text-sm font-semibold text-danger bg-danger/10 border border-danger/20 rounded-xl animate-shake">
