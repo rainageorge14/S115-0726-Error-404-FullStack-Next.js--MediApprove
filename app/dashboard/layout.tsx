@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { MedicineProvider } from "@/components/ui/MedicineContext";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 interface SidebarMenuItem {
   name: string;
@@ -20,15 +21,31 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [navAvatar, setNavAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("profilePhoto");
+      setNavAvatar(stored);
+
+      const handleUpdate = () => {
+        setNavAvatar(localStorage.getItem("profilePhoto"));
+      };
+
+      window.addEventListener("profilePhotoChanged", handleUpdate);
+      return () => window.removeEventListener("profilePhotoChanged", handleUpdate);
+    }
+  }, []);
 
   const sidebarMenu: SidebarMenuItem[] = [
     { name: "Dashboard", category: "", icon: "dashboard", href: "/dashboard" },
     { name: "Pending Medicines", category: "MANAGE", icon: "pending", href: "/dashboard/pending" },
-    { name: "Approved Medicine", category: "MANAGE", icon: "approved", href: "/dashboard/approved" },
-    { name: "Rejected Medicine", category: "MANAGE", icon: "rejected", href: "/dashboard/rejected" },
+    { name: "Approved Medicines", category: "MANAGE", icon: "approved", href: "/dashboard/approved" },
+    { name: "Rejected Medicines", category: "MANAGE", icon: "rejected", href: "/dashboard/rejected" },
     { name: "Action Logs", category: "ACTIVITY", icon: "logs", href: "/dashboard/action-logs" },
     { name: "Reports", category: "ACTIVITY", icon: "reports", href: "/dashboard/reports" },
     { name: "Profile", category: "SETTINGS", icon: "profile", href: "/dashboard/profile" },
+    { name: "Settings", category: "SETTINGS", icon: "settings", href: "/dashboard/settings" },
   ];
 
   const handleLogout = () => {
@@ -37,8 +54,18 @@ export default function DashboardLayout({
 
   // Get active menu title from current path
   const getActiveTitle = () => {
+    if (pathname === "/notifications" || pathname === "/dashboard/notifications") return "Notifications";
     const active = sidebarMenu.find((m) => m.href === pathname);
     return active ? active.name : "Dashboard";
+  };
+
+  const getActiveSubtitle = () => {
+    if (pathname === "/dashboard/profile") return "Manage your account details";
+    if (pathname === "/dashboard/action-logs") return "Monitor and audit administrator and system activity logs";
+    if (pathname === "/dashboard/reports") return "Monitor medicine approval trends, administrator activity, and overall system performance through interactive analytics.";
+    if (pathname === "/notifications" || pathname === "/dashboard/notifications") return "View and manage all system notifications and recent activities.";
+    const active = sidebarMenu.find((m) => m.href === pathname);
+    return active ? `Overview of ${active.name.toLowerCase()} listing and recent activity` : "Overview of medicine Listing and recent activity";
   };
 
   // Helper to render sidebar icons
@@ -86,6 +113,13 @@ export default function DashboardLayout({
         return (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        );
+      case "settings":
+        return (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         );
       default:
@@ -281,7 +315,7 @@ export default function DashboardLayout({
                   {getActiveTitle()}
                 </h2>
                 <p className="text-xs md:text-sm font-semibold text-slate-400 mt-1.5 hidden sm:block">
-                  Overview of medicine Listing and recent activity
+                  {getActiveSubtitle()}
                 </p>
               </div>
             </div>
@@ -289,19 +323,17 @@ export default function DashboardLayout({
             {/* Right Header items */}
             <div className="flex items-center gap-4 sm:gap-6">
               {/* Notification Bell */}
-              <button className="relative p-2 text-slate-400 hover:text-dark-navy rounded-xl border border-border-color transition-colors cursor-pointer">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                {/* Notification Badge */}
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#EF4444] rounded-full" />
-              </button>
+              <NotificationBell />
 
               {/* Admin Avatar */}
-              <div className="flex items-center gap-3 select-none">
+              <Link href="/dashboard/profile" className="flex items-center gap-3 select-none cursor-pointer hover:opacity-80 transition-opacity">
                 {/* User Avatar Circle */}
-                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-border-color select-none">
-                  AU
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-border-color overflow-hidden select-none">
+                  {navAvatar ? (
+                    <img src={navAvatar} alt="Nav Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    "AU"
+                  )}
                 </div>
                 <div className="text-left hidden lg:block">
                   <h4 className="text-sm font-bold text-dark-navy leading-none">
@@ -315,7 +347,7 @@ export default function DashboardLayout({
                 <svg className="w-3.5 h-3.5 text-slate-400 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
-              </div>
+              </Link>
             </div>
           </header>
 
