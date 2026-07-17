@@ -33,14 +33,26 @@ export default function ProfilePage() {
   }, [toastMessage]);
 
   // Avatar state
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("profilePhoto");
+    }
+    return null;
+  });
 
-  // Load avatar from localStorage on mount
+  // Load admin details from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("profilePhoto");
-      if (stored) {
-        setAvatarUrl(stored);
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.name) setFullName(parsed.name);
+          if (parsed.email) setEmail(parsed.email);
+          if (parsed.phone) setPhone(parsed.phone);
+        } catch (e) {
+          // ignore
+        }
       }
     }
   }, []);
@@ -158,6 +170,9 @@ export default function ProfilePage() {
         remarks: "Super Admin updated profile details"
       });
     }
+
+    localStorage.setItem("admin", JSON.stringify({ name: fullName, email, phone, role: "ADMIN" }));
+    window.dispatchEvent(new Event("adminProfileChanged"));
 
     setToastMessage("Profile changes saved successfully");
   };
