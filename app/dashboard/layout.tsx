@@ -21,19 +21,49 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [navAvatar, setNavAvatar] = useState<string | null>(null);
+  const [navAvatar, setNavAvatar] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("profilePhoto");
+    }
+    return null;
+  });
+  const [adminName, setAdminName] = useState("Admin User");
+  const [adminRole, setAdminRole] = useState("Super Admin");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("profilePhoto");
-      setNavAvatar(stored);
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.name) setAdminName(parsed.name);
+          if (parsed.role) setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
+        } catch (e) {
+          // ignore
+        }
+      }
 
       const handleUpdate = () => {
         setNavAvatar(localStorage.getItem("profilePhoto"));
       };
 
+      const handleAdminUpdate = () => {
+        const updatedAdmin = localStorage.getItem("admin");
+        if (updatedAdmin) {
+          try {
+            const parsed = JSON.parse(updatedAdmin);
+            if (parsed.name) setAdminName(parsed.name);
+            if (parsed.role) setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
+          } catch (e) {}
+        }
+      };
+
       window.addEventListener("profilePhotoChanged", handleUpdate);
-      return () => window.removeEventListener("profilePhotoChanged", handleUpdate);
+      window.addEventListener("adminProfileChanged", handleAdminUpdate);
+      return () => {
+        window.removeEventListener("profilePhotoChanged", handleUpdate);
+        window.removeEventListener("adminProfileChanged", handleAdminUpdate);
+      };
     }
   }, []);
 
@@ -332,15 +362,15 @@ export default function DashboardLayout({
                   {navAvatar ? (
                     <img src={navAvatar} alt="Nav Avatar" className="w-full h-full object-cover" />
                   ) : (
-                    "AU"
+                    adminName.split(" ").map(n => n[0]).join("").toUpperCase()
                   )}
                 </div>
                 <div className="text-left hidden lg:block">
                   <h4 className="text-sm font-bold text-dark-navy leading-none">
-                    Admin User
+                    {adminName}
                   </h4>
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mt-0.5 block">
-                    Super Admin
+                    {adminRole}
                   </span>
                 </div>
                 {/* Chevron icon */}

@@ -96,23 +96,39 @@ export default function SignupPage() {
     return isValid;
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setEmailError("");
 
-    // Simulate API registration request
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fullName, email, password }),
+      });
+
+      const data = await response.json();
       setIsLoading(false);
-      setSignupSuccess(true);
-      
-      // Redirect to login page after 1.5 seconds
-      setTimeout(() => {
-        router.push("/");
-      }, 1500);
-    }, 1500);
+
+      if (data.success) {
+        setSignupSuccess(true);
+        // Redirect to login page after 1.5 seconds
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
+      } else {
+        setEmailError(data.message || "An error occurred during registration.");
+      }
+    } catch {
+      setIsLoading(false);
+      setEmailError("A connection error occurred. Please try again.");
+    }
   };
 
   return (

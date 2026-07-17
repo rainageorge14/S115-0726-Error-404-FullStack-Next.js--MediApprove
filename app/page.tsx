@@ -59,21 +59,38 @@ export default function LoginPage() {
     setLoginStatus("idle");
     setStatusMessage("");
 
-    // Simulate API authorization request
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
       setIsLoading(false);
-      // Hardcoded credentials for admin simulation
-      if (email === "admin@mediapprove.com" && password === "password") {
+
+      if (data.success) {
         setLoginStatus("success");
         setStatusMessage("Access Granted! Loading portal...");
+        
+        // Save admin details and token to localStorage
+        localStorage.setItem("admin", JSON.stringify(data.admin));
+        localStorage.setItem("token", data.token);
+
         setTimeout(() => {
           router.push("/dashboard");
         }, 1000);
       } else {
         setLoginStatus("error");
-        setStatusMessage("Invalid email address or password.");
+        setStatusMessage(data.message || "Invalid email address or password.");
       }
-    }, 1500);
+    } catch {
+      setIsLoading(false);
+      setLoginStatus("error");
+      setStatusMessage("A connection error occurred. Please try again.");
+    }
   };
 
   return (
@@ -81,7 +98,7 @@ export default function LoginPage() {
       {/* Auth Screen Header */}
       <AuthHeader
         title="Welcome Back!"
-        subtitle="Sign in to continue"
+        subtitle="Login to continue"
       />
 
       {/* Login Form */}
@@ -167,9 +184,9 @@ export default function LoginPage() {
             label="Remember me"
           />
 
-          {/* Sign In Button */}
+          {/* Login Button */}
           <Button type="submit" isLoading={isLoading} className="mt-2.5">
-            Sign In
+            Login
           </Button>
 
           {/* Redirect to Signup */}
