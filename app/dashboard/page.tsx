@@ -87,7 +87,7 @@ export default function DashboardHome() {
   const displayMedicines = medicines.filter((m) => m.status === "pending").slice(0, 5);
 
   return (
-    <main className="flex-1 p-6 md:p-8 space-y-6 md:space-y-8 overflow-y-auto">
+    <main className="flex-1 h-full max-h-[calc(100vh-75px)] p-3.5 md:p-4 flex flex-col justify-between overflow-hidden space-y-3 bg-[#F8FAFC]">
 
       {/* Toast Notification */}
       {toastMessage && (
@@ -100,147 +100,147 @@ export default function DashboardHome() {
       )}
 
       {/* LEVEL 1: Four Statistic Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
 
         {/* Stat Card 1: Pending */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Pending Medicines
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {stats.pending}
               </h3>
             </div>
-            <div className="p-3 bg-[#0EA5B7]/10 text-primary rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-[#0EA5B7]/10 text-primary rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
               </svg>
             </div>
           </div>
           <Link
             href="/dashboard/pending"
-            className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-hover transition-colors mt-5"
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:text-primary-hover transition-colors mt-2"
           >
             View all pending &rarr;
           </Link>
         </Card>
 
         {/* Stat Card 2: Approved */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Approved Medicines
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {stats.approved}
               </h3>
             </div>
-            <div className="p-3 bg-[#22C55E]/10 text-[#22C55E] rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-[#22C55E]/10 text-[#22C55E] rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
           <Link
-            href="/dashboard/pending"
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#22C55E] hover:text-[#1ea850] transition-colors mt-5"
+            href="/dashboard/approved"
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#22C55E] hover:text-[#1ea850] transition-colors mt-2"
           >
             View all approved &rarr;
           </Link>
         </Card>
 
         {/* Stat Card 3: Rejected */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Rejected Medicines
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {stats.rejected}
               </h3>
             </div>
-            <div className="p-3 bg-[#EF4444]/10 text-[#EF4444] rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-[#EF4444]/10 text-[#EF4444] rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
           <Link
-            href="/dashboard/pending"
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#EF4444] hover:text-[#dc3545] transition-colors mt-5"
+            href="/dashboard/rejected"
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#EF4444] hover:text-[#dc3545] transition-colors mt-2"
           >
             View all rejected &rarr;
           </Link>
         </Card>
 
         {/* Stat Card 4: Total Companies */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Total Companies
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {stats.companies}
               </h3>
             </div>
-            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
           </div>
-          <a
-            href="#"
-            onClick={(e) => { e.preventDefault(); alert("Viewing companies directory."); }}
-            className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 hover:text-purple-700 transition-colors mt-5"
+          <Link
+            href="/dashboard/companies"
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 hover:text-purple-700 transition-colors mt-2"
           >
             View all companies &rarr;
-          </a>
+          </Link>
         </Card>
 
       </div>
 
       {/* LEVEL 2: Table + Activity Feed */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-3 gap-3.5 items-stretch overflow-hidden">
 
         {/* Table Column (col-span-2) */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col min-h-0">
           <Card
             title="Pending Medicines"
             headerActions={
               <Link
                 href="/dashboard/pending"
-                className="py-1.5 px-4 text-xs font-bold rounded-lg cursor-pointer bg-primary text-white hover:bg-primary-hover active:scale-95 transition-all inline-flex items-center justify-center"
+                className="py-1 px-3 text-[11px] font-bold rounded-lg cursor-pointer bg-primary text-white hover:bg-primary-hover active:scale-95 transition-all inline-flex items-center justify-center"
               >
                 View All
               </Link>
             }
             noPadding
+            className="flex-1 min-h-0 flex flex-col justify-between overflow-hidden shadow-xs"
           >
             {displayMedicines.length === 0 ? (
-              <div className="p-10 text-center text-slate-400 font-semibold text-sm">
+              <div className="p-6 text-center text-slate-400 font-semibold text-xs">
                 No pending medicines to review.
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto flex-1 min-h-0">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50 border-b border-border-color">
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         Medicine Name
                       </th>
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         Company
                       </th>
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         Submitted On
                       </th>
-                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400 text-right">
+                      <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">
                         Action
                       </th>
                     </tr>
@@ -248,19 +248,19 @@ export default function DashboardHome() {
                   <tbody className="divide-y divide-border-color">
                     {displayMedicines.map((med) => (
                       <tr key={med.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4.5 text-sm font-extrabold text-dark-navy">
+                        <td className="px-4 py-2 text-xs font-extrabold text-dark-navy">
                           {med.name}
                         </td>
-                        <td className="px-6 py-4.5 text-sm font-medium text-slate-500">
+                        <td className="px-4 py-2 text-xs font-medium text-slate-500">
                           {med.company}
                         </td>
-                        <td className="px-6 py-4.5 text-sm font-medium text-slate-400">
+                        <td className="px-4 py-2 text-xs font-medium text-slate-400">
                           {med.submittedOn}
                         </td>
-                        <td className="px-6 py-4.5 text-right">
+                        <td className="px-4 py-2 text-right">
                           <Button
                             onClick={() => setSelectedMedicine(med)}
-                            className="!py-1.5 !px-4.5 text-xs font-bold rounded-full text-white bg-[#0A8E9B] hover:bg-[#087a85] active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
+                            className="!py-1 !px-3 text-[11px] font-bold rounded-full text-white bg-[#0A8E9B] hover:bg-[#087a85] active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
                           >
                             Review
                           </Button>
@@ -275,42 +275,42 @@ export default function DashboardHome() {
         </div>
 
         {/* Recent Activity Column */}
-        <div>
-          <Card title="Recent Activity" noPadding>
-            <div className="divide-y divide-border-color">
-              {activities.map((act) => (
-                <div key={act.id} className="p-5 flex items-start gap-3.5 hover:bg-slate-50/40 transition-colors">
+        <div className="flex flex-col min-h-0">
+          <Card title="Recent Activity" noPadding className="flex-1 min-h-0 flex flex-col justify-between overflow-hidden shadow-xs">
+            <div className="divide-y divide-border-color overflow-y-auto flex-1">
+              {activities.slice(0, 4).map((act) => (
+                <div key={act.id} className="p-3 flex items-start gap-2.5 hover:bg-slate-50/40 transition-colors">
                   {act.action === "approved" && (
-                    <div className="p-1.5 bg-[#22C55E]/10 text-[#22C55E] rounded-full shrink-0">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <div className="p-1 bg-[#22C55E]/10 text-[#22C55E] rounded-full shrink-0 mt-0.5">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                   )}
                   {act.action === "rejected" && (
-                    <div className="p-1.5 bg-[#EF4444]/10 text-[#EF4444] rounded-full shrink-0">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <div className="p-1 bg-[#EF4444]/10 text-[#EF4444] rounded-full shrink-0 mt-0.5">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </div>
                   )}
                   {act.action === "pending" && (
-                    <div className="p-1.5 bg-amber-50 text-amber-500 rounded-full shrink-0">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <div className="p-1 bg-amber-50 text-amber-500 rounded-full shrink-0 mt-0.5">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                     </div>
                   )}
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-slate-500 leading-snug">
+                    <p className="text-xs font-semibold text-slate-500 leading-tight">
                       <strong className="text-dark-navy font-bold">{act.medicineName}</strong>{" "}
                       {act.action === "approved" && "approved"}
                       {act.action === "rejected" && "rejected"}
                       {act.action === "pending" && "pending review"}{" "}
-                      <span className="text-[11px] text-slate-400 block sm:inline mt-0.5 sm:mt-0 font-medium">by {act.user}</span>
+                      <span className="text-[10px] text-slate-400 block font-medium">by {act.user}</span>
                     </p>
-                    <span className="text-[10px] font-bold text-slate-400 block mt-1.5 uppercase tracking-wide">
+                    <span className="text-[9px] font-bold text-slate-400 block mt-1 uppercase tracking-wide">
                       {act.time}
                     </span>
                   </div>
@@ -318,12 +318,12 @@ export default function DashboardHome() {
               ))}
             </div>
 
-            <div className="p-5 border-t border-border-color text-center bg-slate-50/30">
+            <div className="p-2.5 border-t border-border-color text-center bg-slate-50/30 shrink-0">
               <Link
-                href="/dashboard/pending"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-hover transition-colors"
+                href="/dashboard/action-logs"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:text-primary-hover transition-colors"
               >
-                View all Logs &rarr;
+                View all Activity &rarr;
               </Link>
             </div>
           </Card>
@@ -332,14 +332,14 @@ export default function DashboardHome() {
       </div>
 
       {/* LEVEL 3: Visual Analytics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 shrink-0">
 
         {/* Donut Chart Card */}
-        <Card title="Medicine Status Overview">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 py-2 select-none">
+        <Card title="Medicine Status Overview" className="!p-3">
+          <div className="flex items-center justify-between gap-4 py-1 select-none">
 
             {/* SVG Donut Chart */}
-            <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
+            <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
               <svg viewBox="0 0 120 120" className="w-full h-full transform -rotate-90">
                 <circle cx="60" cy="60" r="40" stroke="#E5E7EB" strokeWidth="18" fill="transparent" />
                 <circle
@@ -374,34 +374,34 @@ export default function DashboardHome() {
                 />
               </svg>
               <div className="absolute text-center">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">
                   Total
                 </span>
-                <span className="text-lg font-extrabold text-dark-navy block mt-0.5 leading-none">
+                <span className="text-base font-extrabold text-dark-navy block mt-0.5 leading-none">
                   {stats.approved + stats.pending + stats.rejected}
                 </span>
               </div>
             </div>
 
             {/* Donut Legend */}
-            <div className="flex flex-col gap-3 flex-1 w-full sm:w-auto">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 font-bold text-slate-500">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#0EA5B7]" />
+            <div className="flex flex-col gap-1.5 flex-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 font-bold text-slate-500">
+                  <span className="w-2 h-2 rounded-full bg-[#0EA5B7]" />
                   Pending
                 </div>
                 <span className="font-extrabold text-dark-navy">128 (15%)</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 font-bold text-slate-500">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E]" />
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 font-bold text-slate-500">
+                  <span className="w-2 h-2 rounded-full bg-[#22C55E]" />
                   Approved
                 </div>
                 <span className="font-extrabold text-dark-navy">542 (65%)</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 font-bold text-slate-500">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 font-bold text-slate-500">
+                  <span className="w-2 h-2 rounded-full bg-[#EF4444]" />
                   Rejected
                 </div>
                 <span className="font-extrabold text-dark-navy">76 (10%)</span>
@@ -412,8 +412,8 @@ export default function DashboardHome() {
         </Card>
 
         {/* Line Chart Card */}
-        <Card title="Submission Overview (This month)">
-          <div className="relative w-full h-[140px] mt-2 select-none">
+        <Card title="Submission Overview (This month)" className="!p-3">
+          <div className="relative w-full h-[95px] mt-1 select-none">
             <svg viewBox="0 0 300 130" className="w-full h-full">
               <line x1="20" y1="20" x2="290" y2="20" stroke="#F1F5F9" strokeWidth="1" />
               <line x1="20" y1="50" x2="290" y2="50" stroke="#F1F5F9" strokeWidth="1" />
@@ -457,20 +457,19 @@ export default function DashboardHome() {
         </Card>
 
         {/* Top Submitting Companies Card */}
-        <Card title="Top Submitting Companies">
-          <div className="flex flex-col gap-3.5 py-1">
+        <Card title="Top Submitting Companies" className="!p-3">
+          <div className="flex flex-col gap-2 py-0.5">
             {[
               { name: "Sun Pharma", count: 120, pct: "w-[100%]", color: "bg-primary" },
               { name: "Cipla Ltd.", count: 98, pct: "w-[82%]", color: "bg-primary/80" },
               { name: "Dr. Reddy's", count: 76, pct: "w-[63%]", color: "bg-primary/60" },
-              { name: "Lupin Ltd.", count: 65, pct: "w-[54%]", color: "bg-primary/40" },
             ].map((comp, idx) => (
-              <div key={idx} className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-dark-navy">
+              <div key={idx} className="space-y-1">
+                <div className="flex items-center justify-between text-xs font-bold text-dark-navy">
                   <span className="text-slate-500 font-semibold">{comp.name}</span>
-                  <span>{comp.count} Submissions</span>
+                  <span>{comp.count} Subs</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className={`h-full rounded-full transition-all duration-500 ${comp.pct} ${comp.color}`} />
                 </div>
               </div>

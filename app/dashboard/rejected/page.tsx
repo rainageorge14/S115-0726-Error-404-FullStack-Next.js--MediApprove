@@ -23,7 +23,7 @@ export default function RejectedMedicinesPage() {
 
   // Pagination UI State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 5;
 
   // Retrieve rejected medicines from global shared state context
   const rejectedList = medicines.filter((m) => m.status === "rejected");
@@ -200,7 +200,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
     (m) => m.rejectedAt === currentDate
   ).length;
 
-  const totalRejectedCount = 65 + (rejectedList.length - 2);
+  const totalRejectedCount = 65 + Math.max(0, rejectedList.length - 12);
   const rejectedTodayCount = 2 + newlyRejectedCount;
   const rejectedThisWeekCount = 5 + newlyRejectedCount;
 
@@ -256,7 +256,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
   };
 
   return (
-    <main className="flex-1 p-6 md:p-8 space-y-6 md:space-y-7 overflow-y-auto bg-[#F8FAFC]">
+    <main className="flex-1 h-full max-h-[calc(100vh-75px)] p-3.5 md:p-4 flex flex-col justify-between overflow-hidden space-y-3 bg-[#F8FAFC]">
       
       {/* Toast Alert */}
       {toastMessage && (
@@ -269,92 +269,92 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
       )}
 
       {/* STATISTICS CARDS SECTION */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 shrink-0">
         
         {/* Card 1: Total Rejected */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Total Rejected
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {totalRejectedCount}
               </h3>
             </div>
-            <div className="p-3 bg-danger/10 text-danger rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2.5 bg-danger/10 text-danger rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 block mt-5">
+          <span className="text-[10px] font-bold text-slate-400 block mt-2.5">
             Disapproved medical listings
           </span>
         </Card>
 
         {/* Card 2: Rejected Today */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Rejected Today
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {rejectedTodayCount}
               </h3>
             </div>
-            <div className="p-3 bg-danger/5 text-danger rounded-xl bg-gradient-to-br from-red-500/10 to-red-600/5">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2.5 bg-danger/5 text-danger rounded-xl bg-gradient-to-br from-red-500/10 to-red-600/5">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-danger block mt-5">
+          <span className="text-[10px] font-bold text-danger block mt-2.5">
             Synced from compliance logs
           </span>
         </Card>
 
         {/* Card 3: Rejected This Week */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Rejected This Week
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {rejectedThisWeekCount}
               </h3>
             </div>
-            <div className="p-3 bg-amber-50 text-amber-500 rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2.5 bg-amber-50 text-amber-500 rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 block mt-5">
+          <span className="text-[10px] font-bold text-slate-400 block mt-2.5">
             Current calendar week
           </span>
         </Card>
 
         {/* Card 4: Latest Rejection */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase block truncate">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase block truncate">
                 Latest Rejection
               </span>
-              <h3 className="text-lg font-extrabold text-dark-navy mt-2 tracking-tight truncate" title={lastRejectionText}>
+              <h3 className="text-base font-extrabold text-dark-navy mt-1 tracking-tight truncate" title={lastRejectionText}>
                 {lastRejectionText}
               </h3>
             </div>
-            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl shrink-0 ml-2">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl shrink-0 ml-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 block mt-5 truncate">
+          <span className="text-[10px] font-bold text-slate-400 block mt-2.5 truncate">
             Rejected on {lastRejectionDate}
           </span>
         </Card>
@@ -362,7 +362,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
       </div>
 
       {/* SEARCH AND FILTERS TOOLBAR */}
-      <div className="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between shrink-0">
         
         {/* Search Bar */}
         <div className="relative flex-1 max-w-xl">
@@ -374,17 +374,17 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-11 pr-4 py-3.5 text-sm text-dark-navy bg-white border border-border-color rounded-2xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200 focus:shadow-md"
+            className="w-full pl-10 pr-4 py-2.5 text-xs text-dark-navy bg-white border border-border-color rounded-xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200 focus:shadow-md"
           />
-          <div className="absolute left-4 top-4 text-slate-400">
-            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <div className="absolute left-3.5 top-3 text-slate-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
         </div>
 
         {/* Toolbar Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           
           {/* Filters Toggle */}
           <div className="relative">
@@ -393,7 +393,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
                 setIsFilterOpen((prev) => !prev);
                 setIsSortOpen(false);
               }}
-              className={`flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
+              className={`flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
                 isFilterOpen || selectedCategoryFilter !== "All" || selectedCompanyFilter !== "All"
                   ? "border-primary text-primary bg-primary/5 font-extrabold"
                   : "border-border-color text-slate-600 bg-white hover:bg-slate-50"
@@ -404,7 +404,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
               </svg>
               Filter
               {(selectedCategoryFilter !== "All" || selectedCompanyFilter !== "All") && (
-                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               )}
             </button>
 
@@ -490,7 +490,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
                 setIsSortOpen((prev) => !prev);
                 setIsFilterOpen(false);
               }}
-              className={`flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
+              className={`flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
                 isSortOpen
                   ? "border-primary text-primary bg-primary/5 font-extrabold"
                   : "border-border-color text-slate-600 bg-white hover:bg-slate-50"
@@ -565,7 +565,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
           <Button
             onClick={handleExportCSV}
             variant="outline"
-            className="!w-auto !py-3.5 !px-5 text-xs font-bold rounded-xl border border-border-color text-slate-600 bg-white hover:bg-slate-50 cursor-pointer active:scale-95 shadow-[0_2px_10px_rgba(15,41,64,0.02)] flex items-center justify-center gap-2"
+            className="!w-auto !py-2.5 !px-4 text-xs font-bold rounded-xl border border-border-color text-slate-600 bg-white hover:bg-slate-50 cursor-pointer active:scale-95 shadow-[0_2px_10px_rgba(15,41,64,0.02)] flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -592,7 +592,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
       </div>
 
       {/* DATA TABLE LISTING CARD OR EMPTY STATE */}
-      <Card noPadding className="shadow-[0_4px_25px_-5px_rgba(15,41,64,0.04)] overflow-hidden">
+      <Card noPadding className="shadow-[0_4px_25px_-5px_rgba(15,41,64,0.04)] overflow-hidden flex-1 flex flex-col justify-between min-h-0">
         {filteredMedicines.length === 0 ? (
           /* EMPTY STATE ILLUSTRATION */
           <div className="flex flex-col items-center justify-center py-20 px-6 text-center max-w-md mx-auto select-none animate-fade-in">
@@ -618,39 +618,39 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
           </div>
         ) : (
           /* TABLE RENDER DATA LISTING */
-          <div className="flex flex-col animate-fade-in">
+          <div className="flex flex-col flex-1 justify-between min-h-0 animate-fade-in">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/70 border-b border-border-color select-none">
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Status
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Medicine Name
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Company
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Category
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Batch Number
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Rejected By
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Rejected Date
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Rejection Reason
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Expiry Date
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 text-right">
+                    <th className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 text-right">
                       Actions
                     </th>
                   </tr>
@@ -663,8 +663,8 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
                       className="hover:bg-slate-50/30 transition-colors duration-150"
                     >
                       {/* Column 1: Status */}
-                      <td className="px-6 py-4.5 select-none">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-danger/10 text-danger border border-danger/15 hover:scale-105 transition-transform duration-150">
+                      <td className="px-4 py-2 select-none">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-danger/10 text-danger border border-danger/15 hover:scale-105 transition-transform duration-150">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                           </svg>
@@ -673,71 +673,71 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
                       </td>
 
                       {/* Column 2: Details */}
-                      <td className="px-6 py-4.5">
-                        <div className="flex flex-col gap-1">
+                      <td className="px-4 py-2">
+                        <div className="flex flex-col gap-0.5">
                           <span
                             onClick={() => setSelectedMedicine(med)}
-                            className="text-sm font-extrabold text-dark-navy hover:text-danger hover:underline cursor-pointer transition-colors"
+                            className="text-xs font-extrabold text-dark-navy hover:text-danger hover:underline cursor-pointer transition-colors"
                           >
                             {med.name || med.medicineName}
                           </span>
-                          <span className="text-[11px] font-bold text-slate-400 leading-none block">
+                          <span className="text-[10px] font-bold text-slate-400 leading-none block">
                             by {med.company}
                           </span>
                         </div>
                       </td>
 
                       {/* Column 3: Company */}
-                      <td className="px-6 py-4.5 text-xs font-semibold text-slate-500">
+                      <td className="px-4 py-2 text-xs font-semibold text-slate-500">
                         {med.company}
                       </td>
 
                       {/* Column 4: Category badge */}
-                      <td className="px-6 py-4.5 select-none">
+                      <td className="px-4 py-2 select-none">
                         <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md uppercase tracking-wider ${getCategoryBadgeClass(med.category)}`}>
                           {med.category}
                         </span>
                       </td>
 
                       {/* Column 5: Batch */}
-                      <td className="px-6 py-4.5 text-xs font-semibold text-slate-500">
+                      <td className="px-4 py-2 text-xs font-semibold text-slate-500">
                         {med.batchNumber || med.batch}
                       </td>
 
                       {/* Column 6: Rejected By */}
-                      <td className="px-6 py-4.5 text-xs font-semibold text-slate-600">
+                      <td className="px-4 py-2 text-xs font-semibold text-slate-600">
                         {med.rejectedBy || "Admin User"}
                       </td>
 
                       {/* Column 7: Rejected Date */}
-                      <td className="px-6 py-4.5 text-xs font-medium text-slate-400">
+                      <td className="px-4 py-2 text-xs font-medium text-slate-400">
                         {med.rejectedAt || "N/A"}
                       </td>
 
                       {/* Column 8: Rejection Reason (colored badge with tooltip) */}
-                      <td className="px-6 py-4.5 select-none">
+                      <td className="px-4 py-2 select-none">
                         <span 
                           title={med.rejectionReason} 
-                          className={`px-2.5 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-wide cursor-help inline-block max-w-[150px] truncate ${getReasonBadgeClass(med.rejectionReason || "")}`}
+                          className={`px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-wide cursor-help inline-block max-w-[140px] truncate ${getReasonBadgeClass(med.rejectionReason || "")}`}
                         >
                           {med.rejectionReason}
                         </span>
                       </td>
 
                       {/* Column 9: Expiry Date */}
-                      <td className="px-6 py-4.5 text-xs font-semibold text-slate-400">
+                      <td className="px-4 py-2 text-xs font-semibold text-slate-400">
                         {med.expiryDate || med.expiry}
                       </td>
 
                       {/* Column 10: Actions Controls */}
-                      <td className="px-6 py-4.5 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="px-4 py-2 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
                           
                           {/* Details action button */}
                           <Button
                             onClick={() => setSelectedMedicine(med)}
                             variant="outline"
-                            className="!py-1.5 !px-3.5 !w-auto text-xs font-bold rounded-lg border border-border-color text-slate-500 hover:bg-slate-50 cursor-pointer active:scale-95 transition-all bg-white"
+                            className="!py-1 !px-2.5 !w-auto text-[11px] font-bold rounded-lg border border-border-color text-slate-500 hover:bg-slate-50 cursor-pointer active:scale-95 transition-all bg-white"
                           >
                             View Details
                           </Button>
@@ -746,9 +746,9 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
                           <button
                             onClick={() => handleDownloadReport(med)}
                             title="Download Report"
-                            className="p-1.5 rounded-lg border border-border-color text-slate-400 hover:text-dark-navy bg-white hover:bg-slate-50 cursor-pointer active:scale-95 transition-all"
+                            className="p-1 rounded-lg border border-border-color text-slate-400 hover:text-dark-navy bg-white hover:bg-slate-50 cursor-pointer active:scale-95 transition-all"
                           >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
                           </button>
@@ -757,9 +757,9 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
                           <button
                             onClick={() => handleRestore(med)}
                             title="Restore Listing"
-                            className="p-1.5 rounded-lg border border-border-color text-slate-400 hover:text-[#22C55E] hover:border-[#22C55E]/30 bg-white hover:bg-emerald-50 cursor-pointer active:scale-95 transition-all"
+                            className="p-1 rounded-lg border border-border-color text-slate-400 hover:text-[#22C55E] hover:border-[#22C55E]/30 bg-white hover:bg-emerald-50 cursor-pointer active:scale-95 transition-all"
                           >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89H17.5" />
                             </svg>
                           </button>
@@ -773,7 +773,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
 
             {/* CARD PAGINATION FOOTER */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-border-color px-6 py-5 select-none bg-slate-50/20">
+              <div className="flex items-center justify-between border-t border-border-color px-4 py-2 select-none bg-slate-50/20">
                 <span className="text-xs font-semibold text-slate-400">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                   {Math.min(currentPage * itemsPerPage, sortedMedicines.length)} of{" "}
