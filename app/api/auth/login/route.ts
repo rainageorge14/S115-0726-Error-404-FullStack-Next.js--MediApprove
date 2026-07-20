@@ -14,21 +14,33 @@ export async function POST(req: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, message: "Invalid input" },
-        { status: 400 }
+        {
+          success: false,
+          message: "Invalid input",
+        },
+        {
+          status: 400,
+        }
       );
     }
 
     const { email, password } = parsed.data;
 
     const admin = await prisma.admin.findUnique({
-      where: { email },
+      where: {
+        email,
+      },
     });
 
     if (!admin) {
       return NextResponse.json(
-        { success: false, message: "Invalid credentials" },
-        { status: 401 }
+        {
+          success: false,
+          message: "Invalid credentials",
+        },
+        {
+          status: 401,
+        }
       );
     }
 
@@ -39,8 +51,13 @@ export async function POST(req: Request) {
 
     if (!isPasswordValid) {
       return NextResponse.json(
-        { success: false, message: "Invalid credentials" },
-        { status: 401 }
+        {
+          success: false,
+          message: "Invalid credentials",
+        },
+        {
+          status: 401,
+        }
       );
     }
 
@@ -50,9 +67,10 @@ export async function POST(req: Request) {
       role: admin.role,
     });
 
-    return NextResponse.json({
+    // Create response
+    const response = NextResponse.json({
       success: true,
-      token,
+      message: "Login successful",
       admin: {
         id: admin.id,
         name: admin.name,
@@ -60,10 +78,30 @@ export async function POST(req: Request) {
         role: admin.role,
       },
     });
-  } catch {
+
+    // Set JWT cookie
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: false, // change to true in production (HTTPS)
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24, // 1 day
+    });
+
+    return response;
+  } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
-      { status: 500 }
+      {
+        success: false,
+        message: "Internal Server Error",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
