@@ -24,7 +24,7 @@ export default function ApprovedMedicinesPage() {
 
   // Pagination UI State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 5;
 
   // Retrieve approved medicines from global shared state context
   const approvedList = medicines.filter((m) => m.status === "approved");
@@ -218,7 +218,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
   };
 
   return (
-    <main className="flex-1 p-6 md:p-8 space-y-6 md:space-y-7 overflow-y-auto">
+    <main className="flex-1 p-4 md:p-5 flex flex-col justify-between overflow-hidden space-y-3.5">
       
       {/* Toast Alert */}
       {toastMessage && (
@@ -231,92 +231,92 @@ Status: SECURE & VERIFIED FOR CATALOGUE
       )}
 
       {/* STATISTICS CARDS SECTION */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 shrink-0">
         
         {/* Card 1: Total Approved Medicines */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Approved Medicines
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {totalApprovedCount}
               </h3>
             </div>
-            <div className="p-3 bg-success/10 text-success rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2.5 bg-success/10 text-success rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 block mt-5">
+          <span className="text-[10px] font-bold text-slate-400 block mt-2.5">
             Active in medical directory
           </span>
         </Card>
 
         {/* Card 2: Approved Today */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Approved Today
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {approvedToday}
               </h3>
             </div>
-            <div className="p-3 bg-primary/10 text-primary rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-success block mt-5">
+          <span className="text-[10px] font-bold text-success block mt-2.5">
             Synced from approval actions
           </span>
         </Card>
 
         {/* Card 3: Approved This Week */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
                 Approved This Week
               </span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
                 {approvedThisWeek}
               </h3>
             </div>
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 block mt-5">
+          <span className="text-[10px] font-bold text-slate-400 block mt-2.5">
             Current calendar week
           </span>
         </Card>
 
         {/* Card 4: Last Approval */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none">
+        <Card className="!p-3.5 hover:translate-y-[-2px] transition-transform duration-200 select-none">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase block truncate">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase block truncate">
                 Last Approved Listing
               </span>
-              <h3 className="text-lg font-extrabold text-dark-navy mt-2 tracking-tight truncate" title={lastApprovalText}>
+              <h3 className="text-base font-extrabold text-dark-navy mt-1 tracking-tight truncate" title={lastApprovalText}>
                 {lastApprovalText}
               </h3>
             </div>
-            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl shrink-0 ml-2">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl shrink-0 ml-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
           </div>
-          <span className="text-[10px] font-bold text-slate-400 block mt-5 truncate">
+          <span className="text-[10px] font-bold text-slate-400 block mt-2.5 truncate">
             Granted on {lastApprovalDate}
           </span>
         </Card>
@@ -324,7 +324,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
       </div>
 
       {/* SEARCH AND FILTERS TOOLBAR */}
-      <div className="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between shrink-0">
         
         {/* Search Bar */}
         <div className="relative flex-1 max-w-xl">
@@ -336,17 +336,17 @@ Status: SECURE & VERIFIED FOR CATALOGUE
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-11 pr-4 py-3.5 text-sm text-dark-navy bg-white border border-border-color rounded-2xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-2.5 text-xs text-dark-navy bg-white border border-border-color rounded-xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200"
           />
-          <div className="absolute left-4 top-4 text-slate-400">
-            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <div className="absolute left-3.5 top-3 text-slate-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
         </div>
 
         {/* Toolbar Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           
           {/* Filters Toggle */}
           <div className="relative">
@@ -355,7 +355,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                 setIsFilterOpen((prev) => !prev);
                 setIsSortOpen(false);
               }}
-              className={`flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
+              className={`flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
                 isFilterOpen || selectedCategoryFilter !== "All" || selectedCompanyFilter !== "All"
                   ? "border-primary text-primary bg-primary/5 font-extrabold"
                   : "border-border-color text-slate-600 bg-white hover:bg-slate-50"
@@ -366,7 +366,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
               </svg>
               Filter
               {(selectedCategoryFilter !== "All" || selectedCompanyFilter !== "All") && (
-                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               )}
             </button>
 
@@ -452,7 +452,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                 setIsSortOpen((prev) => !prev);
                 setIsFilterOpen(false);
               }}
-              className={`flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
+              className={`flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none active:scale-95 ${
                 isSortOpen
                   ? "border-primary text-primary bg-primary/5 font-extrabold"
                   : "border-border-color text-slate-600 bg-white hover:bg-slate-50"
@@ -527,7 +527,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
           <Button
             onClick={handleExportCSV}
             variant="outline"
-            className="!w-auto !py-3.5 !px-5 text-xs font-bold rounded-xl border border-border-color text-slate-600 bg-white hover:bg-slate-50 cursor-pointer active:scale-95 shadow-[0_2px_10px_rgba(15,41,64,0.02)] flex items-center justify-center gap-2"
+            className="!w-auto !py-2.5 !px-4 text-xs font-bold rounded-xl border border-border-color text-slate-600 bg-white hover:bg-slate-50 cursor-pointer active:scale-95 shadow-[0_2px_10px_rgba(15,41,64,0.02)] flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -539,7 +539,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
       </div>
 
       {/* DATA TABLE LISTING CARD OR EMPTY STATE */}
-      <Card noPadding className="shadow-[0_4px_25px_-5px_rgba(15,41,64,0.04)] overflow-hidden">
+      <Card noPadding className="shadow-[0_4px_25px_-5px_rgba(15,41,64,0.04)] overflow-hidden flex-1 flex flex-col justify-between min-h-0">
         {filteredMedicines.length === 0 ? (
           /* EMPTY STATE ILLUSTRATION */
           <div className="flex flex-col items-center justify-center py-20 px-6 text-center max-w-md mx-auto select-none animate-fade-in">
@@ -578,33 +578,33 @@ Status: SECURE & VERIFIED FOR CATALOGUE
           </div>
         ) : (
           /* TABLE RENDER DATA LISTING */
-          <div className="flex flex-col animate-fade-in">
+          <div className="flex flex-col flex-1 justify-between min-h-0 animate-fade-in">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/70 border-b border-border-color select-none">
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Approval Status
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Medicine Details
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Category
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Batch Number
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       MRP / Price
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Approvals Info
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       Expiry Date
                     </th>
-                    <th className="px-6 py-4.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 text-right">
+                    <th className="px-5 py-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 text-right">
                       Actions
                     </th>
                   </tr>
@@ -617,8 +617,8 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                       className="hover:bg-slate-50/30 transition-colors duration-150"
                     >
                       {/* Column 1: Approval Status Indicator Badge */}
-                      <td className="px-6 py-4.5 select-none">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-success/10 text-success border border-success/15 hover:scale-105 transition-transform duration-150">
+                      <td className="px-5 py-2.5 select-none">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-success/10 text-success border border-success/15 hover:scale-105 transition-transform duration-150">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
@@ -627,39 +627,39 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                       </td>
 
                       {/* Column 2: Medicine details */}
-                      <td className="px-6 py-4.5">
-                        <div className="flex flex-col gap-1.5">
+                      <td className="px-5 py-2.5">
+                        <div className="flex flex-col gap-0.5">
                           <span
                             onClick={() => setSelectedMedicine(med)}
                             className="text-sm font-extrabold text-dark-navy hover:text-primary hover:underline cursor-pointer transition-colors"
                           >
                             {med.name}
                           </span>
-                          <span className="text-[11px] font-bold text-slate-400 leading-none block">
+                          <span className="text-[10px] font-bold text-slate-400 leading-none block">
                             by {med.company}
                           </span>
                         </div>
                       </td>
 
                       {/* Column 3: Category badge */}
-                      <td className="px-6 py-4.5 select-none">
+                      <td className="px-5 py-2.5 select-none">
                         <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md uppercase tracking-wider ${getCategoryBadgeClass(med.category)}`}>
                           {med.category}
                         </span>
                       </td>
 
                       {/* Column 4: Batch */}
-                      <td className="px-6 py-4.5 text-xs font-semibold text-slate-500">
+                      <td className="px-5 py-2.5 text-xs font-semibold text-slate-500">
                         {med.batchNumber}
                       </td>
 
                       {/* Column 5: Price (MRP) */}
-                      <td className="px-6 py-4.5 text-sm font-extrabold text-dark-navy">
+                      <td className="px-5 py-2.5 text-sm font-extrabold text-dark-navy">
                         ₹{med.price}
                       </td>
 
                       {/* Column 6: Approvals details */}
-                      <td className="px-6 py-4.5">
+                      <td className="px-5 py-2.5">
                         <div className="flex flex-col gap-0.5 text-xs">
                           <span className="font-semibold text-slate-600 leading-normal">
                             {med.approvedBy || "Admin User"}
@@ -671,12 +671,12 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                       </td>
 
                       {/* Column 7: Expiry date */}
-                      <td className="px-6 py-4.5 text-xs font-semibold text-slate-400">
+                      <td className="px-5 py-2.5 text-xs font-semibold text-slate-400">
                         {med.expiryDate}
                       </td>
 
                       {/* Column 8: Actions Controls */}
-                      <td className="px-6 py-4.5 text-right">
+                      <td className="px-5 py-2.5 text-right">
                         <div className="flex items-center justify-end gap-2">
                           
                           {/* Details action button */}
@@ -719,7 +719,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
 
             {/* CARD PAGINATION FOOTER */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-border-color px-6 py-5 select-none bg-slate-50/20">
+              <div className="flex items-center justify-between border-t border-border-color px-5 py-2.5 select-none bg-slate-50/20">
                 <span className="text-xs font-semibold text-slate-400">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                   {Math.min(currentPage * itemsPerPage, sortedMedicines.length)} of{" "}

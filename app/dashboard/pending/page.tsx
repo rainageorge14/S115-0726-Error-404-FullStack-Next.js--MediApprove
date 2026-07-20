@@ -16,7 +16,7 @@ export default function PendingMedicinesPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [toastMessage, setToastMessage] = useState("");
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   // Confirmation modal states
   const [confirmMedicineId, setConfirmMedicineId] = useState<string | null>(null);
@@ -167,7 +167,7 @@ export default function PendingMedicinesPage() {
   };
 
   return (
-    <main className="flex-1 p-6 md:p-8 space-y-6 overflow-y-auto">
+    <main className="flex-1 h-full max-h-[calc(100vh-75px)] p-3.5 md:p-4 flex flex-col justify-between overflow-hidden space-y-3 bg-[#F8FAFC]">
       
       {/* Toast Alert */}
       {toastMessage && (
@@ -180,7 +180,7 @@ export default function PendingMedicinesPage() {
       )}
 
       {/* TOP SEARCH & FILTER CONTROLS */}
-      <div className="flex flex-col sm:flex-row gap-3.5 items-stretch sm:items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between shrink-0">
         
         {/* Search Input wrapper */}
         <div className="relative flex-1 max-w-md">
@@ -192,11 +192,11 @@ export default function PendingMedicinesPage() {
               setSearchQuery(e.target.value);
               setCurrentPage(1); // reset to page 1 on search
             }}
-            className="w-full pl-11 pr-4 py-3 text-sm text-dark-navy bg-white border border-border-color rounded-2xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-2 text-xs text-dark-navy bg-white border border-border-color rounded-xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200"
           />
           {/* Magnifying Glass SVG Icon */}
-          <div className="absolute left-4 top-3.5 text-slate-400">
-            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <div className="absolute left-3.5 top-2.5 text-slate-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -206,12 +206,12 @@ export default function PendingMedicinesPage() {
         <div className="relative">
           <button
             onClick={() => setIsFilterOpen((prev) => !prev)}
-            className={`flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-slate-600 bg-white border rounded-2xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none ${
+            className={`flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-slate-600 bg-white border rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] transition-all cursor-pointer select-none ${
               isFilterOpen ? "border-primary text-primary" : "border-border-color hover:bg-slate-50"
             }`}
           >
             {/* Filter Slider SVG */}
-            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
             Filters
@@ -255,27 +255,27 @@ export default function PendingMedicinesPage() {
       </div>
 
       {/* TABLE DATA LISTING CARD */}
-      <Card noPadding>
+      <Card noPadding className="flex-1 min-h-0 flex flex-col justify-between overflow-hidden shadow-xs">
         {filteredMedicines.length === 0 ? (
           <div className="p-16 text-center text-slate-400 font-semibold text-sm">
             No pending medicine listings found matching your search.
           </div>
         ) : (
-          <div className="flex flex-col">
-            <div className="overflow-x-auto">
+          <div className="flex flex-col flex-1 justify-between min-h-0 animate-fade-in">
+            <div className="overflow-auto flex-1 min-h-0">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-border-color select-none">
-                    <th className="px-6 py-4.5 text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       Medicine Details
                     </th>
-                    <th className="px-6 py-4.5 text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       Company
                     </th>
-                    <th className="px-6 py-4.5 text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       Submitted On
                     </th>
-                    <th className="px-6 py-4.5 text-xs font-bold uppercase tracking-wider text-slate-400 text-right">
+                    <th className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">
                       Action
                     </th>
                   </tr>
@@ -287,19 +287,19 @@ export default function PendingMedicinesPage() {
                       className="hover:bg-slate-50/40 transition-colors duration-150"
                     >
                       {/* Column 1: Details and dosage badges */}
-                      <td className="px-6 py-4.5">
-                        <div className="flex flex-col gap-2">
+                      <td className="px-4 py-2">
+                        <div className="flex flex-col gap-1">
                           <span
                             onClick={() => setSelectedMedicine(med)}
-                            className="text-sm font-extrabold text-dark-navy hover:text-primary hover:underline cursor-pointer transition-colors"
+                            className="text-xs font-extrabold text-dark-navy hover:text-primary hover:underline cursor-pointer transition-colors"
                           >
                             {med.name}
                           </span>
-                          <div className="flex flex-wrap gap-1.5 select-none">
+                          <div className="flex flex-wrap gap-1 select-none">
                             {med.badges?.map((b, idx) => (
                               <span
                                 key={idx}
-                                className={`px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-wide ${getBadgeClass(
+                                className={`px-1.5 py-0.5 text-[8px] font-extrabold rounded-md uppercase tracking-wide ${getBadgeClass(
                                   b.type
                                 )}`}
                               >
@@ -311,22 +311,22 @@ export default function PendingMedicinesPage() {
                       </td>
 
                       {/* Column 2: Company */}
-                      <td className="px-6 py-4.5 text-sm font-bold text-slate-500">
+                      <td className="px-4 py-2 text-xs font-bold text-slate-500">
                         {med.company}
                       </td>
 
                       {/* Column 3: Submitted Date */}
-                      <td className="px-6 py-4.5 text-sm font-medium text-slate-400">
+                      <td className="px-4 py-2 text-xs font-medium text-slate-400">
                         {med.submittedOn}
                       </td>
 
                       {/* Column 4: Approve / Reject Action controls */}
-                      <td className="px-6 py-4.5 text-right">
-                        <div className="flex items-center justify-end gap-2.5">
+                      <td className="px-4 py-2 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
                           {/* Review button */}
                           <Button
                             onClick={() => setSelectedMedicine(med)}
-                            className="!py-1.5 !px-3.5 text-xs font-bold rounded-lg text-white bg-primary hover:bg-primary-hover active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
+                            className="!py-1 !px-2.5 text-[11px] font-bold rounded-lg text-white bg-primary hover:bg-primary-hover active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
                           >
                             Review
                           </Button>
@@ -335,7 +335,7 @@ export default function PendingMedicinesPage() {
                           <Button
                             onClick={() => handleRejectClick(med.id, med.name)}
                             variant="outline"
-                            className="!py-1.5 !px-3.5 text-xs font-bold rounded-lg !border-danger !text-danger bg-white hover:!bg-danger hover:!text-white active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
+                            className="!py-1 !px-2.5 text-[11px] font-bold rounded-lg !border-danger !text-danger bg-white hover:!bg-danger hover:!text-white active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
                           >
                             Reject
                           </Button>
@@ -343,7 +343,7 @@ export default function PendingMedicinesPage() {
                           {/* Approve button (solid success green) */}
                           <Button
                             onClick={() => handleApproveClick(med.id)}
-                            className="!py-1.5 !px-3.5 text-xs font-bold rounded-lg bg-[#22C55E] text-white hover:bg-[#1ea850] active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
+                            className="!py-1 !px-2.5 text-[11px] font-bold rounded-lg bg-[#22C55E] text-white hover:bg-[#1ea850] active:scale-95 transition-all !inline-flex !w-auto cursor-pointer"
                           >
                             Approve
                           </Button>
@@ -357,22 +357,22 @@ export default function PendingMedicinesPage() {
 
             {/* CARD PAGINATION CONTROLS FOOTER */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-border-color px-6 py-5 select-none bg-slate-50/20">
+              <div className="flex items-center justify-between border-t border-border-color px-4 py-2 select-none bg-slate-50/20 shrink-0">
                 <span className="text-xs font-semibold text-slate-400">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                   {Math.min(currentPage * itemsPerPage, filteredMedicines.length)} of{" "}
                   {filteredMedicines.length} entries
                 </span>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
                   {/* Previous button */}
                   <button
                     disabled={currentPage === 1}
                     onClick={() => handlePageChange(currentPage - 1)}
-                    className="p-2 rounded-lg border border-border-color text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+                    className="p-1.5 rounded-lg border border-border-color text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
                     aria-label="Previous page"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
@@ -385,9 +385,9 @@ export default function PendingMedicinesPage() {
                       <button
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
-                        className={`w-9 h-9 text-xs font-extrabold rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                        className={`w-7 h-7 text-xs font-extrabold rounded-lg flex items-center justify-center transition-all cursor-pointer ${
                           isActive
-                            ? "bg-primary text-white shadow-md shadow-primary/10"
+                            ? "bg-primary text-white shadow-xs"
                             : "border border-border-color text-slate-500 hover:bg-slate-50"
                         }`}
                       >
@@ -400,10 +400,10 @@ export default function PendingMedicinesPage() {
                   <button
                     disabled={currentPage === totalPages}
                     onClick={() => handlePageChange(currentPage + 1)}
-                    className="p-2 rounded-lg border border-border-color text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+                    className="p-1.5 rounded-lg border border-border-color text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
                     aria-label="Next page"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
                   </button>

@@ -482,7 +482,7 @@ Security Registry: SIGNED & SECURED
   };
 
   return (
-    <main className="flex-1 p-6 md:p-8 space-y-6 md:space-y-8 overflow-y-auto bg-[#F8FAFC]">
+    <main className="flex-1 h-full max-h-[calc(100vh-75px)] p-3.5 md:p-4 flex flex-col justify-between overflow-hidden space-y-3 bg-[#F8FAFC]">
       
       {/* Toast Alert */}
       {toastMessage && (
@@ -494,130 +494,78 @@ Security Registry: SIGNED & SECURED
         </div>
       )}
 
-      {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-color pb-5">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-dark-navy tracking-tight">Action Logs</h1>
-          <p className="text-sm font-semibold text-slate-400 mt-1">
-            Monitor and track every administrator action performed within the MediApprove system for security, compliance, and auditing purposes.
-          </p>
-        </div>
-
-        {/* Real-time Simulator Panel */}
-        <div className="bg-white border border-border-color p-3.5 rounded-2xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] flex flex-col gap-2 max-w-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Simulate Live Actions</span>
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
-            </span>
-          </div>
-          <div className="flex gap-1.5 flex-wrap">
-            <button
-              onClick={() => simulateAction("Login")}
-              className="text-[10px] font-bold px-2 py-1 bg-info/10 text-info border border-info/10 hover:bg-info hover:text-white rounded-lg transition-colors cursor-pointer"
-            >
-              + Login
-            </button>
-            <button
-              onClick={() => simulateAction("Logout")}
-              className="text-[10px] font-bold px-2 py-1 bg-slate-500/10 text-slate-500 border border-slate-500/10 hover:bg-slate-500 hover:text-white rounded-lg transition-colors cursor-pointer"
-            >
-              + Logout
-            </button>
-            <button
-              onClick={() => simulateAction("Profile")}
-              className="text-[10px] font-bold px-2 py-1 bg-warning/10 text-warning border border-warning/10 hover:bg-warning hover:text-white rounded-lg transition-colors cursor-pointer"
-            >
-              + Profile Update
-            </button>
-            <button
-              onClick={() => simulateAction("Client")}
-              className="text-[10px] font-bold px-2 py-1 bg-primary/10 text-primary border border-primary/10 hover:bg-primary hover:text-white rounded-lg transition-colors cursor-pointer"
-            >
-              + Client Reg
-            </button>
-            <button
-              onClick={() => simulateAction("Medicine")}
-              className="text-[10px] font-bold px-2 py-1 bg-purple-500/10 text-purple-600 border border-purple-500/10 hover:bg-purple-600 hover:text-white rounded-lg transition-colors cursor-pointer"
-            >
-              + Create Med
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* SUMMARY STATS CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
         
         {/* Total Actions Card */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">Total Actions</span>
-              <h3 className="text-3xl font-extrabold text-dark-navy mt-1 tracking-tight">{totalLogsCount}</h3>
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">Total Actions</span>
+              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">{totalLogsCount}</h3>
             </div>
-            <div className="p-3 bg-primary/10 text-primary rounded-xl">
-              <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-primary/10 text-primary rounded-xl">
+              <svg className="w-5 h-5 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
           </div>
-          <p className="text-[11px] font-semibold text-slate-400 mt-5">All time actions recorded</p>
+          <p className="text-[10px] font-semibold text-slate-400 mt-2">All time actions recorded</p>
         </Card>
 
         {/* Approvals Card */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">Approvals</span>
-              <h3 className="text-3xl font-extrabold text-[#22C55E] mt-1 tracking-tight">{approvalsCount}</h3>
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">Approvals</span>
+              <h3 className="text-2xl font-extrabold text-[#22C55E] mt-0.5 tracking-tight">{approvalsCount}</h3>
             </div>
-            <div className="p-3 bg-[#22C55E]/10 text-[#22C55E] rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-[#22C55E]/10 text-[#22C55E] rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <p className="text-[11px] font-semibold text-slate-400 mt-5">Verified approved Listings</p>
+          <p className="text-[10px] font-semibold text-slate-400 mt-2">Verified approved Listings</p>
         </Card>
 
         {/* Rejections Card */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">Rejections</span>
-              <h3 className="text-3xl font-extrabold text-[#EF4444] mt-1 tracking-tight">{rejectionsCount}</h3>
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">Rejections</span>
+              <h3 className="text-2xl font-extrabold text-[#EF4444] mt-0.5 tracking-tight">{rejectionsCount}</h3>
             </div>
-            <div className="p-3 bg-[#EF4444]/10 text-[#EF4444] rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-[#EF4444]/10 text-[#EF4444] rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <p className="text-[11px] font-semibold text-slate-400 mt-5">Rejected applications log</p>
+          <p className="text-[10px] font-semibold text-slate-400 mt-2">Rejected applications log</p>
         </Card>
 
         {/* Today's Activities Card */}
-        <Card className="hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
+        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-400 tracking-wide uppercase">Today's Activities</span>
-              <h3 className="text-3xl font-extrabold text-info mt-1 tracking-tight">{todayCount}</h3>
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">Today's Activities</span>
+              <h3 className="text-2xl font-extrabold text-info mt-0.5 tracking-tight">{todayCount}</h3>
             </div>
-            <div className="p-3 bg-info/10 text-info rounded-xl">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <div className="p-2 bg-info/10 text-info rounded-xl">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <p className="text-[11px] font-semibold text-slate-400 mt-5">Actions logged today</p>
+          <p className="text-[10px] font-semibold text-slate-400 mt-2">Actions logged today</p>
         </Card>
 
       </div>
 
       {/* SEARCH, FILTERS, EXPORT TOOLBAR */}
-      <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between">
+      <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between shrink-0">
         
         {/* Large Search Input */}
         <div className="relative flex-1 max-w-md">
@@ -629,10 +577,10 @@ Security Registry: SIGNED & SECURED
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-11 pr-4 py-3 text-sm text-dark-navy bg-white border border-border-color rounded-2xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200 animate-search-focus"
+            className="w-full pl-10 pr-4 py-2 text-xs text-dark-navy bg-white border border-border-color rounded-xl outline-hidden shadow-[0_2px_10px_rgba(15,41,64,0.02)] placeholder:text-slate-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all duration-200"
           />
-          <div className="absolute left-4 top-3.5 text-slate-400">
-            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <div className="absolute left-3.5 top-2.5 text-slate-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -884,22 +832,23 @@ Security Registry: SIGNED & SECURED
           {/* Refresh Action */}
           <button
             onClick={handleRefresh}
-            className="flex items-center justify-center p-2.5 text-slate-400 hover:text-dark-navy bg-white border border-border-color rounded-2xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] hover:bg-slate-50 transition-colors cursor-pointer"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-600 bg-white border border-border-color rounded-xl shadow-[0_2px_10px_rgba(15,41,64,0.02)] hover:bg-slate-50 transition-all cursor-pointer active:scale-95 select-none"
             title="Refresh Logs"
           >
-            <svg className={`w-5 h-5 ${isRefreshing ? "animate-spin text-primary" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5" />
+            <svg className={`w-4 h-4 ${isRefreshing ? "animate-spin text-primary" : "text-slate-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
+            <span>Refresh</span>
           </button>
 
         </div>
       </div>
 
       {/* MAIN TWO-COLUMN CONTENT GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-stretch">
+      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-4 gap-4 items-stretch overflow-hidden">
         
         {/* COLUMN 1, 2, 3: AUDIT TABLE & PAGINATION */}
-        <div className="lg:col-span-3 flex flex-col">
+        <div className="lg:col-span-3 flex flex-col min-h-0 justify-between">
           
           {currentLogs.length === 0 ? (
             /* EMPTY STATE SCREEN */
@@ -919,17 +868,17 @@ Security Registry: SIGNED & SECURED
             </Card>
           ) : (
             /* DATA AUDIT TABLE CARD */
-            <Card className="p-0 overflow-hidden shadow-sm animate-fade-in flex flex-col h-full justify-between flex-1">
-              <div className="w-full flex-1">
+            <Card className="p-0 overflow-hidden shadow-sm animate-fade-in flex flex-col h-full justify-between flex-1 min-h-0">
+              <div className="w-full flex-1 overflow-x-auto">
                 <table className="w-full text-left border-collapse table-auto">
                   <thead>
                     <tr className="bg-slate-50 border-b border-border-color select-none">
-                      <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Log ID</th>
-                      <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Date & Time</th>
-                      <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Admin</th>
-                      <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Action</th>
-                      <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Medicine Name</th>
-                      <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Details</th>
+                      <th className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Log ID</th>
+                      <th className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date & Time</th>
+                      <th className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Admin</th>
+                      <th className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Action</th>
+                      <th className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Medicine Name</th>
+                      <th className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Details</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-color">
@@ -940,20 +889,20 @@ Security Registry: SIGNED & SECURED
                           className="hover:bg-slate-50/50 transition-colors duration-150 group"
                         >
                           {/* Log ID */}
-                          <td className="px-5 py-3.5 font-mono text-xs font-extrabold text-slate-600 group-hover:text-primary transition-colors">
+                          <td className="px-4 py-2 font-mono text-xs font-extrabold text-slate-600 group-hover:text-primary transition-colors">
                             {log.id}
                           </td>
 
                           {/* Timestamp */}
-                          <td className="px-5 py-3.5 whitespace-nowrap">
+                          <td className="px-4 py-2 whitespace-nowrap">
                             <div className="text-xs font-bold text-dark-navy">{log.timestamp.split(", ")[0]}</div>
-                            <div className="text-[10px] text-slate-400 mt-0.5 font-semibold">{log.timestamp.split(", ")[1]}</div>
+                            <div className="text-[10px] text-slate-400 font-semibold">{log.timestamp.split(", ")[1]}</div>
                           </td>
 
                           {/* Admin Details */}
-                          <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-7 h-7 rounded-full bg-slate-200 text-slate-600 border border-border-color flex items-center justify-center font-bold text-[10px] select-none shrink-0">
+                          <td className="px-4 py-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-600 border border-border-color flex items-center justify-center font-bold text-[9px] select-none shrink-0">
                                 {log.adminName.split(" ").map(n => n[0]).join("")}
                               </div>
                               <div>
@@ -964,18 +913,18 @@ Security Registry: SIGNED & SECURED
                           </td>
 
                           {/* Action Status Badge */}
-                          <td className="px-5 py-3.5 whitespace-nowrap">
-                            <span className={`inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${getActionBadgeClass(log.action)}`}>
+                          <td className="px-4 py-2 whitespace-nowrap">
+                            <span className={`inline-block text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${getActionBadgeClass(log.action)}`}>
                               {log.newStatus || log.action}
                             </span>
                           </td>
 
                           {/* Medicine Name */}
-                          <td className="px-5 py-3.5">
+                          <td className="px-4 py-2">
                             {log.medicineName && log.medicineName !== "N/A" ? (
                               <div>
                                 <div className="text-xs font-extrabold text-dark-navy leading-tight">{log.medicineName}</div>
-                                <div className="text-[10px] text-slate-400 mt-0.5 font-semibold font-mono">
+                                <div className="text-[10px] text-slate-400 font-semibold font-mono">
                                   ID: {log.medicineId}
                                 </div>
                               </div>
@@ -985,11 +934,11 @@ Security Registry: SIGNED & SECURED
                           </td>
 
                           {/* Details Row Buttons */}
-                          <td className="px-5 py-3.5 whitespace-nowrap text-right">
-                            <div className="flex items-center justify-end gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                          <td className="px-4 py-2 whitespace-nowrap text-right">
+                            <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => setSelectedLog(log)}
-                                className="p-1.5 bg-slate-50 hover:bg-primary/10 hover:text-primary text-slate-400 rounded-lg border border-border-color transition-colors cursor-pointer"
+                                className="p-1 bg-slate-50 hover:bg-primary/10 hover:text-primary text-slate-400 rounded-lg border border-border-color transition-colors cursor-pointer"
                                 title="View details"
                               >
                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -999,7 +948,7 @@ Security Registry: SIGNED & SECURED
                               </button>
                               <button
                                 onClick={() => triggerSingleDownload(log)}
-                                className="p-1.5 bg-slate-50 hover:bg-primary/10 hover:text-primary text-slate-400 rounded-lg border border-border-color transition-colors cursor-pointer"
+                                className="p-1 bg-slate-50 hover:bg-primary/10 hover:text-primary text-slate-400 rounded-lg border border-border-color transition-colors cursor-pointer"
                                 title="Download Log"
                               >
                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -1016,8 +965,8 @@ Security Registry: SIGNED & SECURED
               </div>
 
               {/* PAGINATION PANEL */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-white border-t border-border-color select-none">
-                <span className="text-xs sm:text-sm font-semibold text-slate-400">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2 bg-white border-t border-border-color select-none shrink-0">
+                <span className="text-xs font-semibold text-slate-400">
                   Showing <span className="font-extrabold text-dark-navy">{indexOfFirstItem + 1}</span> to{" "}
                   <span className="font-extrabold text-dark-navy">{Math.min(indexOfLastItem, totalItems)}</span> of{" "}
                   <span className="font-extrabold text-dark-navy">{totalItems}</span> Logs
@@ -1028,11 +977,11 @@ Security Registry: SIGNED & SECURED
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                    className={`p-1.5 border rounded-lg transition-all cursor-pointer ${
                       currentPage === 1 ? "text-slate-300 bg-slate-50 border-slate-200" : "text-slate-500 bg-white border-border-color hover:bg-slate-50 hover:text-dark-navy"
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
@@ -1040,13 +989,12 @@ Security Registry: SIGNED & SECURED
                   {/* Dynamic page numbers */}
                   {Array.from({ length: totalPages }).map((_, i) => {
                     const pageNum = i + 1;
-                    // Render logic for truncated pagination
                     if (totalPages > 5 && pageNum !== 1 && pageNum !== totalPages && Math.abs(pageNum - currentPage) > 1) {
                       if (pageNum === 2 && currentPage > 3) {
-                        return <span key="dots-start" className="px-2 text-slate-400 font-bold text-xs select-none">...</span>;
+                        return <span key="dots-start" className="px-1.5 text-slate-400 font-bold text-xs select-none">...</span>;
                       }
                       if (pageNum === totalPages - 1 && currentPage < totalPages - 2) {
-                        return <span key="dots-end" className="px-2 text-slate-400 font-bold text-xs select-none">...</span>;
+                        return <span key="dots-end" className="px-1.5 text-slate-400 font-bold text-xs select-none">...</span>;
                       }
                       return null;
                     }
@@ -1055,9 +1003,9 @@ Security Registry: SIGNED & SECURED
                       <button
                         key={pageNum}
                         onClick={() => paginate(pageNum)}
-                        className={`w-9 h-9 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                        className={`w-7 h-7 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                           currentPage === pageNum
-                            ? "bg-primary text-white shadow-md shadow-primary/10"
+                            ? "bg-primary text-white shadow-xs"
                             : "bg-white text-slate-500 border border-border-color hover:bg-slate-50 hover:text-dark-navy"
                         }`}
                       >
@@ -1070,11 +1018,11 @@ Security Registry: SIGNED & SECURED
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                    className={`p-1.5 border rounded-lg transition-all cursor-pointer ${
                       currentPage === totalPages ? "text-slate-300 bg-slate-50 border-slate-200" : "text-slate-500 bg-white border-border-color hover:bg-slate-50 hover:text-dark-navy"
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -1087,33 +1035,33 @@ Security Registry: SIGNED & SECURED
         </div>
 
         {/* COLUMN 4: VERTICAL ACTIVITY TIMELINE */}
-        <div className="flex flex-col">
-          <Card className="p-6 shadow-sm flex flex-col space-y-5 animate-fade-in h-full flex-1 justify-between">
+        <div className="flex flex-col min-h-0">
+          <Card className="!p-3.5 shadow-sm flex flex-col space-y-3 animate-fade-in h-full flex-1 justify-between overflow-hidden">
             <div>
-              <h3 className="text-base font-bold text-dark-navy tracking-tight">Recent Activity Feed</h3>
-              <p className="text-xs text-slate-400 mt-1 font-semibold">Live chronological log transitions</p>
+              <h3 className="text-sm font-bold text-dark-navy tracking-tight">Recent Activity Feed</h3>
+              <p className="text-[10px] text-slate-400 font-semibold">Live log transitions</p>
             </div>
 
             {/* Timeline Tree */}
-            <div className="relative border-l-2 border-slate-100 pl-6 ml-3 flex-1 flex flex-col justify-between py-1.5 min-h-[340px]">
+            <div className="relative border-l-2 border-slate-100 pl-5 ml-3 flex-1 flex flex-col justify-between py-1 min-h-0">
               
               {actionLogs.slice(0, 5).map((log) => {
                 const parts = log.timestamp.split(", ");
                 const time = parts[1] || parts[0];
 
                 return (
-                  <div key={log.id} className="relative select-none hover:translate-x-1 transition-transform duration-200 py-1">
+                  <div key={log.id} className="relative select-none hover:translate-x-1 transition-transform duration-200 py-0.5">
                     {/* Floating Connection Node Icon */}
-                    <div className="absolute -left-10 top-0.5">
+                    <div className="absolute -left-9 top-0">
                       {getTimelineIcon(log.action)}
                     </div>
                     
                     {/* Node details */}
                     <div>
-                      <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md font-mono">{time}</span>
-                      <h4 className="text-xs font-bold text-dark-navy mt-1">{log.remarks}</h4>
-                      <p className="text-[10px] text-slate-400 mt-0.5 font-semibold">
-                        by {log.adminName} &bull; <span className="font-mono text-[9px]">{log.id}</span>
+                      <span className="text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-md font-mono">{time}</span>
+                      <h4 className="text-xs font-bold text-dark-navy mt-0.5 leading-tight line-clamp-1">{log.remarks}</h4>
+                      <p className="text-[10px] text-slate-400 font-semibold">
+                        by {log.adminName}
                       </p>
                     </div>
                   </div>
