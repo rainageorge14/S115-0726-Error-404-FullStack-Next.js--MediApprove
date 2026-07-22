@@ -19,7 +19,7 @@ export const NotificationPagination: React.FC<NotificationPaginationProps> = ({
   onPageChange,
 }) => {
   return (
-    <div className="p-4 border-t border-[#E2E8F0] flex items-center justify-between select-none font-sans text-left">
+    <div className="py-2.5 px-4 border-t border-[#E2E8F0] flex items-center justify-between select-none font-sans text-left">
       <span className="text-xs font-bold text-slate-400">
         Showing {startIndex + 1} - {Math.min(endIndex, totalItems)} of {totalItems} notifications
       </span>
