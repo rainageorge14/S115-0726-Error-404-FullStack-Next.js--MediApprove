@@ -44,7 +44,7 @@ function NotificationsPageContent() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 5;
 
   // Refresh Loader Simulation
   const [loading, setLoading] = useState(false);
@@ -188,7 +188,7 @@ function NotificationsPageContent() {
   const unreadCount = (notifications || []).filter((n) => !n.isRead).length;
 
   return (
-    <main className="flex-1 p-[24px] flex flex-col bg-[#F8FAFC] overflow-y-auto select-none font-sans h-[calc(100vh-72px)] pb-10">
+    <main className="flex-1 pt-4 pb-4 px-6 flex flex-col bg-[#F8FAFC] overflow-hidden select-none font-sans h-[calc(100vh-72px)]">
       
       {/* Toast alert popup */}
       {toastMessage && (
@@ -201,7 +201,7 @@ function NotificationsPageContent() {
       )}
 
       {/* Page Content Header / Toolbar */}
-      <div className="flex items-center justify-between gap-3 mb-6 select-none flex-wrap">
+      <div className="flex items-center justify-between gap-3 mb-3.5 select-none flex-wrap">
         {/* Search bar */}
         <NotificationSearch value={search} onChange={setSearch} />
 
@@ -232,7 +232,7 @@ function NotificationsPageContent() {
       <NotificationStats notifications={notifications || []} />
 
       {/* Main card */}
-      <Card className="rounded-[16px] border border-[#E2E8F0] bg-white shadow-[0_6px_20px_rgba(15,23,42,0.06)] flex flex-col">
+      <Card noPadding className="rounded-[16px] border border-[#E2E8F0] bg-white shadow-[0_6px_20px_rgba(15,23,42,0.06)] flex flex-col">
         
         {/* Filters chips and date filter toolbar */}
         <NotificationFilters

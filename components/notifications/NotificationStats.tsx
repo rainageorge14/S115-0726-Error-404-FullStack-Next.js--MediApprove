@@ -45,11 +45,12 @@ export const NotificationStats: React.FC<NotificationStatsProps> = ({ notificati
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[20px] select-none mb-6 font-sans">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[20px] select-none mb-3.5 font-sans">
       {stats.map((s, i) => (
         <Card
           key={i}
-          className="p-5 rounded-[16px] border border-[#E2E8F0] bg-white shadow-[0_6px_20px_rgba(15,23,42,0.04)] hover:shadow-md transition-shadow duration-200 flex items-center justify-between text-left"
+          noPadding
+          className="p-4 rounded-[12px] border border-[#E2E8F0] bg-white shadow-[0_4px_12px_rgba(15,23,42,0.03)] hover:shadow-md transition-shadow duration-200 flex items-center justify-between text-left"
         >
           <div className="space-y-1">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">

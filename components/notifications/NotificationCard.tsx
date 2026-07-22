@@ -72,7 +72,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 
   return (
     <div
-      className={`px-5 py-4 flex items-center justify-between gap-4 border-b border-slate-100 hover:bg-slate-50/50 transition-all select-none font-sans ${
+      className={`px-4 py-2.5 flex items-center justify-between gap-4 border-b border-slate-100 hover:bg-slate-50/50 transition-all select-none font-sans ${
         !notification.isRead ? "bg-[#14B8C5]/5" : "bg-white"
       }`}
     >

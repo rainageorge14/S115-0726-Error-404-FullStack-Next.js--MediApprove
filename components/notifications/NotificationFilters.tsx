@@ -26,7 +26,7 @@ export const NotificationFilters: React.FC<NotificationFiltersProps> = ({
   ];
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 border-b border-[#E2E8F0] select-none font-sans text-left">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2.5 px-4 border-b border-[#E2E8F0] select-none font-sans text-left">
       {/* Tab Filter Chips */}
       <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
         {tabs.map((t) => {

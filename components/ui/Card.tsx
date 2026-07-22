@@ -43,7 +43,7 @@ export const Card: React.FC<CardProps> = ({
       )}
 
       {/* Card Content */}
-      <div className={noPadding ? "" : "p-6"}>{children}</div>
+      {noPadding ? children : <div className="p-6">{children}</div>}
     </div>
   );
 };
