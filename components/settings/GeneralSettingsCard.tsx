@@ -7,13 +7,48 @@ interface GeneralSettingsCardProps {
 }
 
 export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave }) => {
-  const [appName, setAppName] = useState("MediApprove");
-  const [org, setOrg] = useState("Netmeds Corporate");
-  const [timezone, setTimezone] = useState("UTC+05:30");
-  const [lang, setLang] = useState("en");
-  const [dateFormat, setDateFormat] = useState("DD MMM YYYY");
-  const [timeFormat, setTimeFormat] = useState("12h");
-  const [theme, setTheme] = useState("system");
+  const [appName, setAppName] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("appName") || "MediApprove";
+    }
+    return "MediApprove";
+  });
+  const [org, setOrg] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("org") || "Netmeds Corporate";
+    }
+    return "Netmeds Corporate";
+  });
+  const [timezone, setTimezone] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("timezone") || "UTC+05:30";
+    }
+    return "UTC+05:30";
+  });
+  const [lang, setLang] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("lang") || "en";
+    }
+    return "en";
+  });
+  const [dateFormat, setDateFormat] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("dateFormat") || "DD MMM YYYY";
+    }
+    return "DD MMM YYYY";
+  });
+  const [timeFormat, setTimeFormat] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("timeFormat") || "12h";
+    }
+    return "12h";
+  });
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || "system";
+    }
+    return "system";
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
