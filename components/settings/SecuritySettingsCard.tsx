@@ -2,8 +2,19 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { ToggleSwitch } from "./ToggleSwitch";
 
+export interface SecuritySettingsData {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  tfa: boolean;
+  autoLogout: boolean;
+  rememberDevice: boolean;
+  loginAlerts: boolean;
+  timeout: string;
+}
+
 interface SecuritySettingsCardProps {
-  onUpdate: (data: any) => void;
+  onUpdate: (data: SecuritySettingsData) => void;
 }
 
 export const SecuritySettingsCard: React.FC<SecuritySettingsCardProps> = ({ onUpdate }) => {

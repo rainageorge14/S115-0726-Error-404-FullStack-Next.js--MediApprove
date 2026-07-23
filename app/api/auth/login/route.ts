@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { loginSchema } from "@/lib/validators";
 import { comparePassword } from "@/lib/hash";
 import { generateToken } from "@/lib/jwt";
-
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -26,7 +24,7 @@ export async function POST(req: Request) {
 
     const { email, password } = parsed.data;
 
-    const admin = await prisma.admin.findUnique({
+    const admin = await prisma.user.findUnique({
       where: {
         email,
       },
@@ -84,7 +82,7 @@ export async function POST(req: Request) {
       name: "token",
       value: token,
       httpOnly: true,
-      secure: false, // change to true in production (HTTPS)
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24, // 1 day

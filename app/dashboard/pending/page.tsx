@@ -7,6 +7,7 @@ import { MedicineDetailsModal } from "@/components/ui/MedicineDetailsModal";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { RejectionModal } from "@/components/ui/RejectionModal";
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
+import { DetailedMedicine } from "@/lib/mockMedicines";
 
 export default function PendingMedicinesPage() {
   const { medicines, approveMedicine, rejectMedicine } = useMedicines();
@@ -416,7 +417,7 @@ export default function PendingMedicinesPage() {
 
       <MedicineDetailsModal
         isOpen={selectedMedicine !== null}
-        medicine={selectedMedicine as any}
+        medicine={selectedMedicine as unknown as DetailedMedicine}
         onClose={() => setSelectedMedicine(null)}
         onApprove={handleModalApprove}
         onReject={handleModalReject}

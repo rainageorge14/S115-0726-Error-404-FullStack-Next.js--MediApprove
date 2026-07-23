@@ -38,11 +38,17 @@ export const RejectionModal: React.FC<RejectionModalProps> = ({
   // Reset form states on open/close
   useEffect(() => {
     if (isOpen) {
-      setSelectedReason("");
-      setCustomReason("");
-      setAdminNotes("");
-      setError("");
+      const timer = setTimeout(() => {
+        setSelectedReason("");
+        setCustomReason("");
+        setAdminNotes("");
+        setError("");
+      }, 0);
       document.body.style.overflow = "hidden";
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = "unset";
+      };
     } else {
       document.body.style.overflow = "unset";
     }

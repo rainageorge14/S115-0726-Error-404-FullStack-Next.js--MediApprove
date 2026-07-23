@@ -27,21 +27,45 @@ export default function DashboardLayout({
     }
     return null;
   });
-  const [adminName, setAdminName] = useState("Admin User");
-  const [adminRole, setAdminRole] = useState("Super Admin");
-
-  useEffect(() => {
+  const [adminName, setAdminName] = useState(() => {
     if (typeof window !== "undefined") {
       const storedAdmin = localStorage.getItem("admin");
       if (storedAdmin) {
         try {
           const parsed = JSON.parse(storedAdmin);
-          if (parsed.name) setAdminName(parsed.name);
-          if (parsed.role) setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
-        } catch (e) {
-          // ignore
-        }
+          return parsed.name || "Admin User";
+        } catch (e) {}
       }
+    }
+    return "Admin User";
+  });
+  const [adminRole, setAdminRole] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          return parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Super Admin";
+        } catch (e) {}
+      }
+    }
+    return "Super Admin";
+  });
+  const [role, setRole] = useState<"ADMIN" | "USER">(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          return parsed.role === "ADMIN" ? "ADMIN" : "USER";
+        } catch (e) {}
+      }
+    }
+    return "ADMIN";
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
 
       const handleUpdate = () => {
         setNavAvatar(localStorage.getItem("profilePhoto"));
@@ -53,7 +77,10 @@ export default function DashboardLayout({
           try {
             const parsed = JSON.parse(updatedAdmin);
             if (parsed.name) setAdminName(parsed.name);
-            if (parsed.role) setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
+            if (parsed.role) {
+              setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
+              setRole(parsed.role === "ADMIN" ? "ADMIN" : "USER");
+            }
           } catch (e) {}
         }
       };
@@ -100,14 +127,34 @@ export default function DashboardLayout({
     { name: "Settings", category: "SETTINGS", icon: "settings", href: "/dashboard/settings" },
   ];
 
-  const handleLogout = () => {
+  const filteredMenu = role === "USER"
+    ? [
+        { name: "Dashboard", category: "", icon: "dashboard", href: "/dashboard" },
+        { name: "Notifications", category: "ACTIVITY", icon: "pending", href: "/notifications" },
+        { name: "Profile", category: "SETTINGS", icon: "profile", href: "/dashboard/profile" },
+      ]
+    : sidebarMenu;
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+    } catch (e) {
+      console.error("Failed to clear cookie session", e);
+    }
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("admin");
+      localStorage.removeItem("token");
+      localStorage.removeItem("profilePhoto");
+    }
     router.push("/");
   };
 
   // Get active menu title from current path
   const getActiveTitle = () => {
     if (pathname === "/notifications" || pathname === "/dashboard/notifications") return "Notifications";
-    const active = sidebarMenu.find((m) => m.href === pathname);
+    const active = filteredMenu.find((m) => m.href === pathname);
     return active ? active.name : "Dashboard";
   };
 
@@ -116,7 +163,7 @@ export default function DashboardLayout({
     if (pathname === "/dashboard/action-logs") return "Monitor and audit administrator and system activity logs";
     if (pathname === "/dashboard/reports") return "Monitor medicine approval trends, administrator activity, and overall system performance through interactive analytics.";
     if (pathname === "/notifications" || pathname === "/dashboard/notifications") return "View and manage all system notifications and recent activities.";
-    const active = sidebarMenu.find((m) => m.href === pathname);
+    const active = filteredMenu.find((m) => m.href === pathname);
     return active ? `Overview of ${active.name.toLowerCase()} listing and recent activity` : "Overview of medicine Listing and recent activity";
   };
 
@@ -218,7 +265,7 @@ export default function DashboardLayout({
           {/* Sidebar Navigation */}
           <nav className="flex-1 py-6 px-4 space-y-7 overflow-y-auto">
             {["", "MANAGE", "ACTIVITY", "SETTINGS"].map((cat) => {
-              const items = sidebarMenu.filter((m) => m.category === cat);
+              const items = filteredMenu.filter((m) => m.category === cat);
               if (items.length === 0) return null;
 
               return (
@@ -298,7 +345,7 @@ export default function DashboardLayout({
 
           <nav className="flex-1 py-4 px-4 space-y-6 overflow-y-auto">
             {["", "MANAGE", "ACTIVITY", "SETTINGS"].map((cat) => {
-              const items = sidebarMenu.filter((m) => m.category === cat);
+              const items = filteredMenu.filter((m) => m.category === cat);
               if (items.length === 0) return null;
 
               return (
@@ -384,7 +431,7 @@ export default function DashboardLayout({
                   {navAvatar ? (
                     <img src={navAvatar} alt="Nav Avatar" className="w-full h-full object-cover" />
                   ) : (
-                    adminName.split(" ").map(n => n[0]).join("").toUpperCase()
+                    adminName.split(" ").map((n: string) => n[0]).join("").toUpperCase()
                   )}
                 </div>
                 <div className="text-left hidden lg:block">

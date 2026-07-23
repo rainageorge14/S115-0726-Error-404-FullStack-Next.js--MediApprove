@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useMedicines } from "@/components/ui/MedicineContext";
-import { GeneralSettingsCard } from "@/components/settings/GeneralSettingsCard";
-import { NotificationSettingsCard } from "@/components/settings/NotificationSettingsCard";
-import { SecuritySettingsCard } from "@/components/settings/SecuritySettingsCard";
-import { SystemPreferencesCard } from "@/components/settings/SystemPreferencesCard";
+import { GeneralSettingsCard, GeneralSettingsData } from "@/components/settings/GeneralSettingsCard";
+import { NotificationSettingsCard, NotificationSettingsData } from "@/components/settings/NotificationSettingsCard";
+import { SecuritySettingsCard, SecuritySettingsData } from "@/components/settings/SecuritySettingsCard";
+import { SystemPreferencesCard, SystemPreferencesData } from "@/components/settings/SystemPreferencesCard";
 import { DangerZoneCard } from "@/components/settings/DangerZoneCard";
 
 export default function SettingsPage() {
@@ -24,7 +24,7 @@ export default function SettingsPage() {
   };
 
   // --- Actions ---
-  const handleSaveGeneral = (data: any) => {
+  const handleSaveGeneral = (data: GeneralSettingsData) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("appName", data.appName);
       localStorage.setItem("org", data.org);
@@ -61,7 +61,7 @@ export default function SettingsPage() {
     showToast("General settings updated successfully");
   };
 
-  const handleUpdateNotifications = (data: any) => {
+  const handleUpdateNotifications = (data: NotificationSettingsData) => {
     addActionLog({
       adminId: "admin-1",
       adminName: "Admin User",
@@ -79,7 +79,7 @@ export default function SettingsPage() {
     showToast("Notification preferences updated");
   };
 
-  const handleUpdateSecurity = (data: any) => {
+  const handleUpdateSecurity = (data: SecuritySettingsData) => {
     addActionLog({
       adminId: "admin-1",
       adminName: "Admin User",
@@ -97,7 +97,7 @@ export default function SettingsPage() {
     showToast("Security credentials updated");
   };
 
-  const handleUpdatePreferences = (data: any) => {
+  const handleUpdatePreferences = (data: SystemPreferencesData) => {
     addActionLog({
       adminId: "admin-1",
       adminName: "Admin User",
@@ -115,78 +115,6 @@ export default function SettingsPage() {
     showToast("System preferences configured");
   };
 
-  // --- Quick Actions ---
-  const handleBackup = () => {
-    addActionLog({
-      adminId: "admin-1",
-      adminName: "Admin User",
-      adminEmail: "admin@mediapprove.com",
-      adminRole: "Super Admin",
-      action: "Client Updated",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: "Super Admin compiled full database backup db_backup_xxxx.sql"
-    });
-    showToast("Database backup successfully compiled");
-  };
-
-  const handleExport = () => {
-    addActionLog({
-      adminId: "admin-1",
-      adminName: "Admin User",
-      adminEmail: "admin@mediapprove.com",
-      adminRole: "Super Admin",
-      action: "Client Updated",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: "Exported general system activity report"
-    });
-    showToast("Export metadata compilation ready");
-  };
-
-  const handleSync = () => {
-    addActionLog({
-      adminId: "admin-1",
-      adminName: "Admin User",
-      adminEmail: "admin@mediapprove.com",
-      adminRole: "Super Admin",
-      action: "Client Updated",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: "Synced local tables with cloud database servers"
-    });
-    showToast("Tables synchronized with database successfully");
-  };
-
-  const handleClearCache = () => {
-    addActionLog({
-      adminId: "admin-1",
-      adminName: "Admin User",
-      adminEmail: "admin@mediapprove.com",
-      adminRole: "Super Admin",
-      action: "Client Updated",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: "Super Admin cleared compliance statistics cache"
-    });
-    showToast("Application statistics cache cleared");
-  };
 
   // --- Danger Zone ---
   const handleDeactivate = () => {

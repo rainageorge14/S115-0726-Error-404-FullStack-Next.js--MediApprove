@@ -8,6 +8,8 @@ import { ApprovedMedicineDetailsModal } from "@/components/ui/ApprovedMedicineDe
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 import { ApprovedMedicine } from "@/lib/mockApprovedMedicines";
 
+const getExportTimestamp = () => Date.now();
+
 export default function ApprovedMedicinesPage() {
   const { medicines } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
@@ -83,7 +85,7 @@ export default function ApprovedMedicinesPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Approved_Medicines_Report_${Date.now()}.csv`);
+    link.setAttribute("download", `Approved_Medicines_Report_${getExportTimestamp()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -781,7 +783,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
         isOpen={selectedMedicine !== null}
         medicine={selectedMedicine as ApprovedMedicine | null}
         onClose={() => setSelectedMedicine(null)}
-        onDownloadReport={(med) => handleDownloadReport(med as any)}
+        onDownloadReport={(med) => handleDownloadReport(med as Medicine)}
       />
 
     </main>

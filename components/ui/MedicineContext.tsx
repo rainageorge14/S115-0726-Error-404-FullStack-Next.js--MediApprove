@@ -99,7 +99,7 @@ const getInitialMedicines = (): Medicine[] => {
   const mappedPending: Medicine[] = pendingRaw.map((m) => ({
     ...m,
     medicineName: m.name,
-    category: (m.badges?.find((b) => b.type === "form")?.label as any) || "Tablet",
+    category: (m.badges?.find((b) => b.type === "form")?.label as Medicine["category"]) || "Tablet",
     batchNumber: m.batch || "B-GEN-991",
     batch: m.batch || "B-GEN-991",
     price: 150,

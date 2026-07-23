@@ -20,6 +20,18 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
   onReject,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [role] = React.useState<"ADMIN" | "USER">(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          return parsed.role === "ADMIN" ? "ADMIN" : "USER";
+        } catch (e) {}
+      }
+    }
+    return "ADMIN";
+  });
 
   // Close on Escape key press, lock body scroll when open
   useEffect(() => {
@@ -240,20 +252,22 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
             Cancel
           </Button>
 
-          <div className="flex gap-3">
-            <Button
-              onClick={() => onReject(medicine.id)}
-              className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-danger hover:!bg-red-600 active:scale-95 transition-all text-white rounded-xl"
-            >
-              Reject
-            </Button>
-            <Button
-              onClick={() => onApprove(medicine.id)}
-              className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-success hover:!bg-emerald-600 active:scale-95 transition-all text-white rounded-xl"
-            >
-              Approve
-            </Button>
-          </div>
+          {role === "ADMIN" && (
+            <div className="flex gap-3">
+              <Button
+                onClick={() => onReject(medicine.id)}
+                className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-danger hover:!bg-red-600 active:scale-95 transition-all text-white rounded-xl"
+              >
+                Reject
+              </Button>
+              <Button
+                onClick={() => onApprove(medicine.id)}
+                className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-success hover:!bg-emerald-600 active:scale-95 transition-all text-white rounded-xl"
+              >
+                Approve
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

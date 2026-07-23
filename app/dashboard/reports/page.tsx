@@ -32,6 +32,8 @@ interface ReportItem {
   status: "Completed" | "Pending" | "Failed";
 }
 
+const getExportTimestamp = () => Date.now();
+
 export default function ReportsPage() {
   const { medicines, actionLogs } = useMedicines();
   const [isMounted, setIsMounted] = useState(false);
@@ -59,7 +61,10 @@ export default function ReportsPage() {
   const [isTypeOpen, setIsTypeOpen] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -249,7 +254,7 @@ Report Registry Signed. Certified Secure.
     const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const link = document.createElement("a");
     link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", `Generated_Reports_Metadata_${Date.now()}.csv`);
+    link.setAttribute("download", `Generated_Reports_Metadata_${getExportTimestamp()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -261,7 +266,7 @@ Report Registry Signed. Certified Secure.
     const jsonContent = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(filteredReports, null, 2));
     const link = document.createElement("a");
     link.setAttribute("href", jsonContent);
-    link.setAttribute("download", `Reports_List_Dump_${Date.now()}.json`);
+    link.setAttribute("download", `Reports_List_Dump_${getExportTimestamp()}.json`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

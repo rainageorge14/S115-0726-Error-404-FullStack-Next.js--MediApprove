@@ -2,8 +2,18 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { SettingInput } from "./SettingInput";
 
+export interface GeneralSettingsData {
+  appName: string;
+  org: string;
+  timezone: string;
+  lang: string;
+  dateFormat: string;
+  timeFormat: string;
+  theme: string;
+}
+
 interface GeneralSettingsCardProps {
-  onSave: (data: any) => void;
+  onSave: (data: GeneralSettingsData) => void;
 }
 
 export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave }) => {

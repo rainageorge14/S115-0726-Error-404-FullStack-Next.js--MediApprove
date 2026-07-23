@@ -7,20 +7,46 @@ async function main() {
   // Create admin
   const hashedPassword = await hashPassword("admin123");
 
-  await prisma.admin.upsert({
+  await prisma.user.upsert({
     where: {
-      email: "admin@mediapprove.com",
+      email: "raina@mediapprove.com",
     },
     update: {},
     create: {
-      name: "Admin",
-      email: "admin@mediapprove.com",
+      name: "Raina",
+      email: "raina@mediapprove.com",
       password: hashedPassword,
       role: Role.ADMIN,
     },
   });
 
-  console.log("Admin created");
+  await prisma.user.upsert({
+    where: {
+      email: "vinayak@mediapprove.com",
+    },
+    update: {},
+    create: {
+      name: "Vinayak",
+      email: "vinayak@mediapprove.com",
+      password: hashedPassword,
+      role: Role.ADMIN,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: {
+      email: "demo@gmail.com",
+    },
+    update: {},
+    create: {
+      name: "Demo User",
+      email: "demo@gmail.com",
+      password: hashedPassword,
+      role: Role.USER,
+    },
+  });
+
+  console.log("Seed users created");
 
   // Create sample medicines
   await prisma.medicineListing.createMany({
