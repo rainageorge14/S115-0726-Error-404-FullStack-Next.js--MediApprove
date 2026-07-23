@@ -2,16 +2,33 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { AuditAction, MedicineStatus } from "@prisma/client";
 import { createAuditLog } from "@/lib/audit";
+import { getAuthUser } from "@/lib/auth";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = getAuthUser(req);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    if (user.role !== "ADMIN") {
+      return NextResponse.json(
+        { success: false, message: "Forbidden" },
+        { status: 403 }
+      );
+    }
+
     const { id } = await params;
 
-    // Temporary admin until JWT authentication is implemented
-    const admin = await prisma.admin.findFirst();
+    const admin = await prisma.user.findUnique({
+      where: { id: user.id },
+    });
 
     if (!admin) {
       return NextResponse.json(

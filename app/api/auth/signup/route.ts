@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { hashPassword } from "@/lib/hash";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
 
 const signupSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
@@ -26,7 +24,7 @@ export async function POST(req: Request) {
     const { fullName, email, password } = parsed.data;
 
     // Check if email already exists
-    const existingAdmin = await prisma.admin.findUnique({
+    const existingAdmin = await prisma.user.findUnique({
       where: { email },
     });
 
@@ -40,12 +38,16 @@ export async function POST(req: Request) {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create admin in the database
-    const admin = await prisma.admin.create({
+    // Determine role based on email domain automatically
+    const role = email.toLowerCase().endsWith("@mediapprove.com") ? "ADMIN" : "USER";
+
+    // Create user in the database
+    const admin = await prisma.user.create({
       data: {
         name: fullName,
         email,
         password: hashedPassword,
+        role,
       },
     });
 

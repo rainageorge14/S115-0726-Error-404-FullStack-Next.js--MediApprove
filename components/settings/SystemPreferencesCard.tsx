@@ -2,8 +2,17 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { ToggleSwitch } from "./ToggleSwitch";
 
+export interface SystemPreferencesData {
+  defaultDashboard: string;
+  rowsPerPage: number;
+  autoRefresh: boolean;
+  refreshInterval: string;
+  compactMode: boolean;
+  enableAnimations: boolean;
+}
+
 interface SystemPreferencesCardProps {
-  onChange: (data: any) => void;
+  onChange: (data: SystemPreferencesData) => void;
 }
 
 export const SystemPreferencesCard: React.FC<SystemPreferencesCardProps> = ({ onChange }) => {
@@ -14,16 +23,16 @@ export const SystemPreferencesCard: React.FC<SystemPreferencesCardProps> = ({ on
   const [compactMode, setCompactMode] = useState(false);
   const [enableAnimations, setEnableAnimations] = useState(true);
 
-  const handleUpdate = (key: string, val: any) => {
-    let updated: any = {
+  const handleUpdate = <K extends keyof SystemPreferencesData>(key: K, val: SystemPreferencesData[K]) => {
+    const updated: SystemPreferencesData = {
       defaultDashboard,
       rowsPerPage,
       autoRefresh,
       refreshInterval,
       compactMode,
       enableAnimations,
+      [key]: val,
     };
-    updated[key] = val;
     onChange(updated);
   };
 

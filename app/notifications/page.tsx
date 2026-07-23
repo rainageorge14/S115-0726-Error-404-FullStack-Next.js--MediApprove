@@ -73,7 +73,10 @@ function NotificationsPageContent() {
 
   // Reset pagination on filter change
   useEffect(() => {
-    setCurrentPage(1);
+    const timer = setTimeout(() => {
+      setCurrentPage(1);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [search, activeTab, dateFilter]);
 
   // Date filter comparison helper

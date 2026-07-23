@@ -7,8 +7,10 @@ import Link from "next/link";
 import { RejectedMedicineDetailsModal } from "@/components/ui/RejectedMedicineDetailsModal";
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 
+const getExportTimestamp = () => Date.now();
+
 export default function RejectedMedicinesPage() {
-  const { medicines, rejectMedicine } = useMedicines();
+  const { medicines } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -84,7 +86,7 @@ export default function RejectedMedicinesPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Rejected_Medicines_Report_${Date.now()}.csv`);
+    link.setAttribute("download", `Rejected_Medicines_Report_${getExportTimestamp()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

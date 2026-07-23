@@ -9,9 +9,42 @@ export default function ProfilePage() {
   const { addActionLog } = useMedicines();
 
   // Profile data states
-  const [fullName, setFullName] = useState("Admin User");
-  const [email, setEmail] = useState("admin@netmeds.com");
-  const [phone, setPhone] = useState("+91 96165 43210");
+  const [fullName, setFullName] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          return parsed.name || "Admin User";
+        } catch (e) {}
+      }
+    }
+    return "Admin User";
+  });
+  const [email, setEmail] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          return parsed.email || "admin@netmeds.com";
+        } catch (e) {}
+      }
+    }
+    return "admin@netmeds.com";
+  });
+  const [phone, setPhone] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          return parsed.phone || "+91 96165 43210";
+        } catch (e) {}
+      }
+    }
+    return "+91 96165 43210";
+  });
 
   // Passwords state
   const [currentPassword, setCurrentPassword] = useState("");
@@ -39,23 +72,6 @@ export default function ProfilePage() {
     }
     return null;
   });
-
-  // Load admin details from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedAdmin = localStorage.getItem("admin");
-      if (storedAdmin) {
-        try {
-          const parsed = JSON.parse(storedAdmin);
-          if (parsed.name) setFullName(parsed.name);
-          if (parsed.email) setEmail(parsed.email);
-          if (parsed.phone) setPhone(parsed.phone);
-        } catch (e) {
-          // ignore
-        }
-      }
-    }
-  }, []);
 
   const handleAvatarChange = (url: string | null) => {
     setAvatarUrl(url);

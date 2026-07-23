@@ -2,8 +2,18 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { ToggleSwitch } from "./ToggleSwitch";
 
+export interface NotificationSettingsData {
+  emailNotifs: boolean;
+  browserNotifs: boolean;
+  approvalAlerts: boolean;
+  rejectedAlerts: boolean;
+  weeklyReports: boolean;
+  monthlyReports: boolean;
+  systemUpdates: boolean;
+}
+
 interface NotificationSettingsCardProps {
-  onChange: (data: any) => void;
+  onChange: (data: NotificationSettingsData) => void;
 }
 
 export const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({ onChange }) => {
@@ -15,8 +25,8 @@ export const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> =
   const [monthlyReports, setMonthlyReports] = useState(false);
   const [systemUpdates, setSystemUpdates] = useState(true);
 
-  const handleToggle = (key: string, val: boolean) => {
-    let updated: any = {
+  const handleToggle = (key: keyof NotificationSettingsData, val: boolean) => {
+    const updated: NotificationSettingsData = {
       emailNotifs,
       browserNotifs,
       approvalAlerts,
@@ -24,8 +34,8 @@ export const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> =
       weeklyReports,
       monthlyReports,
       systemUpdates,
+      [key]: val,
     };
-    updated[key] = val;
     onChange(updated);
   };
 

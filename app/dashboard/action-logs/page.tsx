@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/Button";
 import { useMedicines, ActionLog } from "@/components/ui/MedicineContext";
 import { ActionLogDetailsModal } from "@/components/ui/ActionLogDetailsModal";
 
+const getExportTimestamp = () => Date.now();
+
 export default function ActionLogsPage() {
   const { actionLogs, addActionLog } = useMedicines();
   
@@ -242,7 +244,7 @@ Security Registry: SIGNED & SECURED
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Action_Logs_Audit_Report_${Date.now()}.csv`);
+    link.setAttribute("download", `Action_Logs_Audit_Report_${getExportTimestamp()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -258,7 +260,7 @@ Security Registry: SIGNED & SECURED
     const jsonContent = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sortedLogs, null, 2));
     const link = document.createElement("a");
     link.setAttribute("href", jsonContent);
-    link.setAttribute("download", `Action_Logs_Dump_${Date.now()}.json`);
+    link.setAttribute("download", `Action_Logs_Dump_${getExportTimestamp()}.json`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -296,7 +298,7 @@ Security Registry: SIGNED & SECURED
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `Registry_Audit_Report_${Date.now()}.txt`;
+    link.download = `Registry_Audit_Report_${getExportTimestamp()}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -306,7 +308,7 @@ Security Registry: SIGNED & SECURED
 
   // Action simulators to trigger real-time actions and logs
   const simulateAction = (type: "Login" | "Logout" | "Profile" | "Client" | "Medicine") => {
-    let logPayload: any = {};
+    let logPayload: Omit<ActionLog, "id" | "timestamp">;
     
     switch (type) {
       case "Login":
@@ -550,7 +552,7 @@ Security Registry: SIGNED & SECURED
         <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none animate-fade-in">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">Today's Activities</span>
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">Today&apos;s Activities</span>
               <h3 className="text-2xl font-extrabold text-info mt-0.5 tracking-tight">{todayCount}</h3>
             </div>
             <div className="p-2 bg-info/10 text-info rounded-xl">

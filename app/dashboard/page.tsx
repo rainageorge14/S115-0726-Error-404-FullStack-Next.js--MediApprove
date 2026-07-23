@@ -7,11 +7,24 @@ import Link from "next/link";
 import { MedicineDetailsModal } from "@/components/ui/MedicineDetailsModal";
 import { RejectionModal } from "@/components/ui/RejectionModal";
 import { useMedicines, Medicine, Activity } from "@/components/ui/MedicineContext";
+import { DetailedMedicine } from "@/lib/mockMedicines";
 
 export default function DashboardHome() {
   const { medicines, activities, approveMedicine, rejectMedicine } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [toastMessage, setToastMessage] = useState("");
+  const [role] = useState<"ADMIN" | "USER">(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          return parsed.role === "ADMIN" ? "ADMIN" : "USER";
+        } catch (e) {}
+      }
+    }
+    return "ADMIN";
+  });
 
   // Rejection modal states
   const [rejectionMedicineId, setRejectionMedicineId] = useState<string | null>(null);
@@ -207,17 +220,19 @@ export default function DashboardHome() {
       {/* LEVEL 2: Table + Activity Feed */}
       <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-3 gap-3.5 items-stretch overflow-hidden">
 
-        {/* Table Column (col-span-2) */}
-        <div className="lg:col-span-2 flex flex-col min-h-0">
+        {/* Table Column (col-span-2 / col-span-3 depending on role) */}
+        <div className={`${role === "USER" ? "lg:col-span-3" : "lg:col-span-2"} flex flex-col min-h-0`}>
           <Card
             title="Pending Medicines"
             headerActions={
-              <Link
-                href="/dashboard/pending"
-                className="py-1 px-3 text-[11px] font-bold rounded-lg cursor-pointer bg-primary text-white hover:bg-primary-hover active:scale-95 transition-all inline-flex items-center justify-center"
-              >
-                View All
-              </Link>
+              role === "ADMIN" ? (
+                <Link
+                  href="/dashboard/pending"
+                  className="py-1 px-3 text-[11px] font-bold rounded-lg cursor-pointer bg-primary text-white hover:bg-primary-hover active:scale-95 transition-all inline-flex items-center justify-center"
+                >
+                  View All
+                </Link>
+              ) : undefined
             }
             noPadding
             className="flex-1 min-h-0 flex flex-col justify-between overflow-hidden shadow-xs"
@@ -275,59 +290,61 @@ export default function DashboardHome() {
         </div>
 
         {/* Recent Activity Column */}
-        <div className="flex flex-col min-h-0">
-          <Card title="Recent Activity" noPadding className="flex-1 min-h-0 flex flex-col justify-between overflow-hidden shadow-xs">
-            <div className="divide-y divide-border-color overflow-y-auto flex-1">
-              {activities.slice(0, 4).map((act) => (
-                <div key={act.id} className="p-3 flex items-start gap-2.5 hover:bg-slate-50/40 transition-colors">
-                  {act.action === "approved" && (
-                    <div className="p-1 bg-[#22C55E]/10 text-[#22C55E] rounded-full shrink-0 mt-0.5">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
-                  {act.action === "rejected" && (
-                    <div className="p-1 bg-[#EF4444]/10 text-[#EF4444] rounded-full shrink-0 mt-0.5">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </div>
-                  )}
-                  {act.action === "pending" && (
-                    <div className="p-1 bg-amber-50 text-amber-500 rounded-full shrink-0 mt-0.5">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                    </div>
-                  )}
+        {role === "ADMIN" && (
+          <div className="flex flex-col min-h-0">
+            <Card title="Recent Activity" noPadding className="flex-1 min-h-0 flex flex-col justify-between overflow-hidden shadow-xs">
+              <div className="divide-y divide-border-color overflow-y-auto flex-1">
+                {activities.slice(0, 4).map((act) => (
+                  <div key={act.id} className="p-3 flex items-start gap-2.5 hover:bg-slate-50/40 transition-colors">
+                    {act.action === "approved" && (
+                      <div className="p-1 bg-[#22C55E]/10 text-[#22C55E] rounded-full shrink-0 mt-0.5">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                    {act.action === "rejected" && (
+                      <div className="p-1 bg-[#EF4444]/10 text-[#EF4444] rounded-full shrink-0 mt-0.5">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
+                    )}
+                    {act.action === "pending" && (
+                      <div className="p-1 bg-amber-50 text-amber-500 rounded-full shrink-0 mt-0.5">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                      </div>
+                    )}
 
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-slate-500 leading-tight">
-                      <strong className="text-dark-navy font-bold">{act.medicineName}</strong>{" "}
-                      {act.action === "approved" && "approved"}
-                      {act.action === "rejected" && "rejected"}
-                      {act.action === "pending" && "pending review"}{" "}
-                      <span className="text-[10px] text-slate-400 block font-medium">by {act.user}</span>
-                    </p>
-                    <span className="text-[9px] font-bold text-slate-400 block mt-1 uppercase tracking-wide">
-                      {act.time}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-slate-500 leading-tight">
+                        <strong className="text-dark-navy font-bold">{act.medicineName}</strong>{" "}
+                        {act.action === "approved" && "approved"}
+                        {act.action === "rejected" && "rejected"}
+                        {act.action === "pending" && "pending review"}{" "}
+                        <span className="text-[10px] text-slate-400 block font-medium">by {act.user}</span>
+                      </p>
+                      <span className="text-[9px] font-bold text-slate-400 block mt-1 uppercase tracking-wide">
+                        {act.time}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            <div className="p-2.5 border-t border-border-color text-center bg-slate-50/30 shrink-0">
-              <Link
-                href="/dashboard/action-logs"
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:text-primary-hover transition-colors"
-              >
-                View all Activity &rarr;
-              </Link>
-            </div>
-          </Card>
-        </div>
+              <div className="p-2.5 border-t border-border-color text-center bg-slate-50/30 shrink-0">
+                <Link
+                  href="/dashboard/action-logs"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:text-primary-hover transition-colors"
+                >
+                  View all Activity &rarr;
+                </Link>
+              </div>
+            </Card>
+          </div>
+        )}
 
       </div>
 
@@ -482,7 +499,7 @@ export default function DashboardHome() {
       {/* DETAIL MODAL PANEL */}
       <MedicineDetailsModal
         isOpen={selectedMedicine !== null}
-        medicine={selectedMedicine as any}
+        medicine={selectedMedicine as unknown as DetailedMedicine}
         onClose={() => setSelectedMedicine(null)}
         onApprove={handleApprove}
         onReject={handleRejectClick}

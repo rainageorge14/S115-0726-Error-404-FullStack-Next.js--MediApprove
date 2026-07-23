@@ -1,10 +1,23 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, MedicineStatus } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import { MedicineStatus } from "@prisma/client";
+import { getAuthUser } from "@/lib/auth";
 
-const prisma = new PrismaClient();
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const user = getAuthUser(req);
+    if (!user) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
     const totalMedicines = await prisma.medicineListing.count();
 
     const pendingMedicines = await prisma.medicineListing.count({
