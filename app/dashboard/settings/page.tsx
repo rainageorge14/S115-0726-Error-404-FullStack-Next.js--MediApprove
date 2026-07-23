@@ -25,6 +25,25 @@ export default function SettingsPage() {
 
   // --- Actions ---
   const handleSaveGeneral = (data: any) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("appName", data.appName);
+      localStorage.setItem("org", data.org);
+      localStorage.setItem("timezone", data.timezone);
+      localStorage.setItem("lang", data.lang);
+      localStorage.setItem("dateFormat", data.dateFormat);
+      localStorage.setItem("timeFormat", data.timeFormat);
+      localStorage.setItem("theme", data.theme);
+
+      // Apply the theme immediately
+      if (data.theme === "dark" || (data.theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+
+      window.dispatchEvent(new Event("themeChanged"));
+    }
+
     addActionLog({
       adminId: "admin-1",
       adminName: "Admin User",

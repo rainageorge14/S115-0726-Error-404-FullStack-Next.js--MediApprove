@@ -27,9 +27,10 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         }`}
       >
         <span
-          className={`pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+          className={`pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full shadow-md ring-0 transition duration-200 ease-in-out ${
             checked ? "translate-x-4.5" : "translate-x-0"
           }`}
+          style={{ backgroundColor: "#ffffff" }}
         />
       </button>
     </div>

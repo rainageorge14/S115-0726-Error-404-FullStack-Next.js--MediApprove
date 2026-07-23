@@ -61,4 +61,96 @@ body {
   animation: shake 0.4s ease-in-out;
 }
 
+/* Dark Mode Theme Variables */
+.dark {
+  --background: #0B0F19; /* Premium sleek dark slate background */
+  --foreground: #F1F5F9; /* slate-100 */
+  --card-bg: #161E2E; /* Slate-800 for card backgrounds */
+  --border-color: #243049; /* Border color for dark mode */
+  --left-panel-bg: #0F172A; /* Sidebar and left panel backgrounds */
+  --dark-navy: #161E2E;
+}
+
+/* Tailwind Utilities Class Overrides for Dark Mode */
+.dark .bg-white {
+  background-color: var(--card-bg) !important;
+}
+
+.dark .bg-\[\#F8FAFC\] {
+  background-color: var(--background) !important;
+}
+
+.dark .bg-slate-50 {
+  background-color: var(--background) !important;
+}
+
+.dark .hover\:bg-slate-50:hover {
+  background-color: var(--background) !important;
+}
+
+.dark .hover\:bg-\[\#F8FAFC\]:hover {
+  background-color: var(--background) !important;
+}
+
+.dark .text-dark-navy {
+  color: var(--foreground) !important;
+}
+
+.dark .text-\[\#0F172A\] {
+  color: var(--foreground) !important;
+}
+
+.dark .text-slate-800 {
+  color: var(--foreground) !important;
+}
+
+.dark .text-slate-700 {
+  color: #CBD5E1 !important; /* slate-300 */
+}
+
+.dark .text-slate-600 {
+  color: #94A3B8 !important; /* slate-400 */
+}
+
+.dark .text-slate-500 {
+  color: #94A3B8 !important; /* slate-400 */
+}
+
+.dark .border-border-color {
+  border-color: var(--border-color) !important;
+}
+
+.dark .border-\[\#E2E8F0\] {
+  border-color: var(--border-color) !important;
+}
+
+.dark .border-\[\#CBD5E1\] {
+  border-color: var(--border-color) !important;
+}
+
+/* Redefine form input element colors */
+.dark select {
+  background-color: var(--card-bg) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dark input {
+  background-color: var(--card-bg) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dark textarea {
+  background-color: var(--card-bg) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dark select option {
+  background-color: var(--card-bg) !important;
+  color: var(--foreground) !important;
+}
+
+
 
