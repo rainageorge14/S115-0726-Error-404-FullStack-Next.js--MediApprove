@@ -161,16 +161,12 @@ export default function LoginPage() {
             }}
             error={passwordError}
             rightLabel={
-              <a
-                href="#"
+              <Link
+                href="/forgot-password"
                 className="font-bold text-primary hover:text-primary-hover hover:underline transition-all duration-150"
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert("Password recovery path triggered.");
-                }}
               >
                 Forgot password?
-              </a>
+              </Link>
             }
             required
             autoComplete="current-password"
