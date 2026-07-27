@@ -3,17 +3,11 @@ import { Card } from "@/components/ui/Card";
 import { Camera, Trash2 } from "lucide-react";
 
 interface AccountDetailsCardProps {
-  role: string;
-  memberSince: string;
-  lastLogin: string;
   avatarUrl: string | null;
   onAvatarChange: (url: string | null) => void;
 }
 
 export const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
-  role,
-  memberSince,
-  lastLogin,
   avatarUrl,
   onAvatarChange,
 }) => {
@@ -49,7 +43,7 @@ export const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       <h3 className="text-base font-bold text-[#0F172A] tracking-tight mb-5 text-left">Account Details</h3>
 
       {/* Photo Upload Section */}
-      <div className="flex flex-col items-center mb-6">
+      <div className="flex flex-col items-center">
         <div
           onClick={handleContainerClick}
           className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center border border-slate-200 cursor-pointer overflow-hidden group relative transition-all duration-200 hover:border-primary shadow-inner"
@@ -93,21 +87,6 @@ export const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
               </button>
             </>
           )}
-        </div>
-      </div>
-
-      <div className="space-y-4 text-left border-t border-[#F1F5F9] pt-5">
-        <div>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Role</span>
-          <span className="text-sm font-extrabold text-[#0F172A] mt-1 block">{role}</span>
-        </div>
-        <div className="pt-3 border-t border-[#F1F5F9]">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Member Since</span>
-          <span className="text-sm font-extrabold text-[#0F172A] mt-1 block">{memberSince}</span>
-        </div>
-        <div className="pt-3 border-t border-[#F1F5F9]">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Last Login</span>
-          <span className="text-sm font-extrabold text-[#0F172A] mt-1 block">{lastLogin}</span>
         </div>
       </div>
     </Card>

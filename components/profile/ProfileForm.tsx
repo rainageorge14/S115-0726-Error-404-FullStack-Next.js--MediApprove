@@ -8,30 +8,24 @@ interface ProfileFormProps {
   fullName: string;
   email: string;
   phone: string;
+  role: string;
   errors: Record<string, string>;
   setFullName: (v: string) => void;
   setEmail: (v: string) => void;
   setPhone: (v: string) => void;
-  setCurrentPassword: (v: string) => void;
-  setNewPassword: (v: string) => void;
-  setConfirmNewPassword: (v: string) => void;
   onSubmit: (e: React.FormEvent) => void;
-  currentPasswordRef: React.RefObject<HTMLInputElement | null>;
 }
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({
   fullName,
   email,
   phone,
+  role,
   errors,
   setFullName,
   setEmail,
   setPhone,
-  setCurrentPassword,
-  setNewPassword,
-  setConfirmNewPassword,
   onSubmit,
-  currentPasswordRef,
 }) => {
   return (
     <Card className="p-6 rounded-[16px] border border-[#E2E8F0] bg-white shadow-[0_6px_20px_rgba(15,23,42,0.06)] flex flex-col h-full justify-between">
@@ -70,29 +64,13 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             placeholder="Enter phone number"
           />
 
-          {/* Current Password */}
-          <PasswordInput
-            ref={currentPasswordRef}
-            label="Current Password"
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            error={errors.currentPassword}
-            placeholder="Enter current password"
-          />
-
-          {/* New Password */}
-          <PasswordInput
-            label="New Password"
-            onChange={(e) => setNewPassword(e.target.value)}
-            error={errors.newPassword}
-            placeholder="Enter new password"
-          />
-
-          {/* Confirm New Password */}
-          <PasswordInput
-            label="Confirm New Password"
-            onChange={(e) => setConfirmNewPassword(e.target.value)}
-            error={errors.confirmNewPassword}
-            placeholder="Confirm new password"
+          {/* Role */}
+          <InputField
+            label="Role"
+            value={role}
+            readOnly
+            disabled
+            className="bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200"
           />
         </div>
 
