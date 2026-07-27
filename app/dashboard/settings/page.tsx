@@ -4,8 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useMedicines } from "@/components/ui/MedicineContext";
 import { GeneralSettingsCard, GeneralSettingsData } from "@/components/settings/GeneralSettingsCard";
 import { NotificationSettingsCard, NotificationSettingsData } from "@/components/settings/NotificationSettingsCard";
-import { SecuritySettingsCard, SecuritySettingsData } from "@/components/settings/SecuritySettingsCard";
-import { SystemPreferencesCard, SystemPreferencesData } from "@/components/settings/SystemPreferencesCard";
 import { DangerZoneCard } from "@/components/settings/DangerZoneCard";
 
 export default function SettingsPage() {
@@ -26,10 +24,8 @@ export default function SettingsPage() {
   // --- Actions ---
   const handleSaveGeneral = (data: GeneralSettingsData) => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("appName", data.appName);
       localStorage.setItem("org", data.org);
       localStorage.setItem("timezone", data.timezone);
-      localStorage.setItem("lang", data.lang);
       localStorage.setItem("dateFormat", data.dateFormat);
       localStorage.setItem("timeFormat", data.timeFormat);
       localStorage.setItem("theme", data.theme);
@@ -56,7 +52,7 @@ export default function SettingsPage() {
       browser: "Chrome",
       os: "Windows 11",
       device: "Desktop",
-      remarks: `Updated general preferences (AppName: ${data.appName}, Org: ${data.org})`
+      remarks: `Updated general preferences (Org: ${data.org})`
     });
     showToast("General settings updated successfully");
   };
@@ -79,41 +75,7 @@ export default function SettingsPage() {
     showToast("Notification preferences updated");
   };
 
-  const handleUpdateSecurity = (data: SecuritySettingsData) => {
-    addActionLog({
-      adminId: "admin-1",
-      adminName: "Admin User",
-      adminEmail: "admin@mediapprove.com",
-      adminRole: "Super Admin",
-      action: "Password Changed",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: "Super Admin changed credentials and updated timeout window"
-    });
-    showToast("Security credentials updated");
-  };
-
-  const handleUpdatePreferences = (data: SystemPreferencesData) => {
-    addActionLog({
-      adminId: "admin-1",
-      adminName: "Admin User",
-      adminEmail: "admin@mediapprove.com",
-      adminRole: "Super Admin",
-      action: "Profile Updated",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: `Updated UI display preferences (rows: ${data.rowsPerPage})`
-    });
-    showToast("System preferences configured");
-  };
+  // Removed Security and System Preferences Handlers
 
 
   // --- Danger Zone ---
@@ -155,12 +117,6 @@ export default function SettingsPage() {
 
           {/* Card 2: Notifications */}
           <NotificationSettingsCard onChange={handleUpdateNotifications} />
-
-          {/* Card 3: Security */}
-          <SecuritySettingsCard onUpdate={handleUpdateSecurity} />
-
-          {/* Card 4: System Preferences */}
-          <SystemPreferencesCard onChange={handleUpdatePreferences} />
         </div>
 
         {/* Card 5: Danger Zone */}

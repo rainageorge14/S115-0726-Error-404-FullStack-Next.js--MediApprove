@@ -21,51 +21,27 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [navAvatar, setNavAvatar] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("profilePhoto");
-    }
-    return null;
-  });
-  const [adminName, setAdminName] = useState(() => {
-    if (typeof window !== "undefined") {
-      const storedAdmin = localStorage.getItem("admin");
-      if (storedAdmin) {
-        try {
-          const parsed = JSON.parse(storedAdmin);
-          return parsed.name || "Admin User";
-        } catch (e) {}
-      }
-    }
-    return "Admin User";
-  });
-  const [adminRole, setAdminRole] = useState(() => {
-    if (typeof window !== "undefined") {
-      const storedAdmin = localStorage.getItem("admin");
-      if (storedAdmin) {
-        try {
-          const parsed = JSON.parse(storedAdmin);
-          return parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Super Admin";
-        } catch (e) {}
-      }
-    }
-    return "Super Admin";
-  });
-  const [role, setRole] = useState<"ADMIN" | "USER">(() => {
-    if (typeof window !== "undefined") {
-      const storedAdmin = localStorage.getItem("admin");
-      if (storedAdmin) {
-        try {
-          const parsed = JSON.parse(storedAdmin);
-          return parsed.role === "ADMIN" ? "ADMIN" : "USER";
-        } catch (e) {}
-      }
-    }
-    return "ADMIN";
-  });
+  const [navAvatar, setNavAvatar] = useState<string | null>(null);
+  const [adminName, setAdminName] = useState("Admin User");
+  const [adminRole, setAdminRole] = useState("Super Admin");
+  const [role, setRole] = useState<"ADMIN" | "USER">("ADMIN");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // Load initial values from localStorage on mount to prevent hydration mismatch
+      setNavAvatar(localStorage.getItem("profilePhoto"));
+      
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.name) setAdminName(parsed.name);
+          if (parsed.role) {
+            setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
+            setRole(parsed.role === "ADMIN" ? "ADMIN" : "USER");
+          }
+        } catch (e) {}
+      }
 
       const handleUpdate = () => {
         setNavAvatar(localStorage.getItem("profilePhoto"));
@@ -425,7 +401,7 @@ export default function DashboardLayout({
               <NotificationBell />
 
               {/* Admin Avatar */}
-              <Link href="/dashboard/profile" className="flex items-center gap-3 select-none cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="flex items-center gap-3 select-none">
                 {/* User Avatar Circle */}
                 <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-border-color overflow-hidden select-none">
                   {navAvatar ? (
@@ -442,11 +418,7 @@ export default function DashboardLayout({
                     {adminRole}
                   </span>
                 </div>
-                {/* Chevron icon */}
-                <svg className="w-3.5 h-3.5 text-slate-400 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </Link>
+              </div>
             </div>
           </header>
 

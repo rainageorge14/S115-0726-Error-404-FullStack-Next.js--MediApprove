@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMedicines } from "@/components/ui/MedicineContext";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { AccountDetailsCard } from "@/components/profile/AccountDetailsCard";
@@ -45,18 +45,22 @@ export default function ProfilePage() {
     }
     return "+91 96165 43210";
   });
-
-  // Passwords state
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [role, setRole] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          return parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Super Admin";
+        } catch (e) {}
+      }
+    }
+    return "Super Admin";
+  });
 
   // Validation state
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [toastMessage, setToastMessage] = useState("");
-
-  // Ref for password focus scroll
-  const currentPasswordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (toastMessage) {
@@ -133,20 +137,6 @@ export default function ProfilePage() {
       newErrors.phone = "Phone Number cannot be empty";
     }
 
-    // Password updates check
-    const isChangingPassword = currentPassword || newPassword || confirmNewPassword;
-    if (isChangingPassword) {
-      if (!currentPassword) {
-        newErrors.currentPassword = "Current Password is required to configure new credentials";
-      }
-      if (!newPassword || newPassword.length < 6) {
-        newErrors.newPassword = "Password Too Short (min 6 characters)";
-      }
-      if (newPassword !== confirmNewPassword) {
-        newErrors.confirmNewPassword = "Passwords Don't Match";
-      }
-    }
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -155,39 +145,22 @@ export default function ProfilePage() {
     setErrors({});
 
     // Audit Event Linkages
-    if (isChangingPassword) {
-      addActionLog({
-        adminId: "admin-1",
-        adminName: fullName,
-        adminEmail: email,
-        adminRole: "Super Admin",
-        action: "Password Changed",
-        medicineId: "N/A",
-        medicineName: "N/A",
-        ipAddress: "192.168.1.1",
-        browser: "Chrome",
-        os: "Windows 11",
-        device: "Desktop",
-        remarks: "Super Admin updated password credentials"
-      });
-    } else {
-      addActionLog({
-        adminId: "admin-1",
-        adminName: fullName,
-        adminEmail: email,
-        adminRole: "Super Admin",
-        action: "Profile Updated",
-        medicineId: "N/A",
-        medicineName: "N/A",
-        ipAddress: "192.168.1.1",
-        browser: "Chrome",
-        os: "Windows 11",
-        device: "Desktop",
-        remarks: "Super Admin updated profile details"
-      });
-    }
+    addActionLog({
+      adminId: "admin-1",
+      adminName: fullName,
+      adminEmail: email,
+      adminRole: "Super Admin",
+      action: "Profile Updated",
+      medicineId: "N/A",
+      medicineName: "N/A",
+      ipAddress: "192.168.1.1",
+      browser: "Chrome",
+      os: "Windows 11",
+      device: "Desktop",
+      remarks: "Super Admin updated profile details"
+    });
 
-    localStorage.setItem("admin", JSON.stringify({ name: fullName, email, phone, role: "ADMIN" }));
+    localStorage.setItem("admin", JSON.stringify({ name: fullName, email, phone, role: role === "Super Admin" ? "ADMIN" : role }));
     window.dispatchEvent(new Event("adminProfileChanged"));
 
     setToastMessage("Profile changes saved successfully");
@@ -215,24 +188,18 @@ export default function ProfilePage() {
             fullName={fullName}
             email={email}
             phone={phone}
+            role={role}
             errors={errors}
             setFullName={setFullName}
             setEmail={setEmail}
             setPhone={setPhone}
-            setCurrentPassword={setCurrentPassword}
-            setNewPassword={setNewPassword}
-            setConfirmNewPassword={setConfirmNewPassword}
             onSubmit={handleProfileSubmit}
-            currentPasswordRef={currentPasswordRef}
           />
         </div>
 
         {/* Right Column (35% width): Account Details */}
         <div className="flex flex-col">
           <AccountDetailsCard
-            role="Super Admin"
-            memberSince="01 Jan 2024"
-            lastLogin="20 May 2024, 10:45 AM"
             avatarUrl={avatarUrl}
             onAvatarChange={handleAvatarChange}
           />

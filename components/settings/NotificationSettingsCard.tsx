@@ -3,8 +3,6 @@ import { Card } from "@/components/ui/Card";
 import { ToggleSwitch } from "./ToggleSwitch";
 
 export interface NotificationSettingsData {
-  emailNotifs: boolean;
-  browserNotifs: boolean;
   approvalAlerts: boolean;
   rejectedAlerts: boolean;
   weeklyReports: boolean;
@@ -17,8 +15,6 @@ interface NotificationSettingsCardProps {
 }
 
 export const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> = ({ onChange }) => {
-  const [emailNotifs, setEmailNotifs] = useState(true);
-  const [browserNotifs, setBrowserNotifs] = useState(true);
   const [approvalAlerts, setApprovalAlerts] = useState(true);
   const [rejectedAlerts, setRejectedAlerts] = useState(false);
   const [weeklyReports, setWeeklyReports] = useState(true);
@@ -27,8 +23,6 @@ export const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> =
 
   const handleToggle = (key: keyof NotificationSettingsData, val: boolean) => {
     const updated: NotificationSettingsData = {
-      emailNotifs,
-      browserNotifs,
       approvalAlerts,
       rejectedAlerts,
       weeklyReports,
@@ -47,18 +41,6 @@ export const NotificationSettingsCard: React.FC<NotificationSettingsCardProps> =
       </div>
 
       <div className="space-y-2">
-        <ToggleSwitch
-          label="Email Notifications"
-          description="Receive automated summaries via email address"
-          checked={emailNotifs}
-          onChange={(v) => { setEmailNotifs(v); handleToggle("emailNotifs", v); }}
-        />
-        <ToggleSwitch
-          label="Browser Notifications"
-          description="Display live system alert banners on desktop"
-          checked={browserNotifs}
-          onChange={(v) => { setBrowserNotifs(v); handleToggle("browserNotifs", v); }}
-        />
         <ToggleSwitch
           label="Approval Alerts"
           description="Notify immediately when a drug is approved"

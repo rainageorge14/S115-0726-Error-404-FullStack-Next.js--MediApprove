@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { initialMedicines as pendingRaw } from "@/lib/mockMedicines";
 import { initialApprovedMedicines as approvedRaw } from "@/lib/mockApprovedMedicines";
 
@@ -499,6 +499,27 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [activities, setActivities] = useState<Activity[]>(initialActivities);
   const [actionLogs, setActionLogs] = useState<ActionLog[]>(initialActionLogs);
   const [notifications, setNotifications] = useState<Notification[]>(getInitialNotifications);
+
+  // Load notifications from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("mediapprove_notifications");
+      if (saved) {
+        try {
+          setNotifications(JSON.parse(saved));
+        } catch (e) {
+          console.error("Failed to parse notifications from localStorage", e);
+        }
+      }
+    }
+  }, []);
+
+  // Save notifications to localStorage on changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("mediapprove_notifications", JSON.stringify(notifications));
+    }
+  }, [notifications]);
 
   const markAsRead = (id: string) => {
     setNotifications((prev) =>

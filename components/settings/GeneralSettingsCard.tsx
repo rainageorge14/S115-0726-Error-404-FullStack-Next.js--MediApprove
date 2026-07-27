@@ -3,10 +3,8 @@ import { Card } from "@/components/ui/Card";
 import { SettingInput } from "./SettingInput";
 
 export interface GeneralSettingsData {
-  appName: string;
   org: string;
   timezone: string;
-  lang: string;
   dateFormat: string;
   timeFormat: string;
   theme: string;
@@ -17,12 +15,6 @@ interface GeneralSettingsCardProps {
 }
 
 export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave }) => {
-  const [appName, setAppName] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("appName") || "MediApprove";
-    }
-    return "MediApprove";
-  });
   const [org, setOrg] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("org") || "Netmeds Corporate";
@@ -34,12 +26,6 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
       return localStorage.getItem("timezone") || "UTC+05:30";
     }
     return "UTC+05:30";
-  });
-  const [lang, setLang] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("lang") || "en";
-    }
-    return "en";
   });
   const [dateFormat, setDateFormat] = useState(() => {
     if (typeof window !== "undefined") {
@@ -62,7 +48,7 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ appName, org, timezone, lang, dateFormat, timeFormat, theme });
+    onSave({ org, timezone, dateFormat, timeFormat, theme });
   };
 
   return (
@@ -75,18 +61,10 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SettingInput
-            label="Application Name"
-            value={appName}
-            onChange={(e) => setAppName(e.target.value)}
-          />
-          <SettingInput
             label="Organization"
             value={org}
             onChange={(e) => setOrg(e.target.value)}
           />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Timezone */}
           <div className="flex flex-col gap-1 w-full text-left">
             <label className="text-xs font-semibold text-slate-700 tracking-wide select-none">Timezone</label>
@@ -98,20 +76,6 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
               <option value="UTC+05:30">UTC+05:30 (IST)</option>
               <option value="UTC+00:00">UTC+00:00 (GMT)</option>
               <option value="UTC-05:00">UTC-05:00 (EST)</option>
-            </select>
-          </div>
-
-          {/* Language */}
-          <div className="flex flex-col gap-1 w-full text-left">
-            <label className="text-xs font-semibold text-slate-700 tracking-wide select-none">Language</label>
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value)}
-              className="w-full px-3 h-[42px] text-[15px] text-slate-800 bg-white border border-[#CBD5E1] rounded-[10px] outline-hidden focus:border-[#14B8C5] focus:ring-4 focus:ring-[#14B8C5]/10"
-            >
-              <option value="en">English (US)</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
             </select>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMedicines } from "@/components/ui/MedicineContext";
 import { NotificationBadge } from "./NotificationBadge";
@@ -8,6 +8,11 @@ import { NotificationBadge } from "./NotificationBadge";
 export const NotificationBell: React.FC = () => {
   const { notifications } = useMedicines();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const unreadCount = notifications ? notifications.filter((n) => !n.isRead).length : 0;
 
@@ -21,7 +26,7 @@ export const NotificationBell: React.FC = () => {
       </svg>
       
       {/* Badge count */}
-      <NotificationBadge count={unreadCount} />
+      {mounted && <NotificationBadge count={unreadCount} />}
     </button>
   );
 };
