@@ -93,7 +93,6 @@ export default function DashboardHome() {
     pending: 128 - (15 - pendingCount),
     approved: 453 + (approvedCount - 15),
     rejected: 65 + rejectedCount,
-    companies: 45,
   };
 
   // 5 pending medicines for home screen table listing
@@ -112,8 +111,8 @@ export default function DashboardHome() {
         </div>
       )}
 
-      {/* LEVEL 1: Four Statistic Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
+      {/* LEVEL 1: Three Statistic Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 shrink-0">
 
         {/* Stat Card 1: Pending */}
         <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none">
@@ -187,31 +186,6 @@ export default function DashboardHome() {
             className="inline-flex items-center gap-1 text-[11px] font-bold text-[#EF4444] hover:text-[#dc3545] transition-colors mt-2"
           >
             View all rejected &rarr;
-          </Link>
-        </Card>
-
-        {/* Stat Card 4: Total Companies */}
-        <Card className="!p-3 hover:translate-y-[-2px] transition-transform duration-200 select-none">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 tracking-wide uppercase">
-                Total Companies
-              </span>
-              <h3 className="text-2xl font-extrabold text-dark-navy mt-0.5 tracking-tight">
-                {stats.companies}
-              </h3>
-            </div>
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-          </div>
-          <Link
-            href="/dashboard/companies"
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 hover:text-purple-700 transition-colors mt-2"
-          >
-            View all companies &rarr;
           </Link>
         </Card>
 
