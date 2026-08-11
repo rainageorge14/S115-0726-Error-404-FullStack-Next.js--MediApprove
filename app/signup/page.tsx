@@ -258,11 +258,11 @@ export default function SignupPage() {
             label={
               <span>
                 I agree to the{" "}
-                <Link href="#" className="font-bold text-primary hover:text-primary-hover hover:underline transition-colors" onClick={(e) => { e.preventDefault(); alert("Terms of Service path clicked."); }}>
+                <Link href="/terms" className="font-bold text-primary hover:text-primary-hover hover:underline transition-colors">
                   Terms & Conditions
                 </Link>{" "}
                 and{" "}
-                <Link href="#" className="font-bold text-primary hover:text-primary-hover hover:underline transition-colors" onClick={(e) => { e.preventDefault(); alert("Privacy Policy path clicked."); }}>
+                <Link href="/privacy" className="font-bold text-primary hover:text-primary-hover hover:underline transition-colors">
                   Privacy Policy
                 </Link>
                 .
