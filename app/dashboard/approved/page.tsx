@@ -68,6 +68,17 @@ export default function ApprovedMedicinesPage() {
     setToastMessage(msg);
   };
 
+  const formatUserAndRole = (val?: string) => {
+    if (!val) return "Vinayak (Admin)";
+    const clean = val.trim();
+    if (clean === "Admin User") return "Vinayak (Admin)";
+    if (clean === "Super Admin") return "Raina George (Super Admin)";
+    if (clean === "Raina") return "Raina (Super Admin)";
+    if (clean === "Vinayak") return "Vinayak (Admin)";
+    if (clean.includes("(")) return clean;
+    return `${clean} (Admin)`;
+  };
+
   // Helper: Export current filtered list as CSV
   const handleExportCSV = () => {
     if (filteredMedicines.length === 0) {
@@ -203,13 +214,22 @@ Status: SECURE & VERIFIED FOR CATALOGUE
   }); // e.g. "14 Jul 2026"
 
   // Dynamic Statistics Calculations
-  const newlyApprovedCount = approvedList.filter(
-    (m) => m.approvedAt === currentDate
-  ).length;
+  const now = new Date();
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  const totalApprovedCount = 453 + (approvedList.length - 15);
-  const approvedToday = 3 + newlyApprovedCount;
-  const approvedThisWeek = 11 + newlyApprovedCount;
+  const totalApprovedCount = approvedList.length;
+
+  const approvedToday = approvedList.filter((m) => {
+    if (!m.approvedAt) return false;
+    const date = new Date(m.approvedAt);
+    return !isNaN(date.getTime()) && date.toDateString() === now.toDateString();
+  }).length;
+
+  const approvedThisWeek = approvedList.filter((m) => {
+    if (!m.approvedAt) return false;
+    const date = new Date(m.approvedAt);
+    return !isNaN(date.getTime()) && date >= oneWeekAgo;
+  }).length;
 
   // Last approved medicine details
   // Filter for newly approved medicines first, then fall back to initial listings
@@ -685,7 +705,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                       <td className="px-5 py-2.5">
                         <div className="flex flex-col gap-0.5 text-xs">
                           <span className="font-semibold text-slate-600 leading-normal">
-                            {med.approvedBy || "Admin User"}
+                            {formatUserAndRole(med.approvedBy)}
                           </span>
                           <span className="text-[10px] font-medium text-slate-400 leading-none">
                             {formatDate(med.approvedAt || med.approvedDate)}

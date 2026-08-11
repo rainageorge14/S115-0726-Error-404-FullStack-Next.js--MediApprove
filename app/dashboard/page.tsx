@@ -13,18 +13,24 @@ export default function DashboardHome() {
   const { medicines, activities, approveMedicine, rejectMedicine } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [toastMessage, setToastMessage] = useState("");
-  const [role] = useState<"ADMIN" | "USER">(() => {
+  const [adminDetails, setAdminDetails] = useState({ name: "Admin User", role: "Super Admin" });
+  const [role, setRole] = useState<"ADMIN" | "USER">("ADMIN");
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const storedAdmin = localStorage.getItem("admin");
       if (storedAdmin) {
         try {
           const parsed = JSON.parse(storedAdmin);
-          return parsed.role === "ADMIN" ? "ADMIN" : "USER";
+          setAdminDetails({
+            name: parsed.name || "Admin User",
+            role: parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Admin",
+          });
+          setRole(parsed.role === "ADMIN" ? "ADMIN" : "USER");
         } catch (e) {}
       }
     }
-    return "ADMIN";
-  });
+  }, []);
 
   // Rejection modal states
   const [rejectionMedicineId, setRejectionMedicineId] = useState<string | null>(null);
@@ -44,7 +50,7 @@ export default function DashboardHome() {
     const med = medicines.find((m) => m.id === id);
     if (!med) return;
 
-    const success = await approveMedicine(id, "Admin User");
+    const success = await approveMedicine(id, `${adminDetails.name} (${adminDetails.role})`);
     if (success) {
       setToastMessage(`"${med.name}" has been approved successfully.`);
     } else {
@@ -68,7 +74,12 @@ export default function DashboardHome() {
     setIsRejecting(true);
 
     try {
-      const success = await rejectMedicine(rejectionMedicineId, "Admin User", reason, notes);
+      const success = await rejectMedicine(
+        rejectionMedicineId,
+        `${adminDetails.name} (${adminDetails.role})`,
+        reason,
+        notes
+      );
       if (success) {
         setToastMessage(`"${rejectionMedicineName}" has been rejected successfully.`);
         setSelectedMedicine(null); // Close details modal if open
@@ -90,9 +101,9 @@ export default function DashboardHome() {
   const rejectedCount = medicines.filter((m) => m.status === "rejected").length;
 
   const stats = {
-    pending: 128 - (15 - pendingCount),
-    approved: 453 + (approvedCount - 15),
-    rejected: 65 + rejectedCount,
+    pending: pendingCount,
+    approved: approvedCount,
+    rejected: rejectedCount,
   };
 
   // 5 pending medicines for home screen table listing

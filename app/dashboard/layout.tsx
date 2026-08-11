@@ -77,7 +77,6 @@ export default function DashboardLayout({
     { name: "Approved Medicines", category: "MANAGE", icon: "approved", href: "/dashboard/approved" },
     { name: "Rejected Medicines", category: "MANAGE", icon: "rejected", href: "/dashboard/rejected" },
     { name: "Action Logs", category: "ACTIVITY", icon: "logs", href: "/dashboard/action-logs" },
-    { name: "Reports", category: "ACTIVITY", icon: "reports", href: "/dashboard/reports" },
     { name: "Profile", category: "SETTINGS", icon: "profile", href: "/dashboard/profile" },
     { name: "Settings", category: "SETTINGS", icon: "settings", href: "/dashboard/settings" },
   ];
@@ -116,7 +115,6 @@ export default function DashboardLayout({
   const getActiveSubtitle = () => {
     if (pathname === "/dashboard/profile") return "Manage your account details";
     if (pathname === "/dashboard/action-logs") return "Monitor and audit administrator and system activity logs";
-    if (pathname === "/dashboard/reports") return "Monitor medicine approval trends, administrator activity, and overall system performance through interactive analytics.";
     if (pathname === "/notifications" || pathname === "/dashboard/notifications") return "View and manage all system notifications and recent activities.";
     const active = filteredMenu.find((m) => m.href === pathname);
     return active ? `Overview of ${active.name.toLowerCase()} listing and recent activity` : "Overview of medicine Listing and recent activity";
@@ -155,12 +153,6 @@ export default function DashboardLayout({
         return (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-          </svg>
-        );
-      case "reports":
-        return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         );
       case "profile":

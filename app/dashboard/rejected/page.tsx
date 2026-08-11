@@ -67,6 +67,17 @@ export default function RejectedMedicinesPage() {
     setToastMessage(msg);
   };
 
+  const formatUserAndRole = (val?: string) => {
+    if (!val) return "Vinayak (Admin)";
+    const clean = val.trim();
+    if (clean === "Admin User") return "Vinayak (Admin)";
+    if (clean === "Super Admin") return "Raina George (Super Admin)";
+    if (clean === "Raina") return "Raina (Super Admin)";
+    if (clean === "Vinayak") return "Vinayak (Admin)";
+    if (clean.includes("(")) return clean;
+    return `${clean} (Admin)`;
+  };
+
   // Helper: Export current filtered list as CSV
   const handleExportCSV = () => {
     if (filteredMedicines.length === 0) {
@@ -219,13 +230,22 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
   }); // e.g. "15 Jul 2026"
 
   // Dynamic Statistics Calculations
-  const newlyRejectedCount = rejectedList.filter(
-    (m) => m.rejectedAt === currentDate
-  ).length;
+  const now = new Date();
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  const totalRejectedCount = 65 + Math.max(0, rejectedList.length - 12);
-  const rejectedTodayCount = 2 + newlyRejectedCount;
-  const rejectedThisWeekCount = 5 + newlyRejectedCount;
+  const totalRejectedCount = rejectedList.length;
+
+  const rejectedTodayCount = rejectedList.filter((m) => {
+    if (!m.rejectedAt) return false;
+    const date = new Date(m.rejectedAt);
+    return !isNaN(date.getTime()) && date.toDateString() === now.toDateString();
+  }).length;
+
+  const rejectedThisWeekCount = rejectedList.filter((m) => {
+    if (!m.rejectedAt) return false;
+    const date = new Date(m.rejectedAt);
+    return !isNaN(date.getTime()) && date >= oneWeekAgo;
+  }).length;
 
   // Last rejected medicine details
   const sortedRejectedByDate = [...rejectedList].sort((a, b) => {
@@ -729,7 +749,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
 
                       {/* Column 6: Rejected By */}
                       <td className="px-4 py-2 text-xs font-semibold text-slate-600">
-                        {med.rejectedBy || "Admin User"}
+                        {formatUserAndRole(med.rejectedBy)}
                       </td>
 
                       {/* Column 7: Rejected At date */}
