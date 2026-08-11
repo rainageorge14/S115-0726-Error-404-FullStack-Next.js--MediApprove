@@ -8,9 +8,30 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { RejectionModal } from "@/components/ui/RejectionModal";
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 import { DetailedMedicine } from "@/lib/mockMedicines";
+import { useRouter } from "next/navigation";
 
 export default function PendingMedicinesPage() {
+  const router = useRouter();
   const { medicines, approveMedicine, rejectMedicine } = useMedicines();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.role !== "ADMIN") {
+            router.push("/dashboard");
+          }
+        } catch {
+          router.push("/dashboard");
+        }
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  }, [router]);
+
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCompanyFilter, setSelectedCompanyFilter] = useState("All");

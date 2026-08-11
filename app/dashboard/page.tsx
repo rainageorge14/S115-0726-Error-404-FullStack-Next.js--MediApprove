@@ -131,12 +131,14 @@ export default function DashboardHome() {
               </svg>
             </div>
           </div>
-          <Link
-            href="/dashboard/pending"
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:text-primary-hover transition-colors mt-2"
-          >
-            View all pending &rarr;
-          </Link>
+          {role !== "USER" && (
+            <Link
+              href="/dashboard/pending"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:text-primary-hover transition-colors mt-2"
+            >
+              View all pending &rarr;
+            </Link>
+          )}
         </Card>
 
         {/* Stat Card 2: Approved */}
@@ -156,12 +158,14 @@ export default function DashboardHome() {
               </svg>
             </div>
           </div>
-          <Link
-            href="/dashboard/approved"
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#22C55E] hover:text-[#1ea850] transition-colors mt-2"
-          >
-            View all approved &rarr;
-          </Link>
+          {role !== "USER" && (
+            <Link
+              href="/dashboard/approved"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-[#22C55E] hover:text-[#1ea850] transition-colors mt-2"
+            >
+              View all approved &rarr;
+            </Link>
+          )}
         </Card>
 
         {/* Stat Card 3: Rejected */}
@@ -181,12 +185,14 @@ export default function DashboardHome() {
               </svg>
             </div>
           </div>
-          <Link
-            href="/dashboard/rejected"
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#EF4444] hover:text-[#dc3545] transition-colors mt-2"
-          >
-            View all rejected &rarr;
-          </Link>
+          {role !== "USER" && (
+            <Link
+              href="/dashboard/rejected"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-[#EF4444] hover:text-[#dc3545] transition-colors mt-2"
+            >
+              View all rejected &rarr;
+            </Link>
+          )}
         </Card>
 
       </div>

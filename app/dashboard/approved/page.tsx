@@ -7,11 +7,32 @@ import Link from "next/link";
 import { ApprovedMedicineDetailsModal } from "@/components/ui/ApprovedMedicineDetailsModal";
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 import { ApprovedMedicine } from "@/lib/mockApprovedMedicines";
+import { useRouter } from "next/navigation";
 
 const getExportTimestamp = () => Date.now();
 
 export default function ApprovedMedicinesPage() {
+  const router = useRouter();
   const { medicines, formatDate } = useMedicines();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.role !== "ADMIN") {
+            router.push("/dashboard");
+          }
+        } catch {
+          router.push("/dashboard");
+        }
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  }, [router]);
+
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState("");
