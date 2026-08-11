@@ -59,13 +59,13 @@ MEDIAPPROVE APPROVED DRUG REPORT
 Medicine Name       : ${medicine.name}
 Manufacturer        : ${medicine.company}
 Category            : ${medicine.category}
-Batch Number        : ${medicine.batchNumber}
-License Number      : ${medicine.licenseNumber}
-Approved Date       : ${medicine.approvedDate}
-Approved By         : ${medicine.approvedBy}
-Price (MRP)         : INR ${medicine.price}
-Manufacturing Date  : ${medicine.manufacturingDate}
-Expiry Date         : ${medicine.expiryDate}
+Batch Number        : ${medicine.batchNumber || (medicine as any).batch}
+License Number      : ${medicine.licenseNumber || (medicine as any).licenseNumber || "N/A"}
+Approved Date       : ${medicine.approvedDate || (medicine as any).approvedAt}
+Approved By         : ${medicine.approvedBy || (medicine as any).approvedBy || "Admin User"}
+Price (MRP)         : INR ${medicine.price ?? medicine.mrp ?? (medicine as any).price}
+Manufacturing Date  : ${medicine.manufacturingDate || (medicine as any).submittedOn || (medicine as any).createdAt}
+Expiry Date         : ${medicine.expiryDate || (medicine as any).expiry}
 ---------------------------------
 Composition:
 ${medicine.composition}
@@ -181,7 +181,7 @@ Verified digital signature. MediApprove Registry.
                     Batch Number
                   </span>
                   <span className="text-sm font-extrabold text-dark-navy block mt-0.5">
-                    {medicine.batchNumber}
+                    {medicine.batchNumber || (medicine as any).batch}
                   </span>
                 </div>
                 <div>
@@ -189,7 +189,7 @@ Verified digital signature. MediApprove Registry.
                     License Number
                   </span>
                   <span className="text-sm font-bold text-slate-600 block mt-0.5 truncate" title={medicine.licenseNumber}>
-                    {medicine.licenseNumber}
+                    {medicine.licenseNumber || (medicine as any).licenseNumber || "N/A"}
                   </span>
                 </div>
               </div>
@@ -205,7 +205,7 @@ Verified digital signature. MediApprove Registry.
                 MRP (Price)
               </span>
               <span className="text-sm font-extrabold text-dark-navy block mt-0.5">
-                ₹{medicine.mrp}
+                ₹{medicine.mrp ?? (medicine as any).price}
               </span>
             </div>
             <div>
@@ -213,7 +213,7 @@ Verified digital signature. MediApprove Registry.
                 Mfg. Date
               </span>
               <span className="text-sm font-bold text-slate-600 block mt-0.5">
-                {medicine.manufacturingDate}
+                {medicine.manufacturingDate || (medicine as any).submittedOn || (medicine as any).createdAt}
               </span>
             </div>
             <div>
@@ -221,7 +221,7 @@ Verified digital signature. MediApprove Registry.
                 Expiry Date
               </span>
               <span className="text-sm font-extrabold text-dark-navy block mt-0.5">
-                {formatDate(medicine.expiryDate)}
+                {formatDate(medicine.expiryDate || (medicine as any).expiry)}
               </span>
             </div>
             <div>
@@ -229,7 +229,7 @@ Verified digital signature. MediApprove Registry.
                 Approval Date
               </span>
               <span className="text-sm font-bold text-slate-600 block mt-0.5">
-                {formatDate(medicine.approvedDate)}
+                {formatDate(medicine.approvedDate || (medicine as any).approvedAt)}
               </span>
             </div>
             <div className="col-span-2">
@@ -237,7 +237,7 @@ Verified digital signature. MediApprove Registry.
                 Approved By
               </span>
               <span className="text-sm font-bold text-primary block mt-0.5">
-                {medicine.approvedBy} (Super Admin)
+                {medicine.approvedBy || (medicine as any).approvedBy || "Admin User"}
               </span>
             </div>
           </div>
