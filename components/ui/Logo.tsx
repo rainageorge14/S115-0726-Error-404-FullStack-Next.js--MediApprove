@@ -119,13 +119,13 @@ export const Logo: React.FC<LogoProps> = ({ className = "", variant = "large" })
           <rect x="75" y="144" width="45" height="6" rx="3" fill="#E5E7EB" />
 
           {/* Checklist Checkmarks */}
-          <circle cx="160" cy="78" r="9" fill="#22C55E" />
+          <circle cx="160" cy="78" r="9" fill="#0EA5B7" />
           <path d="M155.5 78L158.5 81L164.5 75" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
-          <circle cx="160" cy="101" r="9" fill="#22C55E" />
+          <circle cx="160" cy="101" r="9" fill="#0EA5B7" />
           <path d="M155.5 101L158.5 104L164.5 98" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
-          <circle cx="160" cy="124" r="9" fill="#22C55E" />
+          <circle cx="160" cy="124" r="9" fill="#0EA5B7" />
           <path d="M155.5 124L158.5 127L164.5 121" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
           {/* Clipboard Top Clip */}
@@ -167,9 +167,9 @@ export const Logo: React.FC<LogoProps> = ({ className = "", variant = "large" })
               stroke="#FFFFFF"
               strokeWidth="4"
             />
-            {/* Thick White Checkmark */}
+            {/* Thick White Medical Cross & Checkmark */}
             <path
-              d="M156 161.5L164 169.5L184 149.5"
+              d="M162 160H170M170 152V168M156 161.5L164 169.5L184 149.5"
               stroke="#FFFFFF"
               strokeWidth="4.5"
               strokeLinecap="round"

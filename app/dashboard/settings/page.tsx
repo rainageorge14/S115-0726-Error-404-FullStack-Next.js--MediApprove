@@ -7,7 +7,7 @@ import { NotificationSettingsCard, NotificationSettingsData } from "@/components
 import { DangerZoneCard } from "@/components/settings/DangerZoneCard";
 
 export default function SettingsPage() {
-  const { addActionLog } = useMedicines();
+  const { addActionLog, setTimeFormat, setDateFormat } = useMedicines();
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
@@ -22,39 +22,54 @@ export default function SettingsPage() {
   };
 
   // --- Actions ---
-  const handleSaveGeneral = (data: GeneralSettingsData) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("org", data.org);
-      localStorage.setItem("timezone", data.timezone);
-      localStorage.setItem("dateFormat", data.dateFormat);
-      localStorage.setItem("timeFormat", data.timeFormat);
-      localStorage.setItem("theme", data.theme);
+  const handleSaveGeneral = async (data: GeneralSettingsData) => {
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          timeFormat: data.timeFormat,
+        }),
+      });
 
-      // Apply the theme immediately
-      if (data.theme === "dark" || (data.theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
+      const resData = await res.json();
+      if (!res.ok || !resData.success) {
+        showToast(resData.message || "Failed to save preferences to database");
+        return;
       }
 
-      window.dispatchEvent(new Event("themeChanged"));
-    }
+      // Sync settings to the global Context state
+      setTimeFormat(data.timeFormat);
+      setDateFormat(data.dateFormat);
 
-    addActionLog({
-      adminId: "admin-1",
-      adminName: "Admin User",
-      adminEmail: "admin@mediapprove.com",
-      adminRole: "Super Admin",
-      action: "Profile Updated",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: `Updated general preferences (Org: ${data.org})`
-    });
-    showToast("General settings updated successfully");
+      if (typeof window !== "undefined") {
+        localStorage.setItem("org", data.org);
+        localStorage.setItem("timezone", data.timezone);
+        localStorage.setItem("dateFormat", data.dateFormat);
+        localStorage.setItem("timeFormat", data.timeFormat);
+      }
+
+      addActionLog({
+        adminId: "admin-1",
+        adminName: "Admin User",
+        adminEmail: "admin@mediapprove.com",
+        adminRole: "Super Admin",
+        action: "Profile Updated",
+        medicineId: "N/A",
+        medicineName: "N/A",
+        ipAddress: "192.168.1.1",
+        browser: "Chrome",
+        os: "Windows 11",
+        device: "Desktop",
+        remarks: `Updated general preferences (TimeFormat: ${data.timeFormat})`
+      });
+      showToast("General settings updated successfully");
+    } catch (e) {
+      console.error("Save settings error:", e);
+      showToast("Failed to save settings");
+    }
   };
 
   const handleUpdateNotifications = (data: NotificationSettingsData) => {
@@ -75,24 +90,63 @@ export default function SettingsPage() {
     showToast("Notification preferences updated");
   };
 
-  // Removed Security and System Preferences Handlers
-
-
   // --- Danger Zone ---
   const handleDeactivate = () => {
     showToast("Account deactivation request sent to corporate admin");
   };
 
-  const handleLogoutAll = () => {
-    showToast("All active sessions logged out successfully");
+  const handleLogoutAll = async () => {
+    try {
+      const res = await fetch("/api/auth/logout-all", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("All active sessions logged out successfully");
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("admin");
+        }
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      } else {
+        showToast(data.message || "Failed to logout from all devices");
+      }
+    } catch (e) {
+      console.error("Logout all error:", e);
+      showToast("Failed to logout from all devices");
+    }
   };
 
   const handleDeleteSessions = () => {
     showToast("All temporary sessions deleted");
   };
 
-  const handleDeleteAccount = () => {
-    showToast("Account deleted successfully. Logging out...");
+  const handleDeleteAccount = async (password: string) => {
+    try {
+      const res = await fetch("/api/profile", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("Account deleted successfully. Redirecting...");
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("admin");
+        }
+        setTimeout(() => {
+          window.location.href = "/signup";
+        }, 1000);
+      } else {
+        showToast(data.message || "Failed to delete account");
+      }
+    } catch (e) {
+      console.error("Delete account error:", e);
+      showToast("Failed to delete account");
+    }
   };
 
   return (

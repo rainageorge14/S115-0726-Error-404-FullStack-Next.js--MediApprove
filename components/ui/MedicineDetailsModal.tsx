@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { DetailedMedicine } from "@/lib/mockMedicines";
 import { Button } from "./Button";
+import { useMedicines } from "./MedicineContext";
 
 interface MedicineDetailsModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
   onApprove,
   onReject,
 }) => {
+  const { formatDate } = useMedicines();
   const modalRef = useRef<HTMLDivElement>(null);
   const [role] = React.useState<"ADMIN" | "USER">(() => {
     if (typeof window !== "undefined") {
@@ -160,7 +162,7 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
                     Expiry Date
                   </span>
                   <span className="text-sm font-extrabold text-dark-navy block mt-1">
-                    {medicine.expiry}
+                    {formatDate(medicine.expiry)}
                   </span>
                 </div>
               </div>

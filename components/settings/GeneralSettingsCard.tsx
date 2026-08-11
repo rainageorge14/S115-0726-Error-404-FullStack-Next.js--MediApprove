@@ -6,8 +6,7 @@ export interface GeneralSettingsData {
   org: string;
   timezone: string;
   dateFormat: string;
-  timeFormat: string;
-  theme: string;
+  timeFormat: "12h" | "24h";
 }
 
 interface GeneralSettingsCardProps {
@@ -15,12 +14,7 @@ interface GeneralSettingsCardProps {
 }
 
 export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave }) => {
-  const [org, setOrg] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("org") || "Netmeds Corporate";
-    }
-    return "Netmeds Corporate";
-  });
+  const [org] = useState("MediApprove");
   const [timezone, setTimezone] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("timezone") || "UTC+05:30";
@@ -33,22 +27,16 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
     }
     return "DD MMM YYYY";
   });
-  const [timeFormat, setTimeFormat] = useState(() => {
+  const [timeFormat, setTimeFormat] = useState<"12h" | "24h">(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("timeFormat") || "12h";
+      const stored = localStorage.getItem("timeFormat");
+      return (stored === "12h" || stored === "24h") ? stored : "12h";
     }
     return "12h";
   });
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "system";
-    }
-    return "system";
-  });
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ org, timezone, dateFormat, timeFormat, theme });
+    onSave({ org, timezone, dateFormat, timeFormat });
   };
 
   return (
@@ -60,11 +48,17 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SettingInput
-            label="Organization"
-            value={org}
-            onChange={(e) => setOrg(e.target.value)}
-          />
+          <div className="flex flex-col gap-1 w-full text-left">
+            <SettingInput
+              label="Organization"
+              value={org}
+              readOnly
+              className="bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200"
+            />
+            <p className="text-[10px] font-semibold text-slate-400 mt-1 select-none">
+              This value is managed by the system and cannot be changed.
+            </p>
+          </div>
           {/* Timezone */}
           <div className="flex flex-col gap-1 w-full text-left">
             <label className="text-xs font-semibold text-slate-700 tracking-wide select-none">Timezone</label>
@@ -100,7 +94,7 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
             <label className="text-xs font-semibold text-slate-700 tracking-wide select-none">Time Format</label>
             <select
               value={timeFormat}
-              onChange={(e) => setTimeFormat(e.target.value)}
+              onChange={(e) => setTimeFormat(e.target.value as "12h" | "24h")}
               className="w-full px-3 h-[42px] text-[15px] text-slate-800 bg-white border border-[#CBD5E1] rounded-[10px] outline-hidden focus:border-[#14B8C5] focus:ring-4 focus:ring-[#14B8C5]/10"
             >
               <option value="12h">12-Hour (AM/PM)</option>
@@ -109,21 +103,7 @@ export const GeneralSettingsCard: React.FC<GeneralSettingsCardProps> = ({ onSave
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-          {/* Theme */}
-          <div className="flex flex-col gap-1 w-full text-left">
-            <label className="text-xs font-semibold text-slate-700 tracking-wide select-none">Theme</label>
-            <select
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              className="w-full px-3 h-[42px] text-[15px] text-slate-800 bg-white border border-[#CBD5E1] rounded-[10px] outline-hidden focus:border-[#14B8C5] focus:ring-4 focus:ring-[#14B8C5]/10"
-            >
-              <option value="system">System Default</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-          </div>
-
+        <div className="pt-2">
           <button
             type="submit"
             className="w-full h-11 flex items-center justify-center font-bold text-white bg-[#16A34A] hover:bg-[#15803D] active:scale-[0.99] rounded-[10px] transition-all duration-200 cursor-pointer shadow-xs select-none"

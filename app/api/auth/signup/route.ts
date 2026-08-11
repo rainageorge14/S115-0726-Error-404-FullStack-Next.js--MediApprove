@@ -5,7 +5,8 @@ import { z } from "zod";
 
 const signupSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
-  email: z.email("Invalid email address"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number format"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { fullName, email, password } = parsed.data;
+    const { fullName, email, phone, password } = parsed.data;
 
     // Check if email already exists
     const existingAdmin = await prisma.user.findUnique({
@@ -46,6 +47,7 @@ export async function POST(req: Request) {
       data: {
         name: fullName,
         email,
+        phone,
         password: hashedPassword,
         role,
       },

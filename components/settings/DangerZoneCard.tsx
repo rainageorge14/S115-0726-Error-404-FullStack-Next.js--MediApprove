@@ -6,7 +6,7 @@ interface DangerZoneCardProps {
   onDeactivate: () => void;
   onLogoutAll: () => void;
   onDeleteSessions: () => void;
-  onDeleteAccount: () => void;
+  onDeleteAccount: (password: string) => void;
 }
 
 export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({
@@ -16,10 +16,13 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({
   onDeleteAccount,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [password, setPassword] = useState("");
 
   const handleConfirmDelete = () => {
+    if (!password) return;
     setIsConfirmOpen(false);
-    onDeleteAccount();
+    onDeleteAccount(password);
+    setPassword("");
   };
 
   return (
@@ -84,16 +87,37 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({
                 Are you absolutely sure you want to permanently delete your administrator account? This action is irreversible and will remove all audit logs associations.
               </p>
             </div>
+            
+            {/* Password input verification */}
+            <div className="text-left space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Enter Current Password</label>
+              <input
+                type="password"
+                placeholder="Confirm password to delete"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 text-xs text-dark-navy bg-white border border-[#CBD5E1] rounded-xl outline-hidden focus:border-[#EF4444] focus:ring-3 focus:ring-[#EF4444]/10 transition-all"
+              />
+            </div>
+
             <div className="flex gap-2 items-center justify-center pt-2">
               <button
-                onClick={() => setIsConfirmOpen(false)}
+                onClick={() => {
+                  setIsConfirmOpen(false);
+                  setPassword("");
+                }}
                 className="flex-1 py-2 text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 rounded-xl cursor-pointer"
               >
                 Cancel
               </button>
               <button
+                disabled={!password}
                 onClick={handleConfirmDelete}
-                className="flex-1 py-2 text-xs font-bold text-white bg-danger hover:bg-[#DC2626] rounded-xl shadow-md cursor-pointer"
+                className={`flex-1 py-2 text-xs font-bold text-white rounded-xl shadow-md cursor-pointer transition-colors ${
+                  !password
+                    ? "bg-[#EF4444]/40 cursor-not-allowed"
+                    : "bg-danger hover:bg-[#DC2626]"
+                }`}
               >
                 Delete Permanently
               </button>

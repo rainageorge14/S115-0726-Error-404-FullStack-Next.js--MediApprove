@@ -11,7 +11,7 @@ import { ApprovedMedicine } from "@/lib/mockApprovedMedicines";
 const getExportTimestamp = () => Date.now();
 
 export default function ApprovedMedicinesPage() {
-  const { medicines } = useMedicines();
+  const { medicines, formatDate } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -667,14 +667,14 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                             {med.approvedBy || "Admin User"}
                           </span>
                           <span className="text-[10px] font-medium text-slate-400 leading-none">
-                            {med.approvedAt || med.approvedDate}
+                            {formatDate(med.approvedAt || med.approvedDate)}
                           </span>
                         </div>
                       </td>
 
                       {/* Column 7: Expiry date */}
                       <td className="px-5 py-2.5 text-xs font-semibold text-slate-400">
-                        {med.expiryDate}
+                        {formatDate(med.expiryDate)}
                       </td>
 
                       {/* Column 8: Actions Controls */}

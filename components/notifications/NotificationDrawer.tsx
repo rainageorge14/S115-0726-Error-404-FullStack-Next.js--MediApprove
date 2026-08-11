@@ -1,6 +1,6 @@
 import React from "react";
 import { X, Calendar, Clock, ShieldCheck, UserCheck, Briefcase, FileText } from "lucide-react";
-import { Notification } from "@/components/ui/MedicineContext";
+import { useMedicines, Notification } from "@/components/ui/MedicineContext";
 
 interface NotificationDrawerProps {
   isOpen: boolean;
@@ -13,21 +13,13 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   onClose,
   notification,
 }) => {
+  const { timeFormat, formatDate } = useMedicines();
   if (!isOpen || !notification) return null;
-
-  const formatDate = (isoString: string) => {
-    try {
-      const d = new Date(isoString);
-      return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-    } catch {
-      return "N/A";
-    }
-  };
 
   const formatTime = (isoString: string) => {
     try {
       const d = new Date(isoString);
-      return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+      return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: timeFormat !== "24h" });
     } catch {
       return "N/A";
     }

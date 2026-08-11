@@ -5,7 +5,7 @@ import { getAuthUser } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
-    const user = getAuthUser(req);
+    const user = await getAuthUser(req);
     if (!user) {
       return NextResponse.json(
         {

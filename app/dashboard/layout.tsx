@@ -61,33 +61,12 @@ export default function DashboardLayout({
         }
       };
 
-      const applyTheme = () => {
-        const theme = localStorage.getItem("theme") || "system";
-        if (theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      };
-
-      applyTheme();
-
       window.addEventListener("profilePhotoChanged", handleUpdate);
       window.addEventListener("adminProfileChanged", handleAdminUpdate);
-      window.addEventListener("themeChanged", applyTheme);
-      
-      const handleStorage = (e: StorageEvent) => {
-        if (e.key === "theme") {
-          applyTheme();
-        }
-      };
-      window.addEventListener("storage", handleStorage);
 
       return () => {
         window.removeEventListener("profilePhotoChanged", handleUpdate);
         window.removeEventListener("adminProfileChanged", handleAdminUpdate);
-        window.removeEventListener("themeChanged", applyTheme);
-        window.removeEventListener("storage", handleStorage);
       };
     }
   }, []);

@@ -59,6 +59,9 @@ export default function SignupPage() {
     if (!phone.trim()) {
       setPhoneError("Please enter your phone number.");
       isValid = false;
+    } else if (!/^\+?[0-9\s\-()]{7,20}$/.test(phone)) {
+      setPhoneError("Please enter a valid phone number.");
+      isValid = false;
     } else {
       setPhoneError("");
     }
@@ -110,7 +113,7 @@ export default function SignupPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ fullName, email, phone, password }),
       });
 
       const data = await response.json();
@@ -160,7 +163,7 @@ export default function SignupPage() {
           </div>
           <h4 className="text-lg font-bold text-dark-navy">Account Created Successfully</h4>
           <p className="text-sm text-slate-500 mt-1">
-            Welcome to MediApprove! Redirecting to sign in screen...
+            Welcome to MediApprove! Redirecting to login screen...
           </p>
         </div>
       ) : (
@@ -279,7 +282,7 @@ export default function SignupPage() {
               href="/"
               className="font-bold text-primary hover:text-primary-hover hover:underline transition-colors ml-1.5"
             >
-              Sign In
+              Login
             </Link>
           </div>
         </form>

@@ -10,7 +10,7 @@ import { ActionLogDetailsModal } from "@/components/ui/ActionLogDetailsModal";
 const getExportTimestamp = () => Date.now();
 
 export default function ActionLogsPage() {
-  const { actionLogs, addActionLog } = useMedicines();
+  const { actionLogs, addActionLog, formatTime } = useMedicines();
   
   // UI states
   const [selectedLog, setSelectedLog] = useState<ActionLog | null>(null);
@@ -897,8 +897,15 @@ Security Registry: SIGNED & SECURED
 
                           {/* Timestamp */}
                           <td className="px-4 py-2 whitespace-nowrap">
-                            <div className="text-xs font-bold text-dark-navy">{log.timestamp.split(", ")[0]}</div>
-                            <div className="text-[10px] text-slate-400 font-semibold">{log.timestamp.split(", ")[1]}</div>
+                            {(() => {
+                              const formatted = formatTime(log.timestamp);
+                              return (
+                                <>
+                                  <div className="text-xs font-bold text-dark-navy">{formatted.split(", ")[0]}</div>
+                                  <div className="text-[10px] text-slate-400 font-semibold">{formatted.split(", ")[1]}</div>
+                                </>
+                              );
+                            })()}
                           </td>
 
                           {/* Admin Details */}
