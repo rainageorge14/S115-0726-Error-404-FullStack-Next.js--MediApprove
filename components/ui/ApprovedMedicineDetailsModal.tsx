@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { ApprovedMedicine } from "@/lib/mockApprovedMedicines";
 import { Button } from "./Button";
+import { useMedicines } from "@/components/ui/MedicineContext";
 
 interface ApprovedMedicineDetailsModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const ApprovedMedicineDetailsModal: React.FC<ApprovedMedicineDetailsModal
   onClose,
   onDownloadReport,
 }) => {
+  const { formatDate } = useMedicines();
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close on Escape key, prevent background scrolling
@@ -219,7 +221,7 @@ Verified digital signature. MediApprove Registry.
                 Expiry Date
               </span>
               <span className="text-sm font-extrabold text-dark-navy block mt-0.5">
-                {medicine.expiryDate}
+                {formatDate(medicine.expiryDate)}
               </span>
             </div>
             <div>
@@ -227,7 +229,7 @@ Verified digital signature. MediApprove Registry.
                 Approval Date
               </span>
               <span className="text-sm font-bold text-slate-600 block mt-0.5">
-                {medicine.approvedDate}
+                {formatDate(medicine.approvedDate)}
               </span>
             </div>
             <div className="col-span-2">

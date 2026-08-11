@@ -62,6 +62,39 @@ export default function ProfilePage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [toastMessage, setToastMessage] = useState("");
 
+  // Fetch the logged-in user's profile details on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch("/api/profile");
+        const data = await response.json();
+        if (data.success && data.user) {
+          setFullName(data.user.name || "");
+          setEmail(data.user.email || "");
+          setPhone(data.user.phone || "Not Added");
+          if (data.user.role) {
+            setRole(data.user.role === "ADMIN" ? "Super Admin" : data.user.role);
+          }
+          // Sync to localStorage
+          localStorage.setItem(
+            "admin",
+            JSON.stringify({
+              name: data.user.name,
+              email: data.user.email,
+              phone: data.user.phone,
+              role: data.user.role,
+            })
+          );
+          window.dispatchEvent(new Event("adminProfileChanged"));
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile details:", err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   useEffect(() => {
     if (toastMessage) {
       const timer = setTimeout(() => setToastMessage(""), 4000);
@@ -133,8 +166,10 @@ export default function ProfilePage() {
       newErrors.email = "Invalid Email Address";
     }
 
-    if (!phone.trim()) {
+    if (!phone.trim() || phone.trim() === "Not Added") {
       newErrors.phone = "Phone Number cannot be empty";
+    } else if (!/^\+?[0-9\s\-()]{7,20}$/.test(phone)) {
+      newErrors.phone = "Please enter a valid phone number";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -144,26 +179,59 @@ export default function ProfilePage() {
 
     setErrors({});
 
-    // Audit Event Linkages
-    addActionLog({
-      adminId: "admin-1",
-      adminName: fullName,
-      adminEmail: email,
-      adminRole: "Super Admin",
-      action: "Profile Updated",
-      medicineId: "N/A",
-      medicineName: "N/A",
-      ipAddress: "192.168.1.1",
-      browser: "Chrome",
-      os: "Windows 11",
-      device: "Desktop",
-      remarks: "Super Admin updated profile details"
-    });
+    const saveProfile = async () => {
+      try {
+        const response = await fetch("/api/profile", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: fullName, email, phone }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          // Audit Event Linkages
+          addActionLog({
+            adminId: "admin-1",
+            adminName: fullName,
+            adminEmail: email,
+            adminRole: "Super Admin",
+            action: "Profile Updated",
+            medicineId: "N/A",
+            medicineName: "N/A",
+            ipAddress: "192.168.1.1",
+            browser: "Chrome",
+            os: "Windows 11",
+            device: "Desktop",
+            remarks: "Super Admin updated profile details"
+          });
 
-    localStorage.setItem("admin", JSON.stringify({ name: fullName, email, phone, role: role === "Super Admin" ? "ADMIN" : role }));
-    window.dispatchEvent(new Event("adminProfileChanged"));
+          localStorage.setItem(
+            "admin",
+            JSON.stringify({
+              name: fullName,
+              email,
+              phone,
+              role: role === "Super Admin" ? "ADMIN" : role,
+            })
+          );
+          window.dispatchEvent(new Event("adminProfileChanged"));
+          setToastMessage("Profile changes saved successfully");
+        } else {
+          if (data.message && data.message.toLowerCase().includes("email")) {
+            setErrors({ email: data.message });
+          } else if (data.message && data.message.toLowerCase().includes("phone")) {
+            setErrors({ phone: data.message });
+          } else {
+            setToastMessage(data.message || "Failed to save profile changes");
+          }
+        }
+      } catch (err) {
+        setToastMessage("A connection error occurred. Please try again.");
+      }
+    };
 
-    setToastMessage("Profile changes saved successfully");
+    saveProfile();
   };
 
   return (

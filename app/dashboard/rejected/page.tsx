@@ -10,7 +10,7 @@ import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 const getExportTimestamp = () => Date.now();
 
 export default function RejectedMedicinesPage() {
-  const { medicines } = useMedicines();
+  const { medicines, formatDate } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -711,9 +711,9 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
                         {med.rejectedBy || "Admin User"}
                       </td>
 
-                      {/* Column 7: Rejected Date */}
+                      {/* Column 7: Rejected At date */}
                       <td className="px-4 py-2 text-xs font-medium text-slate-400">
-                        {med.rejectedAt || "N/A"}
+                        {formatDate(med.rejectedAt) || "N/A"}
                       </td>
 
                       {/* Column 8: Rejection Reason (colored badge with tooltip) */}
@@ -728,7 +728,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
 
                       {/* Column 9: Expiry Date */}
                       <td className="px-4 py-2 text-xs font-semibold text-slate-400">
-                        {med.expiryDate || med.expiry}
+                        {formatDate(med.expiryDate || med.expiry)}
                       </td>
 
                       {/* Column 10: Actions Controls */}

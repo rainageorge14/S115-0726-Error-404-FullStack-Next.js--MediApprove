@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { Medicine } from "./MedicineContext";
+import { Medicine, useMedicines } from "./MedicineContext";
 import { Button } from "./Button";
 
 interface RejectedMedicineDetailsModalProps {
@@ -17,6 +17,7 @@ export const RejectedMedicineDetailsModal: React.FC<RejectedMedicineDetailsModal
   onClose,
   onDownloadReport,
 }) => {
+  const { formatDate } = useMedicines();
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close on Escape key, prevent background scrolling
@@ -251,7 +252,7 @@ Digital Signature. MediApprove Rejection Registry.
                 Mfg. Date
               </span>
               <span className="text-sm font-bold text-slate-600 block mt-0.5">
-                {medicine.manufacturingDate || "N/A"}
+                {formatDate(medicine.manufacturingDate) || "N/A"}
               </span>
             </div>
             <div>
@@ -259,7 +260,7 @@ Digital Signature. MediApprove Rejection Registry.
                 Expiry Date
               </span>
               <span className="text-sm font-extrabold text-dark-navy block mt-0.5">
-                {medicine.expiryDate || medicine.expiry}
+                {formatDate(medicine.expiryDate || medicine.expiry)}
               </span>
             </div>
             <div>
@@ -267,7 +268,7 @@ Digital Signature. MediApprove Rejection Registry.
                 Submitted On
               </span>
               <span className="text-sm font-bold text-slate-600 block mt-0.5">
-                {medicine.createdAt || medicine.submittedOn}
+                {formatDate(medicine.createdAt || medicine.submittedOn)}
               </span>
             </div>
           </div>

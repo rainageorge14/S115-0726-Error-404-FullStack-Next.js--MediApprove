@@ -63,6 +63,7 @@ export async function POST(req: Request) {
       id: admin.id,
       email: admin.email,
       role: admin.role,
+      tokenVersion: admin.tokenVersion,
     });
 
     // Create response
@@ -73,6 +74,7 @@ export async function POST(req: Request) {
         id: admin.id,
         name: admin.name,
         email: admin.email,
+        phone: admin.phone,
         role: admin.role,
       },
     });

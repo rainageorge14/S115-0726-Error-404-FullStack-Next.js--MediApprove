@@ -23,7 +23,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           {/* Custom Checkbox Box */}
           <div className={`w-5 h-5 border rounded-md bg-white flex items-center justify-center shrink-0 transition-all duration-150 group-hover:border-primary peer-focus:ring-3 peer-focus:ring-primary/10 ${
             error ? "border-danger" : "border-border-color"
-          } peer-checked:bg-primary peer-checked:border-primary ${className}`}>
+          } peer-checked:bg-primary peer-checked:border-primary peer-checked:[&_svg]:scale-100 ${className}`}>
             {/* Check icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -31,8 +31,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               viewBox="0 0 24 24"
               strokeWidth={3.5}
               stroke="white"
-              className="w-3.5 h-3.5 scale-0 peer-checked:scale-100 transition-transform duration-150"
-              style={{ transform: props.checked ? "scale(1)" : "" }}
+              className="w-3.5 h-3.5 scale-0 transition-transform duration-150"
             >
               <path
                 strokeLinecap="round"

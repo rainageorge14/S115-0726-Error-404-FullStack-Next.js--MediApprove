@@ -90,6 +90,12 @@ interface MedicineContextType {
   deleteNotification: (id: string) => void;
   clearAllNotifications: () => void;
   addNotification: (notif: Omit<Notification, "id" | "createdAt" | "isRead" | "status">) => void;
+  timeFormat: "12h" | "24h";
+  setTimeFormat: (format: "12h" | "24h") => void;
+  formatTime: (timeInput: string | Date | null | undefined) => string;
+  dateFormat: string;
+  setDateFormat: (format: string) => void;
+  formatDate: (dateInput: string | Date | null | undefined) => string;
 }
 
 const MedicineContext = createContext<MedicineContextType | undefined>(undefined);
@@ -499,6 +505,150 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [activities, setActivities] = useState<Activity[]>(initialActivities);
   const [actionLogs, setActionLogs] = useState<ActionLog[]>(initialActionLogs);
   const [notifications, setNotifications] = useState<Notification[]>(getInitialNotifications);
+  const [timeFormat, setTimeFormatState] = useState<"12h" | "24h">("12h");
+  const [dateFormat, setDateFormatState] = useState<string>("DD MMM YYYY");
+
+  // Load preferences on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedFormat = localStorage.getItem("timeFormat");
+      if (savedFormat === "12h" || savedFormat === "24h") {
+        setTimeFormatState(savedFormat);
+      }
+      const savedDateFormat = localStorage.getItem("dateFormat");
+      if (savedDateFormat) {
+        setDateFormatState(savedDateFormat);
+      }
+    }
+
+    fetch("/api/profile")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.user && data.user.timeFormat) {
+          const apiFormat = data.user.timeFormat;
+          if (apiFormat === "12h" || apiFormat === "24h") {
+            setTimeFormatState(apiFormat);
+            localStorage.setItem("timeFormat", apiFormat);
+          }
+        }
+      })
+      .catch((e) => console.error("Failed to fetch settings from profile", e));
+  }, []);
+
+  const setTimeFormat = (format: "12h" | "24h") => {
+    setTimeFormatState(format);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("timeFormat", format);
+    }
+  };
+
+  const setDateFormat = (format: string) => {
+    setDateFormatState(format);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("dateFormat", format);
+    }
+  };
+
+  const formatDate = (dateInput: string | Date | null | undefined): string => {
+    if (!dateInput) return "";
+    let date: Date;
+
+    if (typeof dateInput === "string") {
+      if (
+        dateInput.includes("ago") ||
+        dateInput.toLowerCase() === "just now" ||
+        dateInput.toLowerCase() === "n/a"
+      ) {
+        return dateInput;
+      }
+      date = new Date(dateInput);
+      if (isNaN(date.getTime())) {
+        return dateInput;
+      }
+    } else {
+      date = dateInput;
+    }
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+
+    const monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthIndex = date.getMonth();
+    const monthShort = monthsShort[monthIndex];
+    const monthNum = String(monthIndex + 1).padStart(2, "0");
+
+    if (dateFormat === "YYYY-MM-DD") {
+      return `${year}-${monthNum}-${day}`;
+    } else if (dateFormat === "MM/DD/YYYY") {
+      return `${monthNum}/${day}/${year}`;
+    } else {
+      return `${day} ${monthShort} ${year}`;
+    }
+  };
+
+  const formatTime = (timeInput: string | Date | null | undefined): string => {
+    if (!timeInput) return "";
+    if (
+      typeof timeInput === "string" &&
+      (timeInput.includes("ago") ||
+        timeInput.toLowerCase() === "just now" ||
+        timeInput.toLowerCase() === "n/a")
+    ) {
+      return timeInput;
+    }
+
+    let date: Date;
+    let originalCustomPart = "";
+
+    if (typeof timeInput === "string") {
+      const match = timeInput.match(/^(\d{1,2}\s+[A-Za-z]+\s+\d{4}),\s+(\d{1,2}:\d{2}\s+[AP]M)$/i);
+      if (match) {
+        originalCustomPart = match[1];
+        const timePart = match[2];
+        const hmTokens = timePart.split(":");
+        let hours = parseInt(hmTokens[0], 10);
+        const minutesStr = hmTokens[1].substring(0, 2);
+        const ampm = hmTokens[1].substring(2).trim().toUpperCase();
+
+        if (ampm === "PM" && hours < 12) hours += 12;
+        if (ampm === "AM" && hours === 12) hours = 0;
+
+        if (timeFormat === "24h") {
+          const hh = String(hours).padStart(2, "0");
+          return `${formatDate(originalCustomPart)}, ${hh}:${minutesStr}`;
+        } else {
+          const ampmResult = hours >= 12 ? "PM" : "AM";
+          let hh = hours % 12;
+          if (hh === 0) hh = 12;
+          const hhStr = String(hh).padStart(2, "0");
+          return `${formatDate(originalCustomPart)}, ${hhStr}:${minutesStr} ${ampmResult}`;
+        }
+      }
+
+      date = new Date(timeInput);
+      if (isNaN(date.getTime())) {
+        return timeInput;
+      }
+    } else {
+      date = timeInput;
+    }
+
+    if (timeFormat === "24h") {
+      const formattedDate = formatDate(date);
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      return `${formattedDate}, ${hours}:${minutes}`;
+    } else {
+      const formattedDate = formatDate(date);
+      let hours = date.getHours();
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      if (hours === 0) hours = 12;
+      const hh = String(hours).padStart(2, "0");
+      return `${formattedDate}, ${hh}:${minutes} ${ampm}`;
+    }
+  };
 
   // Load notifications from localStorage on mount
   useEffect(() => {
@@ -555,11 +705,7 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   const addActionLog = (log: Omit<ActionLog, "id" | "timestamp">) => {
-    const formattedDate = new Date().toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+    const formattedDate = formatDate(new Date());
     const formattedTime = new Date().toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
@@ -591,83 +737,46 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   // Approve workflow logic
-  const approveMedicine = async (id: string, adminName: string): Promise<boolean> => {
-    // Simulate database network lag
-    await new Promise((resolve) => setTimeout(resolve, 600));
+  const approveMedicine = async (
+  id: string,
+  adminName: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`/api/medicines/${id}/approve`, {
+      method: "PATCH",
+      credentials: "include",
+    });
 
-    // Simulate verification check failures:
-    // If the medicine ID is "med-4" (Aspirin), we mock validation rejection to trigger the error toast!
-    if (id === "med-4") {
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
       return false;
     }
 
-    let target: Medicine | undefined;
     setMedicines((prev) =>
-      prev.map((med) => {
-        if (med.id === id) {
-          target = med;
-          const currentDate = new Date().toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          }); // e.g. "14 Jul 2026"
-          return {
-            ...med,
-            status: "approved",
-            approvedBy: adminName,
-            approvedAt: currentDate,
-          };
-        }
-        return med;
-      })
+      prev.map((med) =>
+        med.id === id
+          ? {
+              ...med,
+              status: "approved",
+              approvedBy: data.admin?.name || adminName,
+              approvedAt: new Date().toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              }),
+            }
+          : med
+      )
     );
 
-    // Append to activities feed
-    if (target) {
-      setActivities((prev) => [
-        {
-          id: `act-${Date.now()}`,
-          medicineName: target!.name,
-          action: "approved",
-          user: adminName,
-          time: "Just now",
-        },
-        ...prev,
-      ]);
-
-      // Generate Action Log
-      addActionLog({
-        adminId: adminName === "Admin User" ? "ADM-001" : "ADM-002",
-        adminName,
-        adminEmail: adminName === "Admin User" ? "admin@mediapprove.com" : "sarah@mediapprove.com",
-        adminRole: adminName === "Admin User" ? "Super Admin" : "Admin",
-        action: "Approved",
-        medicineId: target.id,
-        medicineName: target.name,
-        ipAddress: "192.168.1.10",
-        browser: "Chrome",
-        os: "Windows 11",
-        device: "Chrome / Windows 11",
-        remarks: `Medicine approved by ${adminName}`,
-        previousStatus: "Pending",
-        newStatus: "Approved",
-        additionalNotes: `Approved medicine batch ${target.batchNumber || "N/A"}. Retail price: INR ${target.price}.`
-      });
-
-      // Generate Notification
-      addNotification({
-        title: "Medicine Approved",
-        description: `${target.name} submitted by Cipla has been approved.`,
-        type: "approval",
-        adminName,
-        medicineName: target.name,
-        actionUrl: "/dashboard/approved"
-      });
-    }
-
     return true;
-  };
-
+  } catch (error) {
+    console.error("Approve request failed:", error);
+    return false;
+  }
+};
+  
   // Reject workflow logic
   const rejectMedicine = async (
     id: string,
@@ -761,6 +870,12 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
         deleteNotification,
         clearAllNotifications,
         addNotification,
+        timeFormat,
+        setTimeFormat,
+        formatTime,
+        dateFormat,
+        setDateFormat,
+        formatDate,
       }}
     >
       {children}

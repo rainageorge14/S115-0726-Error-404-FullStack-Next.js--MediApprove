@@ -38,6 +38,8 @@ model User {
 
   department String?
   phone      String?
+  timeFormat   String @default("12h")
+  tokenVersion Int    @default(0)
 
   auditLogs     AuditLog[]
 

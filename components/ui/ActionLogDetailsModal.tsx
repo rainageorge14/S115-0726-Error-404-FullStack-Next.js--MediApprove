@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { ActionLog } from "./MedicineContext";
+import { ActionLog, useMedicines } from "./MedicineContext";
 
 
 interface ActionLogDetailsModalProps {
@@ -17,6 +17,7 @@ export const ActionLogDetailsModal: React.FC<ActionLogDetailsModalProps> = ({
   onClose,
   onDownloadLog,
 }) => {
+  const { formatTime } = useMedicines();
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close on Escape key, prevent background scrolling
@@ -151,7 +152,7 @@ Security Registry: SIGNED & SECURED
             <h2 id="modal-title" className="text-2xl font-extrabold text-dark-navy tracking-tight mt-2 flex items-center gap-2">
               Details for <span className="text-primary font-mono">{log.id}</span>
             </h2>
-            <p className="text-sm font-semibold text-slate-400 mt-1">{log.timestamp}</p>
+            <p className="text-sm font-semibold text-slate-400 mt-1">{formatTime(log.timestamp)}</p>
           </div>
 
           {/* Details Sections */}

@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = getAuthUser(req);
+    const user = await getAuthUser(req);
     if (!user) {
       return NextResponse.json(
         {

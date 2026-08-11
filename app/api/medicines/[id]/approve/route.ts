@@ -2,40 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { AuditAction, MedicineStatus } from "@prisma/client";
 import { createAuditLog } from "@/lib/audit";
-import { getAuthUser } from "@/lib/auth";
+import { getAuthenticatedAdmin } from "@/lib/auth";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = getAuthUser(req);
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const admin = await getAuthenticatedAdmin(req);
 
-    if (user.role !== "ADMIN") {
+    if (!admin) {
       return NextResponse.json(
-        { success: false, message: "Forbidden" },
+        {
+          success: false,
+          message: "Admin access required",
+        },
         { status: 403 }
       );
     }
 
     const { id } = await params;
-
-    const admin = await prisma.user.findUnique({
-      where: { id: user.id },
-    });
-
-    if (!admin) {
-      return NextResponse.json(
-        { success: false, message: "Admin not found" },
-        { status: 404 }
-      );
-    }
 
     const medicine = await prisma.medicineListing.findUnique({
       where: { id },
@@ -43,40 +29,66 @@ export async function PATCH(
 
     if (!medicine) {
       return NextResponse.json(
-        { success: false, message: "Medicine not found" },
+        {
+          success: false,
+          message: "Medicine not found",
+        },
         { status: 404 }
       );
     }
 
-    const updatedMedicine = await prisma.medicineListing.update({
-      where: { id },
-      data: {
-        status: MedicineStatus.APPROVED,
-      },
-    });
+    if (medicine.status !== MedicineStatus.PENDING) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Only pending medicines can be approved",
+        },
+        { status: 409 }
+      );
+    }
 
-    await createAuditLog(
-      admin.id,
-      medicine.id,
-      AuditAction.APPROVED
-    );
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedMedicine = await tx.medicineListing.update({
+        where: { id },
+        data: {
+          status: MedicineStatus.APPROVED,
+        },
+      });
+
+      const auditLog = await tx.auditLog.create({
+        data: {
+          adminId: admin.id,
+          listingId: medicine.id,
+          action: AuditAction.APPROVED,
+        },
+      });
+
+      return {
+        updatedMedicine,
+        auditLog,
+      };
+    });
 
     return NextResponse.json({
       success: true,
       message: "Medicine approved successfully",
-      data: updatedMedicine,
+      data: result.updatedMedicine,
+      auditLog: result.auditLog,
+      admin: {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+      },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Approve medicine error:", error);
 
     return NextResponse.json(
       {
         success: false,
         message: "Internal Server Error",
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }
