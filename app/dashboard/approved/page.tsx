@@ -203,13 +203,22 @@ Status: SECURE & VERIFIED FOR CATALOGUE
   }); // e.g. "14 Jul 2026"
 
   // Dynamic Statistics Calculations
-  const newlyApprovedCount = approvedList.filter(
-    (m) => m.approvedAt === currentDate
-  ).length;
+  const now = new Date();
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  const totalApprovedCount = 453 + (approvedList.length - 15);
-  const approvedToday = 3 + newlyApprovedCount;
-  const approvedThisWeek = 11 + newlyApprovedCount;
+  const totalApprovedCount = approvedList.length;
+
+  const approvedToday = approvedList.filter((m) => {
+    if (!m.approvedAt) return false;
+    const date = new Date(m.approvedAt);
+    return !isNaN(date.getTime()) && date.toDateString() === now.toDateString();
+  }).length;
+
+  const approvedThisWeek = approvedList.filter((m) => {
+    if (!m.approvedAt) return false;
+    const date = new Date(m.approvedAt);
+    return !isNaN(date.getTime()) && date >= oneWeekAgo;
+  }).length;
 
   // Last approved medicine details
   // Filter for newly approved medicines first, then fall back to initial listings

@@ -219,13 +219,22 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
   }); // e.g. "15 Jul 2026"
 
   // Dynamic Statistics Calculations
-  const newlyRejectedCount = rejectedList.filter(
-    (m) => m.rejectedAt === currentDate
-  ).length;
+  const now = new Date();
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  const totalRejectedCount = 65 + Math.max(0, rejectedList.length - 12);
-  const rejectedTodayCount = 2 + newlyRejectedCount;
-  const rejectedThisWeekCount = 5 + newlyRejectedCount;
+  const totalRejectedCount = rejectedList.length;
+
+  const rejectedTodayCount = rejectedList.filter((m) => {
+    if (!m.rejectedAt) return false;
+    const date = new Date(m.rejectedAt);
+    return !isNaN(date.getTime()) && date.toDateString() === now.toDateString();
+  }).length;
+
+  const rejectedThisWeekCount = rejectedList.filter((m) => {
+    if (!m.rejectedAt) return false;
+    const date = new Date(m.rejectedAt);
+    return !isNaN(date.getTime()) && date >= oneWeekAgo;
+  }).length;
 
   // Last rejected medicine details
   const sortedRejectedByDate = [...rejectedList].sort((a, b) => {
