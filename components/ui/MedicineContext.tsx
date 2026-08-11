@@ -483,7 +483,7 @@ const getInitialNotifications = (): Notification[] => {
       medicineName: "N/A",
       createdAt: new Date(now.getTime() - 28 * 3600000).toISOString(),
       isRead: true,
-      actionUrl: "/dashboard/reports"
+      actionUrl: "#"
     },
     {
       id: "notif-6",
