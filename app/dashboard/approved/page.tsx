@@ -68,6 +68,17 @@ export default function ApprovedMedicinesPage() {
     setToastMessage(msg);
   };
 
+  const formatUserAndRole = (val?: string) => {
+    if (!val) return "Vinayak (Admin)";
+    const clean = val.trim();
+    if (clean === "Admin User") return "Vinayak (Admin)";
+    if (clean === "Super Admin") return "Raina George (Super Admin)";
+    if (clean === "Raina") return "Raina (Super Admin)";
+    if (clean === "Vinayak") return "Vinayak (Admin)";
+    if (clean.includes("(")) return clean;
+    return `${clean} (Admin)`;
+  };
+
   // Helper: Export current filtered list as CSV
   const handleExportCSV = () => {
     if (filteredMedicines.length === 0) {
@@ -694,7 +705,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
                       <td className="px-5 py-2.5">
                         <div className="flex flex-col gap-0.5 text-xs">
                           <span className="font-semibold text-slate-600 leading-normal">
-                            {med.approvedBy || "Admin User"}
+                            {formatUserAndRole(med.approvedBy)}
                           </span>
                           <span className="text-[10px] font-medium text-slate-400 leading-none">
                             {formatDate(med.approvedAt || med.approvedDate)}

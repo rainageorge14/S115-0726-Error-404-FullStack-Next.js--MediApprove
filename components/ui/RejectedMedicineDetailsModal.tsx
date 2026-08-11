@@ -20,6 +20,17 @@ export const RejectedMedicineDetailsModal: React.FC<RejectedMedicineDetailsModal
   const { formatDate } = useMedicines();
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const formatUserAndRole = (val?: string) => {
+    if (!val) return "Vinayak (Admin)";
+    const clean = val.trim();
+    if (clean === "Admin User") return "Vinayak (Admin)";
+    if (clean === "Super Admin") return "Raina George (Super Admin)";
+    if (clean === "Raina") return "Raina (Super Admin)";
+    if (clean === "Vinayak") return "Vinayak (Admin)";
+    if (clean.includes("(")) return clean;
+    return `${clean} (Admin)`;
+  };
+
   // Close on Escape key, prevent background scrolling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -218,7 +229,7 @@ Digital Signature. MediApprove Rejection Registry.
                   Rejected By
                 </span>
                 <span className="text-xs font-bold text-slate-600 block mt-0.5">
-                  {medicine.rejectedBy || "Admin User"} on {medicine.rejectedAt}
+                  {formatUserAndRole(medicine.rejectedBy)} on {medicine.rejectedAt}
                 </span>
               </div>
             </div>

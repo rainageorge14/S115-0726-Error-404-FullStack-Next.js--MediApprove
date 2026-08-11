@@ -67,6 +67,17 @@ export default function RejectedMedicinesPage() {
     setToastMessage(msg);
   };
 
+  const formatUserAndRole = (val?: string) => {
+    if (!val) return "Vinayak (Admin)";
+    const clean = val.trim();
+    if (clean === "Admin User") return "Vinayak (Admin)";
+    if (clean === "Super Admin") return "Raina George (Super Admin)";
+    if (clean === "Raina") return "Raina (Super Admin)";
+    if (clean === "Vinayak") return "Vinayak (Admin)";
+    if (clean.includes("(")) return clean;
+    return `${clean} (Admin)`;
+  };
+
   // Helper: Export current filtered list as CSV
   const handleExportCSV = () => {
     if (filteredMedicines.length === 0) {
@@ -738,7 +749,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
 
                       {/* Column 6: Rejected By */}
                       <td className="px-4 py-2 text-xs font-semibold text-slate-600">
-                        {med.rejectedBy || "Admin User"}
+                        {formatUserAndRole(med.rejectedBy)}
                       </td>
 
                       {/* Column 7: Rejected At date */}

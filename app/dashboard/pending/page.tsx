@@ -14,6 +14,8 @@ export default function PendingMedicinesPage() {
   const router = useRouter();
   const { medicines, approveMedicine, rejectMedicine } = useMedicines();
 
+  const [adminDetails, setAdminDetails] = useState({ name: "Admin User", role: "Super Admin" });
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedAdmin = localStorage.getItem("admin");
@@ -22,6 +24,11 @@ export default function PendingMedicinesPage() {
           const parsed = JSON.parse(storedAdmin);
           if (parsed.role !== "ADMIN") {
             router.push("/dashboard");
+          } else {
+            setAdminDetails({
+              name: parsed.name || "Admin User",
+              role: parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Admin",
+            });
           }
         } catch {
           router.push("/dashboard");
@@ -67,7 +74,12 @@ export default function PendingMedicinesPage() {
     setIsRejecting(true);
 
     try {
-      const success = await rejectMedicine(rejectionMedicineId, "Admin User", reason, notes);
+      const success = await rejectMedicine(
+        rejectionMedicineId,
+        `${adminDetails.name} (${adminDetails.role})`,
+        reason,
+        notes
+      );
       if (success) {
         showToast("Medicine rejected successfully.");
         adjustPaginationAfterDelete();
@@ -98,7 +110,10 @@ export default function PendingMedicinesPage() {
     const name = med ? med.name : "";
 
     try {
-      const success = await approveMedicine(confirmMedicineId, "Admin User");
+      const success = await approveMedicine(
+        confirmMedicineId,
+        `${adminDetails.name} (${adminDetails.role})`
+      );
       if (success) {
         showToast(`"${name}" approved successfully.`);
         adjustPaginationAfterDelete();

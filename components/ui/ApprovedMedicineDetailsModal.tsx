@@ -21,6 +21,17 @@ export const ApprovedMedicineDetailsModal: React.FC<ApprovedMedicineDetailsModal
   const { formatDate } = useMedicines();
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const formatUserAndRole = (val?: string) => {
+    if (!val) return "Vinayak (Admin)";
+    const clean = val.trim();
+    if (clean === "Admin User") return "Vinayak (Admin)";
+    if (clean === "Super Admin") return "Raina George (Super Admin)";
+    if (clean === "Raina") return "Raina (Super Admin)";
+    if (clean === "Vinayak") return "Vinayak (Admin)";
+    if (clean.includes("(")) return clean;
+    return `${clean} (Admin)`;
+  };
+
   // Close on Escape key, prevent background scrolling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -237,7 +248,7 @@ Verified digital signature. MediApprove Registry.
                 Approved By
               </span>
               <span className="text-sm font-bold text-primary block mt-0.5">
-                {medicine.approvedBy || (medicine as any).approvedBy || "Admin User"}
+                {formatUserAndRole(medicine.approvedBy || (medicine as any).approvedBy)}
               </span>
             </div>
           </div>
