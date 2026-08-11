@@ -738,44 +738,94 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   // Approve workflow logic
   const approveMedicine = async (
-  id: string,
-  adminName: string
-): Promise<boolean> => {
-  try {
-    const response = await fetch(`/api/medicines/${id}/approve`, {
-      method: "PATCH",
-      credentials: "include",
-    });
+    id: string,
+    adminName: string
+  ): Promise<boolean> => {
+    // Handle mock medicines directly on the client side
+    if (id.startsWith("med-")) {
+      const med = medicines.find((m) => m.id === id);
+      const name = med ? med.name : "Medicine";
 
-    const data = await response.json();
+      setMedicines((prev) =>
+        prev.map((m) =>
+          m.id === id
+            ? {
+                ...m,
+                status: "approved",
+                approvedBy: adminName,
+                approvedAt: new Date().toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+              }
+            : m
+        )
+      );
 
-    if (!response.ok || !data.success) {
-      return false;
+      setActivities((prev) => [
+        {
+          id: `act-${Date.now()}`,
+          medicineName: name,
+          action: "approved",
+          user: adminName,
+          time: "Just now",
+        },
+        ...prev,
+      ]);
+
+      return true;
     }
 
-    setMedicines((prev) =>
-      prev.map((med) =>
-        med.id === id
-          ? {
-              ...med,
-              status: "approved",
-              approvedBy: data.admin?.name || adminName,
-              approvedAt: new Date().toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              }),
-            }
-          : med
-      )
-    );
+    try {
+      const response = await fetch(`/api/medicines/${id}/approve`, {
+        method: "PATCH",
+        credentials: "include",
+      });
 
-    return true;
-  } catch (error) {
-    console.error("Approve request failed:", error);
-    return false;
-  }
-};
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return false;
+      }
+
+      setMedicines((prev) =>
+        prev.map((med) =>
+          med.id === id
+            ? {
+                ...med,
+                status: "approved",
+                approvedBy: data.admin?.name || adminName,
+                approvedAt: new Date().toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+              }
+            : med
+        )
+      );
+
+      // Add to activities log for database entries
+      const med = medicines.find((m) => m.id === id);
+      const name = med ? med.name : "Medicine";
+      setActivities((prev) => [
+        {
+          id: `act-${Date.now()}`,
+          medicineName: name,
+          action: "approved",
+          user: adminName,
+          time: "Just now",
+        },
+        ...prev,
+      ]);
+
+      return true;
+    } catch (error) {
+      console.error("Approve request failed:", error);
+      return false;
+    }
+  };
   
   // Reject workflow logic
   const rejectMedicine = async (
