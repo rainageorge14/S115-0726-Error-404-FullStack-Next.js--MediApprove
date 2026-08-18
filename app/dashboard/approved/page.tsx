@@ -8,6 +8,7 @@ import { ApprovedMedicineDetailsModal } from "@/components/ui/ApprovedMedicineDe
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 import { ApprovedMedicine } from "@/lib/mockApprovedMedicines";
 import { useRouter } from "next/navigation";
+import { createMedicineFilter } from "@/lib/medicine-filters";
 
 const getExportTimestamp = () => Date.now();
 
@@ -160,22 +161,15 @@ Status: SECURE & VERIFIED FOR CATALOGUE
     showToast(`Downloaded approval certification for "${med.name}".`);
   };
 
-  // Filter Computation
-  const filteredMedicines = approvedList.filter((med) => {
-    const matchesSearch =
-      med.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      med.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      med.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      med.batchNumber.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesCategory =
-      selectedCategoryFilter === "All" || med.category === selectedCategoryFilter;
-
-    const matchesCompany =
-      selectedCompanyFilter === "All" || med.company === selectedCompanyFilter;
-
-    return matchesSearch && matchesCategory && matchesCompany;
-  });
+  // Filter Computation using closure
+  const filteredMedicines = approvedList.filter(
+    createMedicineFilter({
+      status: "approved",
+      searchQuery,
+      category: selectedCategoryFilter,
+      company: selectedCompanyFilter,
+    })
+  );
 
   // Sort Computation
   const sortedMedicines = [...filteredMedicines].sort((a, b) => {

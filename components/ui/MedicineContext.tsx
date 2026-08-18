@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { initialMedicines as pendingRaw } from "@/lib/mockMedicines";
 import { initialApprovedMedicines as approvedRaw } from "@/lib/mockApprovedMedicines";
+import { fetchProfile, approveMedicineApi, rejectMedicineApi } from "@/lib/api";
+
 
 export interface Medicine {
   id: string;
@@ -521,9 +523,9 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
       }
     }
 
-    fetch("/api/profile")
-      .then((res) => res.json())
-      .then((data) => {
+    const loadProfile = async () => {
+      try {
+        const data = await fetchProfile();
         if (data.success && data.user && data.user.timeFormat) {
           const apiFormat = data.user.timeFormat;
           if (apiFormat === "12h" || apiFormat === "24h") {
@@ -531,8 +533,11 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
             localStorage.setItem("timeFormat", apiFormat);
           }
         }
-      })
-      .catch((e) => console.error("Failed to fetch settings from profile", e));
+      } catch (e) {
+        console.error("Failed to fetch settings from profile", e);
+      }
+    };
+    loadProfile();
   }, []);
 
   const setTimeFormat = (format: "12h" | "24h") => {
@@ -778,14 +783,9 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
 
     try {
-      const response = await fetch(`/api/medicines/${id}/approve`, {
-        method: "PATCH",
-        credentials: "include",
-      });
+      const data = await approveMedicineApi(id);
 
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
+      if (!data.success) {
         return false;
       }
 
@@ -834,6 +834,19 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
     reason: string,
     notes?: string
   ): Promise<boolean> => {
+    // If it is a real database medicine listing, call the backend API first
+    if (!id.startsWith("med-")) {
+      try {
+        const data = await rejectMedicineApi(id, reason, notes);
+        if (!data.success) {
+          return false;
+        }
+      } catch (error) {
+        console.error("Reject request failed:", error);
+        return false;
+      }
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     const currentDate = new Date().toLocaleDateString("en-GB", {

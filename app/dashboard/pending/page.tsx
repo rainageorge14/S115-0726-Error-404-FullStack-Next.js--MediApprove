@@ -9,6 +9,7 @@ import { RejectionModal } from "@/components/ui/RejectionModal";
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 import { DetailedMedicine } from "@/lib/mockMedicines";
 import { useRouter } from "next/navigation";
+import { createMedicineFilter } from "@/lib/medicine-filters";
 
 export default function PendingMedicinesPage() {
   const router = useRouter();
@@ -163,17 +164,14 @@ export default function PendingMedicinesPage() {
     }
   };
 
-  // Filter & Search computation
-  const filteredMedicines = pendingList.filter((med) => {
-    const matchesSearch =
-      med.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      med.company.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCompany =
-      selectedCompanyFilter === "All" || med.company === selectedCompanyFilter;
-
-    return matchesSearch && matchesCompany;
-  });
+  // Filter & Search computation using closure
+  const filteredMedicines = pendingList.filter(
+    createMedicineFilter({
+      status: "pending",
+      searchQuery,
+      company: selectedCompanyFilter,
+    })
+  );
 
   // Pagination computations
   const totalPages = Math.ceil(filteredMedicines.length / itemsPerPage);

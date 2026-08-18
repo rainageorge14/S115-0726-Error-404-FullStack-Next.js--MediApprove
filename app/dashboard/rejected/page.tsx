@@ -7,6 +7,7 @@ import Link from "next/link";
 import { RejectedMedicineDetailsModal } from "@/components/ui/RejectedMedicineDetailsModal";
 import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 import { useRouter } from "next/navigation";
+import { createMedicineFilter } from "@/lib/medicine-filters";
 
 const getExportTimestamp = () => Date.now();
 
@@ -166,28 +167,15 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
     showToast(`Restore action triggered for "${med.name || med.medicineName}". In production, this returns the drug to the pending queue.`);
   };
 
-  // Filter Computation
-  const filteredMedicines = rejectedList.filter((med) => {
-    const nameStr = (med.name || med.medicineName || "").toLowerCase();
-    const companyStr = (med.company || "").toLowerCase();
-    const batchStr = (med.batchNumber || med.batch || "").toLowerCase();
-    const reasonStr = (med.rejectionReason || "").toLowerCase();
-    const searchLower = searchQuery.toLowerCase();
-
-    const matchesSearch =
-      nameStr.includes(searchLower) ||
-      companyStr.includes(searchLower) ||
-      batchStr.includes(searchLower) ||
-      reasonStr.includes(searchLower);
-
-    const matchesCategory =
-      selectedCategoryFilter === "All" || med.category === selectedCategoryFilter;
-
-    const matchesCompany =
-      selectedCompanyFilter === "All" || med.company === selectedCompanyFilter;
-
-    return matchesSearch && matchesCategory && matchesCompany;
-  });
+  // Filter Computation using closure
+  const filteredMedicines = rejectedList.filter(
+    createMedicineFilter({
+      status: "rejected",
+      searchQuery,
+      category: selectedCategoryFilter,
+      company: selectedCompanyFilter,
+    })
+  );
 
   // Sort Computation
   const sortedMedicines = [...filteredMedicines].sort((a, b) => {

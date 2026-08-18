@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { DetailedMedicine } from "@/lib/mockMedicines";
 import { Button } from "./Button";
 import { useMedicines } from "./MedicineContext";
+import { getMedicineStatusLabel, isMedicineExpired } from "@/lib/medicine";
 
 interface MedicineDetailsModalProps {
   isOpen: boolean;
@@ -126,9 +127,14 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
                 >
                   {medicine.name}
                 </h3>
-                <span className="text-sm font-bold text-primary tracking-wide block mt-1">
-                  {medicine.company}
-                </span>
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <span className="text-sm font-bold text-primary tracking-wide">
+                    {medicine.company}
+                  </span>
+                  <span className="text-[10px] font-extrabold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                    {getMedicineStatusLabel(medicine.status)}
+                  </span>
+                </div>
 
                 {/* Subtitle Badges */}
                 {medicine.badges && medicine.badges.length > 0 && (
@@ -161,9 +167,16 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
                     Expiry Date
                   </span>
-                  <span className="text-sm font-extrabold text-dark-navy block mt-1">
-                    {formatDate(medicine.expiry)}
-                  </span>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-sm font-extrabold text-dark-navy">
+                      {formatDate(medicine.expiry)}
+                    </span>
+                    {isMedicineExpired(medicine.expiry) && (
+                      <span className="text-[9px] font-extrabold text-danger bg-danger/10 border border-danger/20 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                        Expired
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
