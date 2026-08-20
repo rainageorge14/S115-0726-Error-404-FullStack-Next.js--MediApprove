@@ -11,7 +11,8 @@ export const NotificationBell: React.FC = () => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const handle = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(handle);
   }, []);
 
   const unreadCount = notifications ? notifications.filter((n) => !n.isRead).length : 0;

@@ -17,22 +17,16 @@ export async function GET(req: Request) {
       );
     }
 
-    const notifications = await prisma.auditLog.findMany({
+    const notifications = await prisma.notification.findMany({
+      where: {
+        adminId: user.id,
+      },
       include: {
         admin: {
           select: {
             id: true,
             name: true,
             email: true,
-          },
-        },
-        listing: {
-          select: {
-            id: true,
-            medicineName: true,
-            sku: true,
-            vendor: true,
-            status: true,
           },
         },
       },

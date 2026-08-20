@@ -54,14 +54,20 @@ model User {
 }
 
 model MedicineListing {
-  id           String         @id @default(cuid())
-  medicineName String
-  sku          String         @unique
-  formulation  String
-  price        Float
-  expiryDate   DateTime
-  vendor       String
-  status       MedicineStatus @default(PENDING)
+  id              String         @id @default(cuid())
+  medicineName    String
+  sku             String         @unique
+  formulation     String
+  price           Float
+  expiryDate      DateTime
+  vendor          String
+  status          MedicineStatus @default(PENDING)
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectedBy      String?
+  rejectedAt      DateTime?
+  rejectionReason String?
+  adminNotes      String?
 
   auditLogs AuditLog[]
 

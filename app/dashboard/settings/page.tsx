@@ -5,6 +5,8 @@ import { useMedicines } from "@/components/ui/MedicineContext";
 import { GeneralSettingsCard, GeneralSettingsData } from "@/components/settings/GeneralSettingsCard";
 import { NotificationSettingsCard, NotificationSettingsData } from "@/components/settings/NotificationSettingsCard";
 import { DangerZoneCard } from "@/components/settings/DangerZoneCard";
+import { SecuritySettingsCard, SecuritySettingsData } from "@/components/settings/SecuritySettingsCard";
+import { SystemStatusCard } from "@/components/settings/SystemStatusCard";
 
 export default function SettingsPage() {
   const { addActionLog, setTimeFormat, setDateFormat } = useMedicines();
@@ -85,9 +87,55 @@ export default function SettingsPage() {
       browser: "Chrome",
       os: "Windows 11",
       device: "Desktop",
-      remarks: "Updated email/browser notification filters"
+      remarks: `Updated notification filters (Approvals: ${data.approvalAlerts}, Rejections: ${data.rejectedAlerts})`
     });
     showToast("Notification preferences updated");
+  };
+
+  const handleUpdateSecurity = async (data: SecuritySettingsData) => {
+    if (data.newPassword) {
+      if (data.newPassword !== data.confirmPassword) {
+        showToast("Passwords do not match");
+        return;
+      }
+      try {
+        const res = await fetch("/api/profile", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            password: data.newPassword,
+          }),
+        });
+        const resData = await res.json();
+        if (!res.ok || !resData.success) {
+          showToast(resData.message || "Failed to update password");
+          return;
+        }
+        showToast("Password updated successfully");
+      } catch (e) {
+        console.error("Update password error:", e);
+        showToast("Failed to update password");
+        return;
+      }
+    }
+
+    addActionLog({
+      adminId: "admin-1",
+      adminName: "Admin User",
+      adminEmail: "admin@mediapprove.com",
+      adminRole: "Super Admin",
+      action: "Password Changed",
+      medicineId: "N/A",
+      medicineName: "N/A",
+      ipAddress: "192.168.1.1",
+      browser: "Chrome",
+      os: "Windows 11",
+      device: "Desktop",
+      remarks: `Updated password or security settings (TFA: ${data.tfa})`
+    });
+    showToast("Security settings updated successfully");
   };
 
   // --- Danger Zone ---
@@ -171,6 +219,17 @@ export default function SettingsPage() {
 
           {/* Card 2: Notifications */}
           <NotificationSettingsCard onChange={handleUpdateNotifications} />
+
+          {/* Card 3: Security */}
+          <SecuritySettingsCard onUpdate={handleUpdateSecurity} />
+
+          {/* Card 4: System Status */}
+          <SystemStatusCard
+            dbConnected={true}
+            apiRunning={true}
+            authHealthy={true}
+            storageUsage={24}
+          />
         </div>
 
         {/* Card 5: Danger Zone */}

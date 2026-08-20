@@ -6,31 +6,41 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { MedicineDetailsModal } from "@/components/ui/MedicineDetailsModal";
 import { RejectionModal } from "@/components/ui/RejectionModal";
-import { useMedicines, Medicine, Activity } from "@/components/ui/MedicineContext";
+import { useMedicines, Medicine } from "@/components/ui/MedicineContext";
 import { DetailedMedicine } from "@/lib/mockMedicines";
 
 export default function DashboardHome() {
   const { medicines, activities, approveMedicine, rejectMedicine } = useMedicines();
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
   const [toastMessage, setToastMessage] = useState("");
-  const [adminDetails, setAdminDetails] = useState({ name: "Admin User", role: "Super Admin" });
-  const [role, setRole] = useState<"ADMIN" | "USER">("ADMIN");
-
-  useEffect(() => {
+  const [adminDetails] = useState(() => {
     if (typeof window !== "undefined") {
       const storedAdmin = localStorage.getItem("admin");
       if (storedAdmin) {
         try {
           const parsed = JSON.parse(storedAdmin);
-          setAdminDetails({
+          return {
             name: parsed.name || "Admin User",
             role: parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Admin",
-          });
-          setRole(parsed.role === "ADMIN" ? "ADMIN" : "USER");
-        } catch (e) {}
+          };
+        } catch {}
       }
     }
-  }, []);
+    return { name: "Admin User", role: "Super Admin" };
+  });
+
+  const [role] = useState<"ADMIN" | "USER">(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          return parsed.role === "ADMIN" ? "ADMIN" : "USER";
+        } catch {}
+      }
+    }
+    return "ADMIN";
+  });
 
   // Rejection modal states
   const [rejectionMedicineId, setRejectionMedicineId] = useState<string | null>(null);
@@ -86,7 +96,7 @@ export default function DashboardHome() {
       } else {
         setToastMessage(`Failed to reject "${rejectionMedicineName}".`);
       }
-    } catch (err) {
+    } catch {
       setToastMessage(`Error rejecting "${rejectionMedicineName}".`);
     } finally {
       setIsRejecting(false);

@@ -21,27 +21,51 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [navAvatar, setNavAvatar] = useState<string | null>(null);
-  const [adminName, setAdminName] = useState("Admin User");
-  const [adminRole, setAdminRole] = useState("Super Admin");
-  const [role, setRole] = useState<"ADMIN" | "USER">("ADMIN");
-
-  useEffect(() => {
+  const [navAvatar, setNavAvatar] = useState<string | null>(() => {
     if (typeof window !== "undefined") {
-      // Load initial values from localStorage on mount to prevent hydration mismatch
-      setNavAvatar(localStorage.getItem("profilePhoto"));
-      
+      return localStorage.getItem("profilePhoto");
+    }
+    return null;
+  });
+  const [adminName, setAdminName] = useState(() => {
+    if (typeof window !== "undefined") {
       const storedAdmin = localStorage.getItem("admin");
       if (storedAdmin) {
         try {
           const parsed = JSON.parse(storedAdmin);
-          if (parsed.name) setAdminName(parsed.name);
-          if (parsed.role) {
-            setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
-            setRole(parsed.role === "ADMIN" ? "ADMIN" : "USER");
-          }
-        } catch (e) {}
+          if (parsed.name) return parsed.name;
+        } catch {}
       }
+    }
+    return "Admin User";
+  });
+  const [role, setRole] = useState<"ADMIN" | "USER">(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.role) return parsed.role === "ADMIN" ? "ADMIN" : "USER";
+        } catch {}
+      }
+    }
+    return "ADMIN";
+  });
+  const [adminRole, setAdminRole] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          if (parsed.role) return parsed.role === "ADMIN" ? "Super Admin" : parsed.role;
+        } catch {}
+      }
+    }
+    return "Super Admin";
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
 
       const handleUpdate = () => {
         setNavAvatar(localStorage.getItem("profilePhoto"));
@@ -57,7 +81,7 @@ export default function DashboardLayout({
               setAdminRole(parsed.role === "ADMIN" ? "Super Admin" : parsed.role);
               setRole(parsed.role === "ADMIN" ? "ADMIN" : "USER");
             }
-          } catch (e) {}
+          } catch {}
         }
       };
 
@@ -77,6 +101,7 @@ export default function DashboardLayout({
     { name: "Approved Medicines", category: "MANAGE", icon: "approved", href: "/dashboard/approved" },
     { name: "Rejected Medicines", category: "MANAGE", icon: "rejected", href: "/dashboard/rejected" },
     { name: "Action Logs", category: "ACTIVITY", icon: "logs", href: "/dashboard/action-logs" },
+    { name: "Developer Hub", category: "DEVELOPER", icon: "terminal", href: "/dashboard/developer-hub" },
     { name: "Profile", category: "SETTINGS", icon: "profile", href: "/dashboard/profile" },
     { name: "Settings", category: "SETTINGS", icon: "settings", href: "/dashboard/settings" },
   ];
@@ -85,6 +110,7 @@ export default function DashboardLayout({
     ? [
         { name: "Dashboard", category: "", icon: "dashboard", href: "/dashboard" },
         { name: "Notifications", category: "ACTIVITY", icon: "pending", href: "/notifications" },
+        { name: "Developer Hub", category: "DEVELOPER", icon: "terminal", href: "/dashboard/developer-hub" },
         { name: "Profile", category: "SETTINGS", icon: "profile", href: "/dashboard/profile" },
       ]
     : sidebarMenu;
@@ -115,6 +141,7 @@ export default function DashboardLayout({
   const getActiveSubtitle = () => {
     if (pathname === "/dashboard/profile") return "Manage your account details";
     if (pathname === "/dashboard/action-logs") return "Monitor and audit administrator and system activity logs";
+    if (pathname === "/dashboard/developer-hub") return "Interactive engineering visualizers and AI compliance audit tools";
     if (pathname === "/notifications" || pathname === "/dashboard/notifications") return "View and manage all system notifications and recent activities.";
     const active = filteredMenu.find((m) => m.href === pathname);
     return active ? `Overview of ${active.name.toLowerCase()} listing and recent activity` : "Overview of medicine Listing and recent activity";
@@ -166,6 +193,12 @@ export default function DashboardLayout({
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        );
+      case "terminal":
+        return (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke={strokeColor} strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         );
       default:
@@ -376,6 +409,7 @@ export default function DashboardLayout({
                 {/* User Avatar Circle */}
                 <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-border-color overflow-hidden select-none">
                   {navAvatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={navAvatar} alt="Nav Avatar" className="w-full h-full object-cover" />
                   ) : (
                     adminName.split(" ").map((n: string) => n[0]).join("").toUpperCase()

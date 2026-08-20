@@ -103,7 +103,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Build update payload
-    const updateData: any = {};
+    const updateData: Record<string, string | null> = {};
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
     if (phone !== undefined) updateData.phone = phone === "" ? null : phone;

@@ -17,7 +17,27 @@ export function middleware(req: NextRequest) {
   try {
     const decoded = verifyToken(token);
 
-    if (!decoded?.id || decoded.role !== "ADMIN") {
+    if (!decoded?.id) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    // Check for admin-only endpoints:
+    // - GET /api/medicines (the admin review list query)
+    // - /api/medicines/[id]/approve
+    // - /api/medicines/[id]/reject
+    const path = req.nextUrl.pathname;
+    const isAdminOnlyRoute =
+      (path === "/api/medicines" && req.method === "GET") ||
+      path.endsWith("/approve") ||
+      path.endsWith("/reject");
+
+    if (isAdminOnlyRoute && decoded.role !== "ADMIN") {
       return NextResponse.json(
         {
           success: false,

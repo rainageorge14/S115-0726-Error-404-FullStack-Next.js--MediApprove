@@ -19,5 +19,9 @@ export function generateToken(payload: object) {
 }
 
 export function verifyToken(token: string): AuthTokenPayload {
-  return jwt.verify(token, JWT_SECRET as string) as any as AuthTokenPayload;
+  const decoded = jwt.verify(token, JWT_SECRET as string);
+  if (typeof decoded === "string") {
+    throw new Error("Invalid token payload format");
+  }
+  return decoded as AuthTokenPayload;
 }

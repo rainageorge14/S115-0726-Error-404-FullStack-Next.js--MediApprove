@@ -10,8 +10,8 @@ export async function getAuthUser(req: Request | NextRequest) {
   let token: string | undefined;
 
   // Try parsing cookies from NextRequest
-  if ("cookies" in req && typeof (req as any).cookies?.get === "function") {
-    token = (req as any).cookies.get("token")?.value;
+  if (req instanceof NextRequest) {
+    token = req.cookies.get("token")?.value;
   }
 
   // Fallback to cookie header parsing (standard Request)

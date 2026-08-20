@@ -200,12 +200,7 @@ Status: SECURE & VERIFIED FOR CATALOGUE
     }
   };
 
-  // Get current date string to filter today's approvals
-  const currentDate = new Date().toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }); // e.g. "14 Jul 2026"
+
 
   // Dynamic Statistics Calculations
   const now = new Date();

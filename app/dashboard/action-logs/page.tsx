@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -99,7 +107,7 @@ export default function ActionLogsPage() {
       if (ampm === "AM" && hours === 12) hours = 0;
 
       return new Date(year, month, day, hours, minutes);
-    } catch (e) {
+    } catch {
       return new Date(); // fallback
     }
   };
@@ -307,6 +315,7 @@ Security Registry: SIGNED & SECURED
   };
 
   // Action simulators to trigger real-time actions and logs
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const simulateAction = (type: "Login" | "Logout" | "Profile" | "Client" | "Medicine") => {
     let logPayload: Omit<ActionLog, "id" | "timestamp">;
     

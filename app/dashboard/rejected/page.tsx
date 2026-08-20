@@ -210,12 +210,7 @@ Status: DISAPPROVED - INELIGIBLE FOR CATALOGUE
     }
   };
 
-  // Date constants to filter today's actions
-  const currentDate = new Date().toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }); // e.g. "15 Jul 2026"
+
 
   // Dynamic Statistics Calculations
   const now = new Date();

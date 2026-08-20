@@ -1,7 +1,6 @@
 import React from "react";
 import { Card } from "@/components/ui/Card";
 import { InputField } from "./InputField";
-import { PasswordInput } from "./PasswordInput";
 import { PrimaryButton } from "./PrimaryButton";
 
 interface ProfileFormProps {

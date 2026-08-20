@@ -15,7 +15,21 @@ export default function PendingMedicinesPage() {
   const router = useRouter();
   const { medicines, approveMedicine, rejectMedicine } = useMedicines();
 
-  const [adminDetails, setAdminDetails] = useState({ name: "Admin User", role: "Super Admin" });
+  const [adminDetails] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("admin");
+      if (storedAdmin) {
+        try {
+          const parsed = JSON.parse(storedAdmin);
+          return {
+            name: parsed.name || "Admin User",
+            role: parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Admin",
+          };
+        } catch {}
+      }
+    }
+    return { name: "Admin User", role: "Super Admin" };
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -25,11 +39,6 @@ export default function PendingMedicinesPage() {
           const parsed = JSON.parse(storedAdmin);
           if (parsed.role !== "ADMIN") {
             router.push("/dashboard");
-          } else {
-            setAdminDetails({
-              name: parsed.name || "Admin User",
-              role: parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Admin",
-            });
           }
         } catch {
           router.push("/dashboard");
@@ -88,7 +97,7 @@ export default function PendingMedicinesPage() {
       } else {
         showToast(`Failed to reject "${rejectionMedicineName}".`);
       }
-    } catch (err) {
+    } catch {
       showToast(`Error rejecting "${rejectionMedicineName}".`);
     } finally {
       setIsRejecting(false);
@@ -123,7 +132,7 @@ export default function PendingMedicinesPage() {
         // Validation check failed - triggers for med-4 Aspirin
         showToast(`Compliance check failed for "${name}". Medicine remains pending.`);
       }
-    } catch (err) {
+    } catch {
       showToast(`Error approving "${name}". Internal Server Error.`);
     } finally {
       setIsApproving(false);

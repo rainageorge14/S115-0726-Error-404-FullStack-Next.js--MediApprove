@@ -14,6 +14,22 @@ interface MedicineDetailsModalProps {
   onReject: (id: string) => void;
 }
 
+interface AiAuditReport {
+  success: boolean;
+  isMock: boolean;
+  systemInstruction: string;
+  prompt: string;
+  rawJson: {
+    isCompliant: boolean;
+    recommendation: "APPROVE" | "REJECT";
+    reason: string;
+    safetyConcerns: string[];
+    extractedChemicals: string[];
+    flags: string[];
+  };
+  statusCode: number;
+}
+
 export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
   isOpen,
   medicine,
@@ -23,6 +39,65 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
 }) => {
   const { formatDate } = useMedicines();
   const modalRef = useRef<HTMLDivElement>(null);
+  
+  const [showAiAudit, setShowAiAudit] = React.useState(false);
+  const [aiReport, setAiReport] = React.useState<AiAuditReport | null>(null);
+  const [aiLoading, setAiLoading] = React.useState(false);
+  const [aiError, setAiError] = React.useState("");
+
+  useEffect(() => {
+    if (!isOpen) {
+      const handle = requestAnimationFrame(() => {
+        setShowAiAudit(false);
+        setAiReport(null);
+        setAiError("");
+      });
+      return () => cancelAnimationFrame(handle);
+    }
+  }, [isOpen]);
+
+  const handleAiAudit = async () => {
+    if (showAiAudit && aiReport) {
+      setShowAiAudit(false);
+      return;
+    }
+    
+    setShowAiAudit(true);
+    if (aiReport) return;
+    
+    setAiLoading(true);
+    setAiError("");
+    try {
+      const response = await fetch("/api/ai/audit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-key": typeof window !== "undefined" ? sessionStorage.getItem("gemini_key") || "" : "",
+        },
+        body: JSON.stringify({
+          medicineName: medicine?.name,
+          sku: medicine?.batch || medicine?.id || "",
+          formulation: medicine?.badges?.map(b => b.label).join(" ") || "",
+          price: 19.99, // base catalog mock price
+          expiryDate: medicine?.expiry ? (medicine.expiry.includes("/") ? `20${medicine.expiry.split("/")[1]}-${medicine.expiry.split("/")[0]}-01` : medicine.expiry) : "",
+          vendor: medicine?.company,
+          description: medicine?.description || "",
+          composition: medicine?.composition || "",
+        }),
+      });
+      
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP ${response.status}`);
+      }
+      setAiReport(data);
+    } catch (err: unknown) {
+      setAiError(err instanceof Error ? err.message : "Failed to run AI audit");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const [role] = React.useState<"ADMIN" | "USER">(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("admin");
@@ -30,7 +105,7 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
         try {
           const parsed = JSON.parse(stored);
           return parsed.role === "ADMIN" ? "ADMIN" : "USER";
-        } catch (e) {}
+        } catch {}
       }
     }
     return "ADMIN";
@@ -204,6 +279,98 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
             </p>
           </div>
 
+          {showAiAudit && (
+            <div className="border border-slate-200 rounded-xl bg-slate-50/50 p-5 space-y-4 animate-fade-in">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span className="text-xs font-black text-dark-navy flex items-center gap-1.5">
+                  <svg className="w-4.5 h-4.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  AI Compliance Audit Report
+                </span>
+                {aiReport && (
+                  <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                    aiReport.rawJson.isCompliant ? "bg-emerald-50 text-success border border-success/20" : "bg-red-50 text-danger border border-danger/20"
+                  }`}>
+                    {aiReport.rawJson.recommendation}
+                  </span>
+                )}
+              </div>
+
+              {aiLoading && (
+                <div className="flex flex-col items-center justify-center py-6 gap-2">
+                  <svg className="animate-spin h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  <span className="text-xs text-slate-500 font-bold">Querying AI model for audit verification...</span>
+                </div>
+              )}
+
+              {aiError && (
+                <div className="p-3 bg-red-50 text-danger text-xs font-semibold rounded-lg border border-danger/10">
+                  {aiError}
+                </div>
+              )}
+
+              {aiReport && !aiLoading && (
+                <div className="space-y-4 text-xs">
+                  <div className="bg-white border rounded-lg p-3 space-y-1">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Audit Assessment Summary</span>
+                    <p className="text-slate-600 font-semibold leading-relaxed">{aiReport.rawJson.reason}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white border rounded-lg p-3 space-y-2">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Chemical Extracts</span>
+                      <div className="flex flex-wrap gap-1">
+                        {aiReport.rawJson.extractedChemicals.map((chem: string, i: number) => (
+                          <span key={i} className="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] uppercase tracking-wider font-extrabold">
+                            {chem}
+                          </span>
+                        ))}
+                        {aiReport.rawJson.extractedChemicals.length === 0 && <span className="text-[10px] text-slate-400 italic">None</span>}
+                      </div>
+                    </div>
+
+                    <div className="bg-white border rounded-lg p-3 space-y-2">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Compliance Flags</span>
+                      <div className="flex flex-wrap gap-1">
+                        {aiReport.rawJson.flags.map((flag: string, i: number) => (
+                          <span key={i} className="px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded text-[9px] uppercase tracking-wider font-extrabold">
+                            {flag}
+                          </span>
+                        ))}
+                        {aiReport.rawJson.flags.length === 0 && <span className="text-[10px] text-slate-400 italic font-semibold">None</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {aiReport.rawJson.safetyConcerns.length > 0 && (
+                    <div className="bg-white border rounded-lg p-3 space-y-1.5">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Safety Warning Alerts</span>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-500 font-medium leading-relaxed">
+                        {aiReport.rawJson.safetyConcerns.map((warning: string, i: number) => (
+                          <li key={i}>{warning}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="bg-slate-900 text-slate-300 font-mono text-[9px] rounded-lg p-3 space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 text-slate-400">
+                      <span>Structured output schema payload</span>
+                      <span>{aiReport.isMock ? "Mock Fallback Mode" : "Real Gemini Flash"}</span>
+                    </div>
+                    <pre className="overflow-x-auto whitespace-pre max-h-36 max-w-full">
+                      {JSON.stringify(aiReport.rawJson, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="border-t border-border-color" />
 
           {/* Documents & Download Links */}
@@ -267,22 +434,38 @@ export const MedicineDetailsModal: React.FC<MedicineDetailsModalProps> = ({
             Cancel
           </Button>
 
-          {role === "ADMIN" && (
-            <div className="flex gap-3">
-              <Button
-                onClick={() => onReject(medicine.id)}
-                className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-danger hover:!bg-red-600 active:scale-95 transition-all text-white rounded-xl"
-              >
-                Reject
-              </Button>
-              <Button
-                onClick={() => onApprove(medicine.id)}
-                className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-success hover:!bg-emerald-600 active:scale-95 transition-all text-white rounded-xl"
-              >
-                Approve
-              </Button>
-            </div>
-          )}
+          <div className="flex gap-3">
+            <Button
+              onClick={handleAiAudit}
+              className="!w-full sm:!w-auto !py-2.5 !px-5 text-sm font-bold !bg-indigo-600 hover:!bg-indigo-700 active:scale-95 transition-all text-white rounded-xl flex items-center justify-center gap-1.5"
+            >
+              {aiLoading ? (
+                <span className="w-4 h-4 rounded-full border-2 border-t-transparent border-white animate-spin" />
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              )}
+              AI Audit
+            </Button>
+
+            {role === "ADMIN" && (
+              <>
+                <Button
+                  onClick={() => onReject(medicine.id)}
+                  className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-danger hover:!bg-red-600 active:scale-95 transition-all text-white rounded-xl"
+                >
+                  Reject
+                </Button>
+                <Button
+                  onClick={() => onApprove(medicine.id)}
+                  className="!w-full sm:!w-auto !py-2.5 !px-6 text-sm font-bold !bg-success hover:!bg-emerald-600 active:scale-95 transition-all text-white rounded-xl"
+                >
+                  Approve
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

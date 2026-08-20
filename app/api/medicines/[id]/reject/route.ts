@@ -59,6 +59,10 @@ export async function PATCH(
         where: { id },
         data: {
           status: MedicineStatus.REJECTED,
+          rejectedBy: admin.name,
+          rejectedAt: new Date(),
+          rejectionReason: body.reason || null,
+          adminNotes: body.notes || null,
         },
       });
 
@@ -70,9 +74,18 @@ export async function PATCH(
         },
       });
 
+      const notification = await tx.notification.create({
+        data: {
+          title: "Medicine Rejected",
+          message: `Medicine listing ${medicine.medicineName} has been rejected by ${admin.name} because: ${body.reason || "N/A"}.`,
+          adminId: admin.id,
+        },
+      });
+
       return {
         updatedMedicine,
         auditLog,
+        notification,
       };
     });
 

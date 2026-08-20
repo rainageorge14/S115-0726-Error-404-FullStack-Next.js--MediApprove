@@ -49,6 +49,7 @@ export const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center border border-slate-200 cursor-pointer overflow-hidden group relative transition-all duration-200 hover:border-primary shadow-inner"
         >
           {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             <span className="text-2xl font-extrabold text-slate-400 uppercase">AU</span>

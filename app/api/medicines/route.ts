@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAuthenticatedAdmin } from "@/lib/auth";
+import { MedicineStatus } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   try {
@@ -23,13 +24,17 @@ export async function GET(req: NextRequest) {
       1
     );
 
-    // Problem statement: one pending medicine per page
-    const limit = 100;
+    const statusParam = searchParams.get("status")?.toUpperCase();
+    const whereClause: { status?: MedicineStatus } = {};
+    if (statusParam && ["PENDING", "APPROVED", "REJECTED"].includes(statusParam)) {
+      whereClause.status = statusParam as MedicineStatus;
+    }
+
+    // Return a larger page size or limit as specified by parameter
+    const limit = Number(searchParams.get("limit")) || 100;
 
     const medicines = await prisma.medicineListing.findMany({
-      where: {
-        status: "PENDING",
-      },
+      where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
       orderBy: {
@@ -38,9 +43,7 @@ export async function GET(req: NextRequest) {
     });
 
     const total = await prisma.medicineListing.count({
-      where: {
-        status: "PENDING",
-      },
+      where: whereClause,
     });
 
     return NextResponse.json({

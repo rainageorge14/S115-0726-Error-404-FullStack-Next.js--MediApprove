@@ -16,7 +16,7 @@ export default function ProfilePage() {
         try {
           const parsed = JSON.parse(stored);
           return parsed.name || "Admin User";
-        } catch (e) {}
+        } catch {}
       }
     }
     return "Admin User";
@@ -28,7 +28,7 @@ export default function ProfilePage() {
         try {
           const parsed = JSON.parse(stored);
           return parsed.email || "admin@netmeds.com";
-        } catch (e) {}
+        } catch {}
       }
     }
     return "admin@netmeds.com";
@@ -40,7 +40,7 @@ export default function ProfilePage() {
         try {
           const parsed = JSON.parse(stored);
           return parsed.phone || "+91 96165 43210";
-        } catch (e) {}
+        } catch {}
       }
     }
     return "+91 96165 43210";
@@ -52,7 +52,7 @@ export default function ProfilePage() {
         try {
           const parsed = JSON.parse(stored);
           return parsed.role === "ADMIN" ? "Super Admin" : parsed.role || "Super Admin";
-        } catch (e) {}
+        } catch {}
       }
     }
     return "Super Admin";
@@ -226,7 +226,7 @@ export default function ProfilePage() {
             setToastMessage(data.message || "Failed to save profile changes");
           }
         }
-      } catch (err) {
+      } catch {
         setToastMessage("A connection error occurred. Please try again.");
       }
     };

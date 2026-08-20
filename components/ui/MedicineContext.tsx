@@ -506,24 +506,42 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [medicines, setMedicines] = useState<Medicine[]>(getInitialMedicines);
   const [activities, setActivities] = useState<Activity[]>(initialActivities);
   const [actionLogs, setActionLogs] = useState<ActionLog[]>(initialActionLogs);
-  const [notifications, setNotifications] = useState<Notification[]>(getInitialNotifications);
-  const [timeFormat, setTimeFormatState] = useState<"12h" | "24h">("12h");
-  const [dateFormat, setDateFormatState] = useState<string>("DD MMM YYYY");
-
-  // Load preferences on mount
-  useEffect(() => {
+  const [notifications, setNotifications] = useState<Notification[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("mediapprove_notifications");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error("Failed to parse notifications from localStorage", e);
+        }
+      }
+    }
+    return getInitialNotifications();
+  });
+  const [timeFormat, setTimeFormatState] = useState<"12h" | "24h">(() => {
     if (typeof window !== "undefined") {
       const savedFormat = localStorage.getItem("timeFormat");
       if (savedFormat === "12h" || savedFormat === "24h") {
-        setTimeFormatState(savedFormat);
-      }
-      const savedDateFormat = localStorage.getItem("dateFormat");
-      if (savedDateFormat) {
-        setDateFormatState(savedDateFormat);
+        return savedFormat;
       }
     }
+    return "12h";
+  });
+  const [dateFormat, setDateFormatState] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const savedDateFormat = localStorage.getItem("dateFormat");
+      if (savedDateFormat) {
+        return savedDateFormat;
+      }
+    }
+    return "DD MMM YYYY";
+  });
 
-    const loadProfile = async () => {
+  // Load initial data on mount
+  useEffect(() => {
+    const loadInitialData = async () => {
+      // 1. Fetch Profile
       try {
         const data = await fetchProfile();
         if (data.success && data.user && data.user.timeFormat) {
@@ -536,8 +554,143 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
       } catch (e) {
         console.error("Failed to fetch settings from profile", e);
       }
+
+      // 2. Fetch Medicines from DB
+      try {
+        const res = await fetch("/api/medicines?limit=200");
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.success && resData.data) {
+            interface DbMedicine {
+              id: string;
+              medicineName: string;
+              vendor: string;
+              formulation?: string;
+              sku?: string;
+              price?: number;
+              expiryDate: string;
+              status: string;
+              approvedBy?: string;
+              approvedAt?: string;
+              rejectedBy?: string;
+              rejectedAt?: string;
+              rejectionReason?: string;
+              adminNotes?: string;
+              createdAt: string;
+            }
+
+            setMedicines(() => {
+              const dbMedicines: Medicine[] = (resData.data as DbMedicine[]).map((m) => ({
+                id: m.id,
+                name: m.medicineName,
+                medicineName: m.medicineName,
+                company: m.vendor,
+                category: (m.formulation || "Tablet") as "Tablet" | "Capsule" | "Injection" | "Syrup" | "Ointment" | "Drops",
+                batchNumber: m.sku || "B-GEN-991",
+                batch: m.sku || "B-GEN-991",
+                price: m.price || 100,
+                dosage: "As directed by physician",
+                expiryDate: new Date(m.expiryDate).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+                expiry: new Date(m.expiryDate).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+                status: m.status.toLowerCase() as "pending" | "approved" | "rejected",
+                approvedBy: m.approvedBy,
+                approvedAt: m.approvedAt ? new Date(m.approvedAt).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }) : undefined,
+                rejectedBy: m.rejectedBy,
+                rejectedAt: m.rejectedAt ? new Date(m.rejectedAt).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }) : undefined,
+                rejectionReason: m.rejectionReason,
+                adminNotes: m.adminNotes,
+                createdAt: new Date(m.createdAt).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+                submittedOn: new Date(m.createdAt).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+                composition: "Active pharmaceutical ingredients.",
+                description: "Clinical medication pending admin check.",
+                image: "/medicine-placeholder.png",
+                badges: [
+                  { label: m.formulation || "Tablet", type: "form" },
+                  { label: "Oral", type: "route" },
+                ],
+              }));
+
+              const existingIds = new Set(dbMedicines.map((m) => m.id));
+              const existingSkus = new Set(dbMedicines.map((m) => m.batchNumber));
+              // Filter out duplicate mock items
+              const filteredMock = getInitialMedicines().filter(
+                (m) => !existingIds.has(m.id) && !existingSkus.has(m.batchNumber)
+              );
+
+              return [...dbMedicines, ...filteredMock];
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch database medicines", e);
+      }
+
+      // 3. Fetch Notifications from DB
+      try {
+        const res = await fetch("/api/notifications");
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData.success && resData.data) {
+            interface DbNotification {
+              id: string;
+              title: string;
+              message: string;
+              isRead: boolean;
+              createdAt: string;
+              admin?: {
+                name: string;
+              };
+            }
+
+            setNotifications(prev => {
+              const dbNotifications: Notification[] = (resData.data as DbNotification[]).map((n) => ({
+                id: n.id,
+                title: n.title,
+                description: n.message,
+                type: n.title.toLowerCase().includes("approve") ? "approval" : "rejection",
+                status: n.isRead ? "read" : "unread",
+                adminName: n.admin?.name || "Admin User",
+                medicineName: "Medicine Listing",
+                createdAt: n.createdAt,
+                isRead: n.isRead,
+                actionUrl: n.title.toLowerCase().includes("approve") ? "/dashboard/approved" : "/dashboard/rejected",
+              }));
+              // Merge with existing client notifications (deduplicating by id)
+              const existingIds = new Set(dbNotifications.map((n) => n.id));
+              const filteredMock = prev.filter((n) => !existingIds.has(n.id));
+              return [...dbNotifications, ...filteredMock];
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch database notifications", e);
+      }
     };
-    loadProfile();
+    loadInitialData();
   }, []);
 
   const setTimeFormat = (format: "12h" | "24h") => {
@@ -655,19 +808,7 @@ export const MedicineProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   };
 
-  // Load notifications from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("mediapprove_notifications");
-      if (saved) {
-        try {
-          setNotifications(JSON.parse(saved));
-        } catch (e) {
-          console.error("Failed to parse notifications from localStorage", e);
-        }
-      }
-    }
-  }, []);
+  // Notifications already loaded via lazy state initialization
 
   // Save notifications to localStorage on changes
   useEffect(() => {

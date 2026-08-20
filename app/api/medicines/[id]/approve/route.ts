@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { AuditAction, MedicineStatus } from "@prisma/client";
-import { createAuditLog } from "@/lib/audit";
 import { getAuthenticatedAdmin } from "@/lib/auth";
 
 export async function PATCH(
@@ -52,6 +51,8 @@ export async function PATCH(
         where: { id },
         data: {
           status: MedicineStatus.APPROVED,
+          approvedBy: admin.name,
+          approvedAt: new Date(),
         },
       });
 
@@ -63,9 +64,18 @@ export async function PATCH(
         },
       });
 
+      const notification = await tx.notification.create({
+        data: {
+          title: "Medicine Approved",
+          message: `Medicine listing ${medicine.medicineName} has been approved by ${admin.name}.`,
+          adminId: admin.id,
+        },
+      });
+
       return {
         updatedMedicine,
         auditLog,
+        notification,
       };
     });
 
